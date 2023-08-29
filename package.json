@@ -1,0 +1,27 @@
+{
+  "name": "@chargekit/paddle",
+  "version": "0.1.0",
+  "description": "Paddle Billing API wrapper with detailed TypeScript types",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chargekit/paddle.git"
+  },
+  "keywords": [
+    "Paddle",
+    "Paddle Billing"
+  ],
+  "author": "Sasha Koss <koss@nocorp.me>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chargekit/paddle/issues"
+  },
+  "homepage": "https://github.com/chargekit/paddle#readme",
+  "devDependencies": {
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.3"
+  }
+}
