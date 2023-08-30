@@ -591,11 +591,9 @@ export namespace Paddle {
     /** How proration was calculated for this item. */
     proration: Proration | null;
   }
+
   /**
-   * Represents proration for a transaction item. How proration was calculated
-   * for this item. Populated when a transaction is created from a subscription
-   * change, where proration_billing_mode was prorated_immediately or
-   * prorated_next_billing_period. Set automatically by Paddle.
+   * Represents proration information.
    */
   export interface Proration {
     /** Rate used to calculate proration. */
@@ -755,7 +753,7 @@ export namespace Paddle {
    */
   export interface LineItem {
     /** Unique Paddle ID for this transaction item, prefixed with txnitm_. */
-    id: LineId;
+    id: TransactionItemId;
     /** Paddle ID for the price related to this transaction line item,
      * prefixed with pri_. */
     price_id: PriceId;
@@ -775,9 +773,9 @@ export namespace Paddle {
   }
 
   /**
-   * Transaction line item ID.
+   * Transaction item ID.
    */
-  export type LineId = `txnitm_${string}`;
+  export type TransactionItemId = `txnitm_${string}`;
 
   /**
    * List of payment attempts for this transaction.
@@ -1147,29 +1145,26 @@ export namespace Paddle {
     /** Why this adjustment was created. Appears in the Paddle Dashboard.
      * Retained for record-keeping purposes. */
     reason: string;
-
-    /** Whether this adjustment was applied to the related customer's credit balance. Only returned for credit adjustments. */
+    /** Whether this adjustment was applied to the related customer's credit
+     * balance. Only returned for credit adjustments. */
     credit_applied_to_balance: boolean;
-
-    /** Three-letter ISO 4217 currency code for this adjustment. Set automatically by Paddle based on the currency_code of the related transaction. */
-    currency_code: string;
-
+    /** Three-letter ISO 4217 currency code for this adjustment. Set
+     * automatically by Paddle based on the currency_code of the related
+     * transaction. */
+    currency_code: CurrencyCode;
     /** Status of this adjustment. Set automatically by Paddle. */
     status: AdjustmentStatus;
-
     /** List of items on this adjustment. */
     items: AdjustmentItem[];
-
     /** Breakdown of the total for an adjustment. */
-    totals: AAdjustmentTotals;
-
+    totals: AdjustmentTotals;
     /** Breakdown of how this adjustment affects your payout balance. */
-    payout_totals: AAdjustmentPayoutTotals | null;
-
-    /** RFC 3339 datetime string of when this entity was created. Set automatically by Paddle. */
+    payout_totals: AdjustmentPayoutTotals | null;
+    /** RFC 3339 datetime string of when this entity was created.
+     * Set automatically by Paddle. */
     created_at: string;
-
-    /** RFC 3339 datetime string of when this entity was updated. Set automatically by Paddle. */
+    /** RFC 3339 datetime string of when this entity was updated.
+     * Set automatically by Paddle. */
     updated_at: string;
   }
 
@@ -1196,24 +1191,84 @@ export namespace Paddle {
    * Represents a single adjustment item.
    */
   export interface AdjustmentItem {
-    // Relevant fields for the item should be added here
-    // as they were not described in the given input.
+    /** Unique Paddle ID for this adjustment item, prefixed with adjitm_. */
+    id: string;
+    /** Paddle ID for the transaction item that this adjustment item relates
+     * to, prefixed with adjitm_. */
+    item_id: AdjustmentItemId;
+    /** Type of adjustment for this transaction item. */
+    type: AdjustmentType;
+    /** Amount adjusted for this transaction item. Required when adjustment
+     * type is partial. */
+    amount: string | null;
+    /** How proration was calculated for this adjustment item. Set
+     * automatically by Paddle. */
+    proration: Proration | null;
+    /** Breakdown of the total for an adjustment item. */
+    totals: AdjustmentItemTotals;
   }
+
+  /**
+   * Represents the breakdown of the total for an adjustment item.
+   */
+  export interface AdjustmentItemTotals {
+    /** Amount multiplied by quantity. */
+    subtotal: string;
+    /** Total tax on the subtotal. */
+    tax: string;
+    /** Total after tax. */
+    total: string;
+  }
+
+  /**
+   * Adjustment item ID.
+   */
+  export type AdjustmentItemId = `adjitm_${string}`;
+
+  /**
+   * Represents an adjustment type for a transaction item.
+   */
+  export type AdjustmentType = "full" | "partial" | "tax" | "proration";
 
   /**
    * Represents the breakdown of the total for an adjustment.
    */
-  export interface AAdjustmentTotals {
-    // Relevant fields for the totals should be added here
-    // as they were not described in the given input.
+  export interface AdjustmentTotals {
+    /** Total before tax. For tax adjustments, the value is 0. */
+    subtotal: string;
+    /** Total tax on the subtotal. */
+    tax: string;
+    /** Total after tax. */
+    total: string;
+    /** Total fee taken by Paddle for this adjustment. */
+    fee: string;
+    /** Total earnings. This is the subtotal minus the Paddle fee. */
+    earnings: string;
+    /** Three-letter ISO 4217 currency code used for this adjustment. */
+    currency_code: CurrencyCode;
   }
 
   /**
    * Represents the breakdown of how an adjustment affects payout balance.
    */
-  export interface AAdjustmentPayoutTotals {
-    // Relevant fields for the payout totals should be added here
-    // as they were not described in the given input.
+  export interface AdjustmentPayoutTotals {
+    /** Adjustment total before tax and fees. */
+    subtotal: string;
+    /** Total tax on the adjustment subtotal. */
+    tax: string;
+    /** Adjustment total after tax. */
+    total: string;
+    /** Adjusted Paddle fee. */
+    fee: string;
+    /** Chargeback fees incurred for this adjustment. Only returned when
+     * the adjustment action is chargeback or chargeback_warning. */
+    chargeback_fee: ChargebackFee;
+    /** Adjusted payout earnings. This is the adjustment total plus adjusted
+     * Paddle fees, minus chargeback fees. */
+    earnings: string;
+    /** Three-letter ISO 4217 currency code used for the payout for this
+     * transaction. */
+    currency_code: CurrencyCode;
   }
 
   /**
@@ -1531,9 +1586,6 @@ export namespace Paddle {
     EventBase<"price.updated", Price<PriceData>>;
 
   /*
-  Adjustments
-  adjustment.created
-  adjustment.updated
   Businesses
   business.created
   business.updated
