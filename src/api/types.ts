@@ -1,3 +1,4 @@
+import type { Paddle } from "../types";
 /**
  * The API Paddle types namespace. Contains all the types related to the API.
  */
@@ -5,8 +6,12 @@ export namespace PaddleAPI {
   /**
    * The error response.
    */
-  export interface ErrorResponse<Code extends ErrorCode>
-    extends ResponseBase<Error<Code>, MetaBasic> {}
+  export interface ErrorResponse<Code extends ErrorCode> {
+    /** The error object */
+    error: Error<Code>;
+    /** Information about this response. */
+    meta: MetaBasic;
+  }
 
   /**
    * The response error.
@@ -237,6 +242,76 @@ export namespace PaddleAPI {
   }
 
   /**
+   * The products list query.
+   */
+  export interface QueryProductsList<
+    Include extends QueryProductsListInclude | undefined
+  > {
+    /** Return entities after the specified cursor. Used for working through
+     * paginated results. */
+    after?: string;
+    /** Return only the IDs specified. Use a comma separated list to get
+     * multiple entities. */
+    id?: string;
+    /** Include related entities in the response. */
+    include?: Include;
+    /** Order returned entities by the specified field and direction ([ASC] or [DESC]). */
+    order_by?: string;
+    /** Set how many entities are returned per page. */
+    per_page?: number;
+    /** Return entities that match the specified status. Use a comma separated list to specify multiple status values. */
+    status?: string;
+    /** Return entities that match the specified tax category. */
+    tax_category?: string;
+  }
+
+  /**
+   * The products list include query.
+   */
+  export type QueryProductsListInclude = "prices"; // Include an array of prices related to this product.
+
+  /**
+   * THe products list response.
+   */
+  export type ResponseProductsList<
+    PriceData extends Paddle.CustomData,
+    ProductData extends Paddle.CustomData,
+    Include extends PaddleAPI.QueryProductsListInclude | undefined
+  > =
+    | ResponseProductsListError
+    | ResponseProductsListSuccess<PriceData, ProductData, Include>;
+
+  /**
+   * The errored products list response.
+   */
+  export interface ResponseProductsListError
+    extends ErrorResponse<ErrorCodeProducts> {}
+
+  /**
+   * The successful products list response.
+   */
+  export interface ResponseProductsListSuccess<
+    PriceData extends Paddle.CustomData,
+    ProductData extends Paddle.CustomData,
+    Include extends PaddleAPI.QueryProductsListInclude | undefined
+  > extends ResponseBase<
+      DataProductsListItem<PriceData, ProductData, Include>[],
+      MetaPaginated
+    > {}
+
+  /**
+   * The products list data item.
+   */
+  export interface DataProductsListItem<
+    PriceData extends Paddle.CustomData,
+    ProductData extends Paddle.CustomData,
+    Include extends PaddleAPI.QueryProductsListInclude | undefined
+  > extends Paddle.Product<ProductData> {
+    /** The product prices */
+    prices: "prices" extends Include ? Paddle.Price<PriceData>[] : never;
+  }
+
+  /**
    * The response object.
    */
   export interface ResponseBase<Data, Meta> {
@@ -244,6 +319,8 @@ export namespace PaddleAPI {
     data: Data;
     /** Information about this response. */
     meta: Meta;
+    /** The error object */
+    error?: undefined;
   }
 
   /**
