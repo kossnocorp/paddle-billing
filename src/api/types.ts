@@ -3,6 +3,22 @@ import type { Paddle } from "../types";
  * The API Paddle types namespace. Contains all the types related to the API.
  */
 export namespace PaddleAPI {
+  export interface Client<_DataDef extends CustomDataDef> {
+    key: string;
+    sandbox?: boolean | undefined;
+  }
+
+  export interface CustomDataDef {
+    Price?: Paddle.CustomData;
+    Product?: Paddle.CustomData;
+    SubscriptionItem?: Paddle.CustomData;
+    Subscription?: Paddle.CustomData;
+    Transaction?: Paddle.CustomData;
+  }
+
+  export type CustomData<Data extends Paddle.CustomData | undefined> =
+    Data extends Paddle.CustomData ? Data : Paddle.CustomData;
+
   /**
    * The error response.
    */
@@ -249,20 +265,25 @@ export namespace PaddleAPI {
   > {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
-    after?: string;
+    after?: string | undefined;
     /** Return only the IDs specified. Use a comma separated list to get
      * multiple entities. */
-    id?: string;
+    id?: Paddle.ProductId | Paddle.ProductId[] | undefined;
     /** Include related entities in the response. */
     include?: Include;
-    /** Order returned entities by the specified field and direction ([ASC] or [DESC]). */
-    order_by?: string;
+    /** Order returned entities by the specified field and direction
+     * [ASC] or [DESC]). */
+    order_by?:
+      | OrderQuery<Paddle.Product>
+      | OrderQuery<Paddle.Product>[]
+      | undefined;
     /** Set how many entities are returned per page. */
-    per_page?: number;
-    /** Return entities that match the specified status. Use a comma separated list to specify multiple status values. */
-    status?: string;
+    per_page?: number | undefined;
+    /** Return entities that match the specified status. Use a comma separated
+     * list to specify multiple status values. */
+    status?: Paddle.EntityStatus | Paddle.EntityStatus[] | undefined;
     /** Return entities that match the specified tax category. */
-    tax_category?: string;
+    tax_category?: Paddle.TaxCategory | undefined;
   }
 
   /**
@@ -274,12 +295,15 @@ export namespace PaddleAPI {
    * THe products list response.
    */
   export type ResponseProductsList<
-    PriceData extends Paddle.CustomData,
-    ProductData extends Paddle.CustomData,
+    DataDef extends PaddleAPI.CustomDataDef,
     Include extends PaddleAPI.QueryProductsListInclude | undefined
   > =
     | ResponseProductsListError
-    | ResponseProductsListSuccess<PriceData, ProductData, Include>;
+    | ResponseProductsListSuccess<
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Product"]>,
+        Include
+      >;
 
   /**
    * The errored products list response.
@@ -305,11 +329,18 @@ export namespace PaddleAPI {
   export interface DataProductsListItem<
     PriceData extends Paddle.CustomData,
     ProductData extends Paddle.CustomData,
-    Include extends PaddleAPI.QueryProductsListInclude | undefined
+    Include extends QueryProductsListInclude | undefined
   > extends Paddle.Product<ProductData> {
     /** The product prices */
-    prices: "prices" extends Include ? Paddle.Price<PriceData>[] : never;
+    prices: undefined extends Include ? never : Paddle.Price<PriceData>[];
   }
+
+  /**
+   * The order query.
+   */
+  export type OrderQuery<Type> = keyof Type extends string
+    ? `${keyof Type}[ASC]` | `${keyof Type}[DESC]`
+    : never;
 
   /**
    * The response object.
