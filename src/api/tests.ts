@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { listProducts } from ".";
+import { createProduct, listProducts } from ".";
 
 global.fetch = vi.fn();
 
@@ -24,6 +24,7 @@ describe("listProducts", () => {
       {
         method: "GET",
         headers: { Authorization: "Bearer test" },
+        body: null,
       }
     );
 
@@ -50,6 +51,7 @@ describe("listProducts", () => {
       {
         method: "GET",
         headers: { Authorization: "Bearer test" },
+        body: null,
       }
     );
   });
@@ -73,6 +75,7 @@ describe("listProducts", () => {
       {
         method: "GET",
         headers: { Authorization: "Bearer test" },
+        body: null,
       }
     );
   });
@@ -85,6 +88,70 @@ describe("listProducts", () => {
       {
         method: "GET",
         headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
+  });
+});
+
+describe("createProduct", () => {
+  beforeEach(() => {
+    vi.mocked(global.fetch as any).mockImplementation(async () => ({
+      json: async () => ({ data: {} }),
+    }));
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("sends a POST request to the correct URL", async () => {
+    const productData = {
+      name: "Product Name",
+      tax_category: "digital-goods" as const,
+      description: "Product Description",
+      image_url: "https://example.com/image.jpg",
+      custom_data: { key1: "value1", key2: "value2" },
+    };
+
+    const result = await createProduct({ key: "test" }, productData);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/products",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer test",
+        },
+        body: JSON.stringify(productData),
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Object);
+  });
+
+  it("sends the request to the sandbox API if the 'sandbox' option is set to true", async () => {
+    const productData = {
+      name: "Product Name",
+      tax_category: "digital-goods" as const,
+      description: "Product Description",
+      image_url: "https://example.com/image.jpg",
+      custom_data: { key1: "value1", key2: "value2" },
+    };
+
+    await createProduct({ key: "test", sandbox: true }, productData);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://sandbox-api.paddle.com/products",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer test",
+        },
+        body: JSON.stringify(productData),
       }
     );
   });

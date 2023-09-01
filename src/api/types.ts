@@ -309,7 +309,7 @@ export namespace PaddleAPI {
    * The errored products list response.
    */
   export interface ResponseProductsListError
-    extends ErrorResponse<ErrorCodeProducts> {}
+    extends ErrorResponse<ErrorCodeShared> {}
 
   /**
    * The successful products list response.
@@ -334,6 +334,38 @@ export namespace PaddleAPI {
     /** The product prices */
     prices: undefined extends Include ? never : Paddle.Price<PriceData>[];
   }
+
+  /**
+   * The create product body.
+   */
+  export type BodyProductCreate<DataDef extends PaddleAPI.CustomDataDef> =
+    MakeFieldsOptional<
+      Pick<
+        Paddle.Product<CustomData<DataDef["Product"]>>,
+        "name" | "tax_category" | "description" | "image_url" | "custom_data"
+      >,
+      "description" | "image_url" | "custom_data"
+    >;
+
+  /**
+   * The create product response.
+   */
+  export type ResponseProductCreate<DataDef extends PaddleAPI.CustomDataDef> =
+    | ResponseProductCreateError
+    | ResponseProductCreateSuccess<CustomData<DataDef["Product"]>>;
+
+  /**
+   * The errored product create response.
+   */
+  export interface ResponseProductCreateError
+    extends ErrorResponse<ErrorCodeProducts> {}
+
+  /**
+   * The successful product create response.
+   */
+  export interface ResponseProductCreateSuccess<
+    ProductData extends Paddle.CustomData
+  > extends ResponseBase<Paddle.Product<ProductData>, MetaBasic> {}
 
   /**
    * The order query.
@@ -387,4 +419,13 @@ export namespace PaddleAPI {
     /** Estimated number of entities for this response. */
     estimated_total: number;
   }
+
+  /**
+   * Makes the specified fields optional.
+   */
+  export type MakeFieldsOptional<Type, Field extends keyof Type> = Omit<
+    Type,
+    Field
+  > &
+    Partial<Pick<Type, Field>>;
 }
