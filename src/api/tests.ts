@@ -5,6 +5,7 @@ import {
   getProduct,
   listProducts,
   paddleFetch,
+  updateProduct,
 } from ".";
 
 global.fetch = vi.fn();
@@ -194,6 +195,35 @@ describe("getProduct", () => {
         body: null,
       }
     );
+  });
+});
+
+describe("updateProduct", () => {
+  mockFetch();
+
+  it("sends a PUT request to the correct URL", async () => {
+    const productData = {
+      name: "Updated Product Name",
+      custom_data: { key1: "value1", key2: "value2" },
+      status: "active",
+    };
+
+    const result = await updateProduct(testClient, "pro_123", productData);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/products/pro_123",
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer test",
+        },
+        body: JSON.stringify(productData),
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Object);
   });
 });
 

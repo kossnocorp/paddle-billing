@@ -123,6 +123,26 @@ export function getProduct<
   });
 }
 
+/**
+ * Update a product with the specified details.
+ *
+ * @param client - the Paddle API client
+ * @param productId - Paddle ID of the product entity to work with
+ * @param body - the request body containing the product update details
+ * @returns the updated product
+ */
+export function updateProduct<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  productId: string,
+  body: PaddleAPI.BodyProductUpdate
+): Promise<PaddleAPI.ResponseProductUpdate<DataDef>> {
+  return paddleFetch(client, {
+    method: "PATCH",
+    path: "products/" + productId,
+    body,
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;

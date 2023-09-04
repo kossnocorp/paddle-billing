@@ -423,6 +423,40 @@ export namespace PaddleAPI {
     prices: undefined extends Include ? never : Paddle.Price<PriceData>[];
   }
 
+  //// Update a product
+
+  /**
+   * The update product body.
+   */
+  export type BodyProductUpdate = Partial<
+    Pick<
+      Paddle.Product,
+      "name" | "tax_category" | "description" | "image_url" | "custom_data"
+    >
+  >;
+
+  /**
+   * The update product response.
+   */
+  export type ResponseProductUpdate<DataDef extends CustomDataDef> =
+    | ResponseProductUpdateError
+    | ResponseProductUpdateSuccess<DataDef>;
+
+  /**
+   * The errored product update response.
+   */
+  export interface ResponseProductUpdateError
+    extends ErrorResponse<ErrorCodeProducts> {}
+
+  /**
+   * The successful product update response.
+   */
+  export interface ResponseProductUpdateSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Product<CustomData<DataDef["Product"]>>,
+      MetaBasic
+    > {}
+
   ///
 
   /**
