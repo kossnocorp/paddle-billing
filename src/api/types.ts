@@ -257,11 +257,20 @@ export namespace PaddleAPI {
     message: string;
   }
 
+  /// Products
+
+  /**
+   * The products list include query.
+   */
+  export type QueryProductsInclude = "prices";
+
+  //// List products
+
   /**
    * The products list query.
    */
   export interface QueryProductsList<
-    Include extends QueryProductsListInclude | undefined
+    Include extends QueryProductsInclude | undefined
   > {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
@@ -287,23 +296,12 @@ export namespace PaddleAPI {
   }
 
   /**
-   * The products list include query.
-   */
-  export type QueryProductsListInclude = "prices"; // Include an array of prices related to this product.
-
-  /**
    * THe products list response.
    */
   export type ResponseProductsList<
-    DataDef extends PaddleAPI.CustomDataDef,
-    Include extends PaddleAPI.QueryProductsListInclude | undefined
-  > =
-    | ResponseProductsListError
-    | ResponseProductsListSuccess<
-        CustomData<DataDef["Price"]>,
-        CustomData<DataDef["Product"]>,
-        Include
-      >;
+    DataDef extends CustomDataDef,
+    Include extends QueryProductsInclude | undefined
+  > = ResponseProductsListError | ResponseProductsListSuccess<DataDef, Include>;
 
   /**
    * The errored products list response.
@@ -315,11 +313,14 @@ export namespace PaddleAPI {
    * The successful products list response.
    */
   export interface ResponseProductsListSuccess<
-    PriceData extends Paddle.CustomData,
-    ProductData extends Paddle.CustomData,
-    Include extends PaddleAPI.QueryProductsListInclude | undefined
+    DataDef extends CustomDataDef,
+    Include extends QueryProductsInclude | undefined
   > extends ResponseBase<
-      DataProductsListItem<PriceData, ProductData, Include>[],
+      DataProductsListItem<
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Product"]>,
+        Include
+      >[],
       MetaPaginated
     > {}
 
@@ -329,16 +330,18 @@ export namespace PaddleAPI {
   export interface DataProductsListItem<
     PriceData extends Paddle.CustomData,
     ProductData extends Paddle.CustomData,
-    Include extends QueryProductsListInclude | undefined
+    Include extends QueryProductsInclude | undefined
   > extends Paddle.Product<ProductData> {
     /** The product prices */
     prices: undefined extends Include ? never : Paddle.Price<PriceData>[];
   }
 
+  //// Create a product
+
   /**
    * The create product body.
    */
-  export type BodyProductCreate<DataDef extends PaddleAPI.CustomDataDef> =
+  export type BodyProductCreate<DataDef extends CustomDataDef> =
     MakeFieldsOptional<
       Pick<
         Paddle.Product<CustomData<DataDef["Product"]>>,
@@ -350,7 +353,7 @@ export namespace PaddleAPI {
   /**
    * The create product response.
    */
-  export type ResponseProductCreate<DataDef extends PaddleAPI.CustomDataDef> =
+  export type ResponseProductCreate<DataDef extends CustomDataDef> =
     | ResponseProductCreateError
     | ResponseProductCreateSuccess<CustomData<DataDef["Product"]>>;
 
@@ -366,6 +369,61 @@ export namespace PaddleAPI {
   export interface ResponseProductCreateSuccess<
     ProductData extends Paddle.CustomData
   > extends ResponseBase<Paddle.Product<ProductData>, MetaBasic> {}
+
+  //// Get a product
+
+  /**
+   * The get product query.
+   */
+  export interface QueryProductGet<
+    Include extends QueryProductsInclude | undefined
+  > {
+    /** Include related entities in the response. */
+    include?: Include;
+  }
+
+  /**
+   * The get product response.
+   */
+  export type ResponseProductGet<
+    DataDef extends CustomDataDef,
+    Include extends QueryProductsInclude | undefined
+  > = ResponseProductGetError | ResponseProductGetSuccess<DataDef, Include>;
+
+  /**
+   * The error response of getProduct function.
+   */
+  export interface ResponseProductGetError
+    extends ErrorResponse<ErrorCodeProducts> {}
+
+  /**
+   * The successful product get response.
+   */
+  export interface ResponseProductGetSuccess<
+    DataDef extends CustomDataDef,
+    Include extends QueryProductsInclude | undefined
+  > extends ResponseBase<
+      DataProduct<
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Product"]>,
+        Include
+      >,
+      MetaBasic
+    > {}
+
+  /**
+   * The get product data.
+   */
+  export interface DataProduct<
+    PriceData extends Paddle.CustomData,
+    ProductData extends Paddle.CustomData,
+    Include extends QueryProductsInclude | undefined
+  > extends Paddle.Product<ProductData> {
+    /** The product prices */
+    prices: undefined extends Include ? never : Paddle.Price<PriceData>[];
+  }
+
+  ///
 
   /**
    * The order query.

@@ -1,10 +1,58 @@
+import { Paddle } from "../types";
 import type { PaddleAPI } from "./types";
 
+/**
+ * Creates a Paddle API client.
+ *
+ * @param key - the Paddle key
+ * @param sandbox - if to use the sandbox API
+ * @returns the Paddle API client
+ */
 export function client<DataDef extends PaddleAPI.CustomDataDef>(
   key: string,
   sandbox?: boolean
 ): PaddleAPI.Client<DataDef> {
   return { key, sandbox };
+}
+
+/**
+ * The Paddle API request props.
+ */
+export interface PaddleFetchProps {
+  /** The request method */
+  method: "GET" | "POST" | "PATCH" | "DELETE";
+  /** The API path */
+  path: string;
+  /** The request body */
+  body?: Object;
+}
+
+/**
+ * Sends a request to the Paddle API.
+ *
+ * @param client - the Paddle API client
+ * @param props - the fetch props
+ * @returns promise to the response
+ */
+export async function paddleFetch(
+  client: PaddleAPI.Client<PaddleAPI.CustomDataDef>,
+  props: PaddleFetchProps
+) {
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${client.key}`,
+  };
+
+  if (props.body) headers["Content-Type"] = "application/json";
+
+  const response = await fetch(
+    (client.sandbox ? sandboxAPIURL : apiURL) + props.path,
+    {
+      method: props.method,
+      headers,
+      body: props.body ? JSON.stringify(props.body) : null,
+    }
+  );
+  return response.json();
 }
 
 /**
@@ -22,7 +70,7 @@ export function client<DataDef extends PaddleAPI.CustomDataDef>(
  */
 export function listProducts<
   DataDef extends PaddleAPI.CustomDataDef,
-  Include extends PaddleAPI.QueryProductsListInclude | undefined
+  Include extends PaddleAPI.QueryProductsInclude | undefined
 >(
   client: PaddleAPI.Client<DataDef>,
   query?: PaddleAPI.QueryProductsList<Include>
@@ -51,31 +99,28 @@ export function createProduct<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
-interface PaddleFetchProps {
-  method: "GET" | "POST" | "PATCH" | "DELETE";
-  path: string;
-  body?: Object;
-}
-
-async function paddleFetch(
-  client: PaddleAPI.Client<PaddleAPI.CustomDataDef>,
-  props: PaddleFetchProps
-) {
-  const headers: Record<string, string> = {
-    Authorization: `Bearer ${client.key}`,
-  };
-
-  if (props.body) headers["Content-Type"] = "application/json";
-
-  const response = await fetch(
-    (client.sandbox ? sandboxAPIURL : apiURL) + props.path,
-    {
-      method: props.method,
-      headers,
-      body: props.body ? JSON.stringify(props.body) : null,
-    }
-  );
-  return response.json();
+/**
+ * Returns a product using its ID.
+ *
+ * Use the include parameter to include related price entities in the response.
+ *
+ * @param client - the Paddle API client
+ * @param productId - Paddle ID of the product entity to work with
+ * @param query - the query
+ * @returns the product
+ */
+export function getProduct<
+  DataDef extends PaddleAPI.CustomDataDef,
+  Include extends PaddleAPI.QueryProductsInclude | undefined
+>(
+  client: PaddleAPI.Client<DataDef>,
+  productId: Paddle.ProductId,
+  query?: PaddleAPI.QueryProductGet<Include>
+): Promise<PaddleAPI.ResponseProductGet<DataDef, Include>> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "products/" + productId + prepareQuery(query),
+  });
 }
 
 const apiURL = `https://api.paddle.com/`;

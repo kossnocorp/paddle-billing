@@ -1,4 +1,4 @@
-import { client, listProducts } from ".";
+import { client, getProduct, listProducts } from ".";
 
 const api = client("test");
 
@@ -36,4 +36,15 @@ listProducts(api).then((products) => {
 
 listProducts(api, {
   order_by: `created_at[ASC]`,
+});
+
+getProduct(api, `pro_123`).then((product) => {
+  if (product.error) return;
+  // @ts-expect-error: prices must be undefined unless include is set to "prices"
+  products.data.prices[0]?.id;
+});
+
+getProduct(api, `pro_123`, { include: "prices" }).then((product) => {
+  if (product.error) return;
+  product.data.prices[0]?.id;
 });
