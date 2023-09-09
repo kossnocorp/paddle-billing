@@ -457,6 +457,84 @@ export namespace PaddleAPI {
       MetaBasic
     > {}
 
+  /// Prices
+
+  /**
+   * The prices list include query.
+   */
+  export type QueryPricesInclude = "product";
+
+  //// List prices
+
+  /**
+   * The prices list query.
+   */
+  export interface QueryPricesList<
+    Include extends QueryPricesInclude | undefined
+  > {
+    /** Return entities after the specified cursor. Used for working through
+     * paginated results. */
+    after?: string | undefined;
+    /** Return only the IDs specified. Use a comma separated list to get
+     * multiple entities. */
+    id?: Paddle.PriceId | Paddle.PriceId[] | undefined;
+    /** Include related entities in the response. */
+    include?: Include;
+    /** Order returned entities by the specified field and direction
+     * [ASC] or [DESC]). */
+    order_by?:
+      | OrderQuery<Paddle.Price>
+      | OrderQuery<Paddle.Price>[]
+      | undefined;
+    /** Set how many entities are returned per page. */
+    per_page?: number | undefined;
+    /** Return entities related to the specified product. Use a comma separated
+     * list to specify multiple product IDs. */
+    product_id?: Paddle.ProductId | Paddle.ProductId[] | undefined;
+    /** Return entities that match the specified status. Use a comma separated
+     * list to specify multiple status values. */
+    status?: Paddle.EntityStatus | Paddle.EntityStatus[] | undefined;
+    /** Determine whether returned entities are for recurring prices (true) or
+     * one-time prices (false). */
+    recurring?: boolean | undefined;
+  }
+
+  /**
+   * The prices list response.
+   */
+  export type ResponsePricesList<
+    DataDef extends CustomDataDef,
+    Include extends QueryPricesInclude | undefined
+  > = ResponsePricesListError | ResponsePricesListSuccess<DataDef, Include>;
+
+  /**
+   * The errored prices list response.
+   */
+  export interface ResponsePricesListError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful prices list response.
+   */
+  export interface ResponsePricesListSuccess<
+    DataDef extends CustomDataDef,
+    Include extends QueryPricesInclude | undefined
+  > extends ResponseBase<
+      DataPricesListItem<CustomData<DataDef["Price"]>, Include>[],
+      MetaPaginated
+    > {}
+
+  /**
+   * The prices list data item.
+   */
+  export type DataPricesListItem<
+    Data extends Paddle.CustomData,
+    Include extends QueryPricesInclude | undefined
+  > = Paddle.Price<Data> & {
+    /** The related product object */
+    product: undefined extends Include ? never : Paddle.Product;
+  };
+
   ///
 
   /**

@@ -3,6 +3,7 @@ import {
   client,
   createProduct,
   getProduct,
+  listPrices,
   listProducts,
   paddleFetch,
   updateProduct,
@@ -71,6 +72,8 @@ describe("paddleFetch", () => {
     );
   });
 });
+
+/// Products
 
 describe("listProducts", () => {
   mockFetch();
@@ -224,6 +227,69 @@ describe("updateProduct", () => {
 
     expect(result.error).toBeUndefined();
     expect(!result.error && result.data).toBeInstanceOf(Object);
+  });
+});
+
+/// Prices
+
+describe("listPrices", () => {
+  mockFetch();
+
+  it("sends a GET request to the correct URL", async () => {
+    const result = await listPrices(testClient);
+
+    expect(global.fetch).toHaveBeenCalledWith("https://api.paddle.com/prices", {
+      method: "GET",
+      headers: { Authorization: "Bearer test" },
+      body: null,
+    });
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Array);
+  });
+
+  it("sends a GET request to the correct URL with query params", async () => {
+    await listPrices(testClient, {
+      after: "qwe",
+      id: "pri_123",
+      include: "product",
+      order_by: "unit_price[ASC]",
+      per_page: 10,
+      product_id: "pro_123",
+      status: "active",
+      recurring: true,
+    });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/prices?after=qwe&id=pri_123&include=product&order_by=unit_price%5BASC%5D&per_page=10&product_id=pro_123&status=active&recurring=true",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
+  });
+
+  it("excludes undefined query params", async () => {
+    await listPrices(testClient, {
+      after: undefined,
+      id: "pri_123",
+      include: undefined,
+      order_by: "unit_price[ASC]",
+      per_page: undefined,
+      product_id: undefined,
+      status: undefined,
+      recurring: undefined,
+    });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/prices?id=pri_123&order_by=unit_price%5BASC%5D",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
   });
 });
 

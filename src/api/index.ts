@@ -6,6 +6,7 @@ import type { PaddleAPI } from "./types";
  *
  * @param key - the Paddle key
  * @param sandbox - if to use the sandbox API
+ *
  * @returns the Paddle API client
  */
 export function client<DataDef extends PaddleAPI.CustomDataDef>(
@@ -32,6 +33,7 @@ export interface PaddleFetchProps {
  *
  * @param client - the Paddle API client
  * @param props - the fetch props
+ *
  * @returns promise to the response
  */
 export async function paddleFetch(
@@ -55,6 +57,8 @@ export async function paddleFetch(
   return response.json();
 }
 
+/// Products
+
 /**
  * Returns a paginated list of products. Use the query parameters to page
  * through results.
@@ -66,6 +70,7 @@ export async function paddleFetch(
  *
  * @param client - the Paddle API client
  * @param query - the query parameters to filter the list of products
+ *
  * @returns list of products
  */
 export function listProducts<
@@ -86,6 +91,7 @@ export function listProducts<
  *
  * @param client - the Paddle API client
  * @param body - the request body containing the product details
+ *
  * @returns the created product
  */
 export function createProduct<DataDef extends PaddleAPI.CustomDataDef>(
@@ -107,6 +113,7 @@ export function createProduct<DataDef extends PaddleAPI.CustomDataDef>(
  * @param client - the Paddle API client
  * @param productId - Paddle ID of the product entity to work with
  * @param query - the query
+ *
  * @returns the product
  */
 export function getProduct<
@@ -129,6 +136,7 @@ export function getProduct<
  * @param client - the Paddle API client
  * @param productId - Paddle ID of the product entity to work with
  * @param body - the request body containing the product update details
+ *
  * @returns the updated product
  */
 export function updateProduct<DataDef extends PaddleAPI.CustomDataDef>(
@@ -140,6 +148,34 @@ export function updateProduct<DataDef extends PaddleAPI.CustomDataDef>(
     method: "PATCH",
     path: "products/" + productId,
     body,
+  });
+}
+
+/// Prices
+
+/**
+ * Returns a paginated list of prices. Use the query parameters to page through results.
+ *
+ * By default, Paddle returns prices that are active. Use the status query parameter
+ * to return prices that are archived.
+ *
+ * Use the include parameter to include the related product entity in the response.
+ *
+ * @param client - the Paddle API client
+ * @param query - the query parameters to filter the list of prices
+ *
+ * @returns list of prices
+ */
+export function listPrices<
+  DataDef extends PaddleAPI.CustomDataDef,
+  Include extends PaddleAPI.QueryPricesInclude | undefined
+>(
+  client: PaddleAPI.Client<DataDef>,
+  query?: PaddleAPI.QueryPricesList<Include>
+): Promise<PaddleAPI.ResponsePricesList<DataDef, Include>> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "prices" + prepareQuery(query),
   });
 }
 
