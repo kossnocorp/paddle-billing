@@ -1,4 +1,4 @@
-import { client, getProduct, listPrices, listProducts } from ".";
+import { client, createProduct, getProduct, listPrices, listProducts } from ".";
 
 const api = client("test");
 
@@ -16,6 +16,8 @@ interface CustomDataPrice {
 }
 
 /// Products
+
+//// List products
 
 listProducts(api, {
   include: "prices",
@@ -41,6 +43,38 @@ listProducts(api, {
   order_by: `created_at[ASC]`,
 });
 
+//// Create product
+
+createProduct(api, {
+  name: "My Product",
+  tax_category: "digital-goods",
+  custom_data: {
+    hello: "world",
+    foo: "bar",
+  },
+}).then((product) => {
+  if (product.error) return;
+  product.data.custom_data.hello;
+  product.data.custom_data.world;
+});
+
+createProduct(apiCustomData, {
+  name: "My Product",
+  tax_category: "digital-goods",
+  custom_data: {
+    hello: "world",
+    // @ts-expect-error: foo is not a valid custom_data key
+    foo: "bar",
+  },
+}).then((product) => {
+  if (product.error) return;
+  product.data.custom_data.hello;
+  // @ts-expect-error: world is not a valid custom_data key
+  product.data.custom_data.world;
+});
+
+//// Get product
+
 getProduct(api, `pro_123`).then((product) => {
   if (product.error) return;
   // @ts-expect-error: prices must be undefined unless include is set to "prices"
@@ -50,6 +84,36 @@ getProduct(api, `pro_123`).then((product) => {
 getProduct(api, `pro_123`, { include: "prices" }).then((product) => {
   if (product.error) return;
   product.data.prices[0]?.id;
+});
+
+//// Update product
+
+createProduct(api, {
+  name: "My Product",
+  tax_category: "digital-goods",
+  custom_data: {
+    hello: "world",
+    foo: "bar",
+  },
+}).then((product) => {
+  if (product.error) return;
+  product.data.custom_data.hello;
+  product.data.custom_data.world;
+});
+
+createProduct(apiCustomData, {
+  name: "My Product",
+  tax_category: "digital-goods",
+  custom_data: {
+    hello: "world",
+    // @ts-expect-error: foo is not a valid custom_data key
+    foo: "bar",
+  },
+}).then((product) => {
+  if (product.error) return;
+  product.data.custom_data.hello;
+  // @ts-expect-error: world is not a valid custom_data key
+  product.data.custom_data.world;
 });
 
 /// Prices
