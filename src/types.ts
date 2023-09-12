@@ -7,14 +7,10 @@ export namespace Paddle {
    * Price entities describe how much and how often you charge for your
    * products. They hold charging information.
    */
-  export type Price<Data extends CustomData = CustomData> =
-    | PriceSubscription<Data>
-    | PriceOneTime<Data>;
-
-  /**
-   * Base price interface.
-   */
-  export interface PriceBase<Data extends CustomData> {
+  export interface Price<
+    BillingCycle extends TimeInterval | null = TimeInterval | null,
+    Data extends CustomData = CustomData
+  > {
     /** Unique Paddle ID for this price, prefixed with pri_ */
     id: PriceId;
     /** Paddle ID for the product that this price is for, prefixed with pro_ */
@@ -37,34 +33,15 @@ export namespace Paddle {
     status: EntityStatus;
     /** Your own structured key-value data. */
     custom_data: Data;
-  }
-
-  /**
-   * Subcription price.
-   */
-  export interface PriceSubscription<Data extends CustomData = CustomData>
-    extends PriceBase<Data> {
     /** How often this price should be charged. null if price is non-recurring
      * (one-time) */
-    billing_cycle: TimeInterval;
+    billing_cycle: BillingCycle;
     /** Trial period for the product related to this price. The billing cycle
      * begins once the trial period is over. null for no trial period.
      * Requires billing_cycle. */
-    trial_period: null | TimeInterval;
-  }
-
-  /**
-   * One-time price.
-   */
-  export interface PriceOneTime<Data extends CustomData = CustomData>
-    extends PriceBase<Data> {
-    /** How often this price should be charged. null if price is non-recurring
-     * (one-time) */
-    billing_cycle: null;
-    /** Trial period for the product related to this price. The billing cycle
-     * begins once the trial period is over. null for no trial period.
-     * Requires billing_cycle. */
-    trial_period: null;
+    trial_period: BillingCycle extends TimeInterval
+      ? null | TimeInterval
+      : null;
   }
 
   /**
@@ -207,7 +184,7 @@ export namespace Paddle {
   /**
    * Your own structured key-value data.
    */
-  export type CustomData = Record<string, any>;
+  export type CustomData = Record<string, any> | null;
 
   /**
    * Tax category for the product. Used for charging the correct rate of tax.
@@ -252,17 +229,10 @@ export namespace Paddle {
   /**
    * Subscription interface.
    */
-  export type Subscription<
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
-  > =
-    | SubscriptionManual<SubscriptionItemData, SubscriptionData>
-    | SubscriptionAutomatic<SubscriptionItemData, SubscriptionData>;
-
-  /**
-   * Base subscription interface.
-   */
-  export interface SubscriptionBase<
+  export interface Subscription<
+    Mode extends CollectionMode,
+    BillingCycle extends TimeInterval | null,
+    PriceData extends CustomData,
     SubscriptionItemData extends CustomData,
     SubscriptionData extends CustomData
   > {
@@ -309,37 +279,16 @@ export namespace Paddle {
     /** Public URLs that customers can use to make changes to this subscription. */
     management_urls: ManagementURLs;
     /** Represents subscription items. */
-    items: SubscriptionItem<SubscriptionItemData>[];
+    items: SubscriptionItem<BillingCycle, PriceData, SubscriptionItemData>[];
     /** Your own structured key-value data. */
     custom_data: SubscriptionData;
-  }
-
-  /**
-   * Manual subscription interface.
-   */
-  export interface SubscriptionManual<
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
-  > extends SubscriptionBase<SubscriptionItemData, SubscriptionData> {
     /** How payment is collected for transactions created for this
      * subscription. */
-    collection_mode: CollectionMode & "manual";
+    collection_mode: Mode;
     /** Details for invoicing. Required if collection_mode is manual. */
-    billing_details: BillingDetails;
-  }
-
-  /**
-   * Automatic subscription interface.
-   */
-  export interface SubscriptionAutomatic<
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
-  > extends SubscriptionBase<SubscriptionItemData, SubscriptionData> {
-    /** How payment is collected for transactions created for this
-     * subscription. */
-    collection_mode: CollectionMode & "automatic";
-    /** Details for invoicing. Required if collection_mode is manual. */
-    billing_details: BillingDetails | null;
+    billing_details: Mode extends "manual"
+      ? BillingDetails
+      : BillingDetails | null;
   }
 
   /**
@@ -407,7 +356,11 @@ export namespace Paddle {
   /**
    * Represents a subscription item.
    */
-  export interface SubscriptionItem<Data extends CustomData = CustomData> {
+  export interface SubscriptionItem<
+    BillingCycle extends TimeInterval | null,
+    PriceData extends CustomData = CustomData,
+    SubscriptionItemData extends CustomData = CustomData
+  > {
     /** Status of this subscription item. */
     status: SubscriptionItemStatus;
     /** Quantity of this item on the subscription. */
@@ -428,9 +381,9 @@ export namespace Paddle {
     /** Trial dates for this item. */
     trial_dates: TimePeriod | null;
     /** Price object for this item. */
-    price: Price;
+    price: Price<BillingCycle, PriceData>;
     /** Your own structured key-value data. */
-    custom_data: Data;
+    custom_data: SubscriptionItemData;
   }
 
   /**
@@ -506,6 +459,7 @@ export namespace Paddle {
    * Represents the transaction entity.
    */
   export interface Transaction<
+    BillingCycle extends TimeInterval | null,
     PriceData extends CustomData = CustomData,
     TransactionData extends CustomData = CustomData
   > {
@@ -544,7 +498,7 @@ export namespace Paddle {
     /** Details for invoicing. */
     billing_details: BillingDetails | null;
     /** List of items on this transaction. */
-    items: TransactionItem<PriceData>[];
+    items: TransactionItem<BillingCycle, PriceData>[];
     /** Details for this transaction. */
     details: TransactionDetails;
     /** Paddle Checkout details for this transaction. */
@@ -571,12 +525,15 @@ export namespace Paddle {
   /**
    * Represents an item in the transaction.
    */
-  export interface TransactionItem<PriceData extends CustomData> {
+  export interface TransactionItem<
+    BillingCycle extends TimeInterval | null,
+    PriceData extends CustomData
+  > {
     /** Paddle ID for the price to add to this transaction, prefixed
      * with pri_. */
     price_id: string;
     /** Represents a price entity. */
-    price: Price<PriceData>;
+    price: Price<BillingCycle, PriceData>;
     /** Quantity of this item on the transaction. */
     quantity: number;
     /** How proration was calculated for this item. */

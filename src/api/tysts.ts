@@ -24,8 +24,12 @@ listProducts(api, {
 }).then((products) => {
   if (products.error) return;
   products.data[0]?.prices[0]?.id;
+  // @ts-expect-error: custom_data can be null
   products.data[0]?.custom_data.nope;
+  // @ts-expect-error: custom_data can be null
   products.data[0]?.custom_data.hello;
+  products.data[0]?.custom_data?.nope;
+  products.data[0]?.custom_data?.hello;
 });
 
 listProducts(apiCustomData, {}).then((products) => {
@@ -54,8 +58,12 @@ createProduct(api, {
   },
 }).then((product) => {
   if (product.error) return;
-  product.data.custom_data.hello;
-  product.data.custom_data.world;
+  // @ts-expect-error: custom_data can be null
+  product.data[0]?.custom_data.hello;
+  // @ts-expect-error: custom_data can be null
+  product.data[0]?.custom_data.world;
+  product.data.custom_data?.hello;
+  product.data.custom_data?.world;
 });
 
 createProduct(apiCustomData, {
@@ -97,8 +105,12 @@ createProduct(api, {
   },
 }).then((product) => {
   if (product.error) return;
-  product.data.custom_data.hello;
-  product.data.custom_data.world;
+  // @ts-expect-error: custom_data can be null
+  product.data[0]?.custom_data.hello;
+  // @ts-expect-error: custom_data can be null
+  product.data[0]?.custom_data.world;
+  product.data.custom_data?.hello;
+  product.data.custom_data?.world;
 });
 
 createProduct(apiCustomData, {
@@ -122,16 +134,20 @@ listPrices(api, {
   include: "product",
 }).then((prices) => {
   if (prices.error) return;
-  prices.data[0]?.product?.id;
+  prices.data[0]?.product.id;
+  // @ts-expect-error: custom_data can be null
   prices.data[0]?.custom_data.nope;
+  // @ts-expect-error: custom_data can be null
   prices.data[0]?.custom_data.hello;
+  prices.data[0]?.custom_data?.nope;
+  prices.data[0]?.custom_data?.hello;
 });
 
 listPrices(apiCustomData, {}).then((prices) => {
   if (prices.error) return;
-  // @ts-expect-error: product must be undefined unless include is set to "prices"
+  // @ts-expect-error: product must be undefined unless include is set to "product"
   prices.data[0]?.product?.id;
-  // @ts-expect-error: custom_data is specified
+  // @ts-expect-error: custom_data is defined
   prices.data[0]?.custom_data.nope;
   prices.data[0]?.custom_data.foo;
 });

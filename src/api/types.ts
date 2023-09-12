@@ -333,7 +333,9 @@ export namespace PaddleAPI {
     Include extends QueryProductsInclude | undefined
   > extends Paddle.Product<ProductData> {
     /** The product prices */
-    prices: undefined extends Include ? never : Paddle.Price<PriceData>[];
+    prices: undefined extends Include
+      ? never
+      : Paddle.Price<Paddle.TimeInterval | null, PriceData>[];
   }
 
   //// Create a product
@@ -420,7 +422,9 @@ export namespace PaddleAPI {
     Include extends QueryProductsInclude | undefined
   > extends Paddle.Product<ProductData> {
     /** The product prices */
-    prices: undefined extends Include ? never : Paddle.Price<PriceData>[];
+    prices: undefined extends Include
+      ? never
+      : Paddle.Price<Paddle.TimeInterval | null, PriceData>[];
   }
 
   //// Update a product
@@ -527,13 +531,13 @@ export namespace PaddleAPI {
   /**
    * The prices list data item.
    */
-  export type DataPricesListItem<
+  export interface DataPricesListItem<
     Data extends Paddle.CustomData,
     Include extends QueryPricesInclude | undefined
-  > = Paddle.Price<Data> & {
+  > extends Paddle.Price<Paddle.TimeInterval | null, Data> {
     /** The related product object */
     product: undefined extends Include ? never : Paddle.Product;
-  };
+  }
 
   ///
 
