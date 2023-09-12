@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   client,
+  createPrice,
   createProduct,
   getProduct,
   listPrices,
@@ -208,7 +209,7 @@ describe("updateProduct", () => {
     const productData = {
       name: "Updated Product Name",
       custom_data: { key1: "value1", key2: "value2" },
-      status: "active",
+      status: "active" as const,
     };
 
     const result = await updateProduct(testClient, "pro_123", productData);
@@ -290,6 +291,38 @@ describe("listPrices", () => {
         body: null,
       }
     );
+  });
+});
+
+describe("createPrice", () => {
+  mockFetch();
+
+  it("sends a POST request to the correct URL", async () => {
+    const priceData = {
+      description: "Monthly Subscription",
+      product_id: "pro_123" as const,
+      unit_price: { currency_code: "USD" as const, amount: "10.00" },
+      billing_cycle: { interval: "month" as const, frequency: 1 },
+      trial_period: null,
+      tax_mode: "internal" as const,
+      unit_price_overrides: [],
+      quantity: { minimum: 1, maximum: 100 },
+      custom_data: { key1: "value1", key2: "value2" },
+    };
+
+    const result = await createPrice(testClient, priceData);
+
+    expect(global.fetch).toHaveBeenCalledWith("https://api.paddle.com/prices", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer test",
+      },
+      body: JSON.stringify(priceData),
+    });
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Object);
   });
 });
 

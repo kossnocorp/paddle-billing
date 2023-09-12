@@ -1,4 +1,11 @@
-import { client, createProduct, getProduct, listPrices, listProducts } from ".";
+import {
+  client,
+  createPrice,
+  createProduct,
+  getProduct,
+  listPrices,
+  listProducts,
+} from ".";
 
 const api = client("test");
 
@@ -128,7 +135,15 @@ createProduct(apiCustomData, {
   product.data.custom_data.world;
 });
 
+// @ts-expect-error: custom_data must be defined
+createProduct(apiCustomData, {
+  name: "My Product",
+  tax_category: "digital-goods",
+});
+
 /// Prices
+
+//// List prices
 
 listPrices(api, {
   include: "product",
@@ -156,4 +171,73 @@ listPrices(api);
 
 listPrices(api, {
   order_by: `unit_price[ASC]`,
+});
+
+//// Create price
+
+createPrice(api, {
+  description: "Monthly Subscription",
+  product_id: "pro_123",
+  unit_price: { currency_code: "USD", amount: "10.00" },
+  billing_cycle: { interval: "month", frequency: 1 },
+  trial_period: null,
+  tax_mode: "internal",
+  unit_price_overrides: [],
+  quantity: { minimum: 1, maximum: 100 },
+  custom_data: {
+    hello: "world",
+    foo: "bar",
+  },
+}).then((price) => {
+  if (price.error) return;
+  // @ts-expect-error: custom_data can be null
+  price.data[0]?.custom_data.hello;
+  // @ts-expect-error: custom_data can be null
+  price.data[0]?.custom_data.world;
+  price.data.custom_data?.hello;
+  price.data.custom_data?.world;
+});
+
+createPrice(apiCustomData, {
+  description: "Monthly Subscription",
+  product_id: "pro_123",
+  unit_price: { currency_code: "USD", amount: "10.00" },
+  billing_cycle: { interval: "month", frequency: 1 },
+  trial_period: null,
+  tax_mode: "internal",
+  unit_price_overrides: [],
+  quantity: { minimum: 1, maximum: 100 },
+  custom_data: {
+    // @ts-expect-error: hello is not a valid custom_data key
+    hello: "world",
+    foo: "bar",
+  },
+}).then((price) => {
+  if (price.error) return;
+  // @ts-expect-error: hello is not a valid custom_data key
+  price.data.custom_data.hello;
+  price.data.custom_data.foo;
+});
+
+// @ts-expect-error: custom_data must be defined
+createPrice(apiCustomData, {
+  description: "Monthly Subscription",
+  product_id: "pro_123",
+  unit_price: { currency_code: "USD", amount: "10.00" },
+  billing_cycle: { interval: "month", frequency: 1 },
+  trial_period: null,
+  tax_mode: "internal",
+  unit_price_overrides: [],
+  quantity: { minimum: 1, maximum: 100 },
+});
+
+// quantity is optional
+createPrice(api, {
+  description: "Monthly Subscription",
+  product_id: "pro_123",
+  unit_price: { currency_code: "USD", amount: "10.00" },
+  billing_cycle: { interval: "month", frequency: 1 },
+  trial_period: null,
+  tax_mode: "internal",
+  unit_price_overrides: [],
 });

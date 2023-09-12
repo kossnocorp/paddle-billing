@@ -154,10 +154,11 @@ export function updateProduct<DataDef extends PaddleAPI.CustomDataDef>(
 /// Prices
 
 /**
- * Returns a paginated list of prices. Use the query parameters to page through results.
+ * Returns a paginated list of prices. Use the query parameters to page through
+ * results.
  *
- * By default, Paddle returns prices that are active. Use the status query parameter
- * to return prices that are archived.
+ * By default, Paddle returns prices that are active. Use the status query
+ * parameter to return prices that are archived.
  *
  * Use the include parameter to include the related product entity in the response.
  *
@@ -176,6 +177,34 @@ export function listPrices<
   return paddleFetch(client, {
     method: "GET",
     path: "prices" + prepareQuery(query),
+  });
+}
+
+/**
+ * Creates a new price.
+ *
+ * Prices describe how you charge for products. You must include a product_id
+ * in your request to relate this price to a product.
+ *
+ * If you omit the quantity object, Paddle automatically sets a minimum of 1
+ * and a maximum of 100 for you. This means the most units that a customer can
+ * buy is 100. Set a quantity if you'd like to offer a different amount.
+ *
+ * If successful, your response includes a copy of the new price entity.
+ *
+ * @param client - the Paddle API client
+ * @param body - the request body detailing the price settings
+ *
+ * @returns the created price entity
+ */
+export function createPrice<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  body: PaddleAPI.PriceCreateBody<DataDef>
+): Promise<PaddleAPI.PriceCreateResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "prices",
+    body,
   });
 }
 

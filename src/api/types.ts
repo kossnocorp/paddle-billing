@@ -541,6 +541,48 @@ export namespace PaddleAPI {
     product: undefined extends Include ? never : Paddle.Product;
   }
 
+  /// Create a price
+
+  /**
+   * The create price body.
+   */
+  export type PriceCreateBody<DataDef extends CustomDataDef> =
+    MakeNullableFieldsOptional<
+      MakeFieldsOptional<
+        Omit<
+          Paddle.Price<
+            Paddle.TimeInterval | null,
+            CustomData<DataDef["Price"]>
+          >,
+          PriceAutoAssignFields | "status"
+        >,
+        "quantity"
+      >
+    >;
+
+  /**
+   * The create price response.
+   */
+  export type PriceCreateResponse<DataDef extends CustomDataDef> =
+    | PriceCreateResponseError
+    | PriceCreateResponseSuccess<CustomData<DataDef["Price"]>>;
+
+  /**
+   * The errored price create response.
+   */
+  export interface PriceCreateResponseError
+    extends ErrorResponse<ErrorCodePrices> {}
+
+  /**
+   * The successful price create response.
+   */
+  export interface PriceCreateResponseSuccess<
+    PriceData extends Paddle.CustomData
+  > extends ResponseBase<
+      Paddle.Price<Paddle.TimeInterval | null, PriceData>,
+      MetaBasic
+    > {}
+
   ///
 
   /**
