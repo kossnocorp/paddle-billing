@@ -260,17 +260,22 @@ export namespace PaddleAPI {
   /// Products
 
   /**
-   * The products list include query.
+   * The product's include query.
    */
-  export type QueryProductsInclude = "prices";
+  export type ProductInclude = "prices";
+
+  /**
+   * The product's auto-assign fields.
+   */
+  export type ProductAutoAssignFields = "id" | "created_at";
 
   //// List products
 
   /**
    * The products list query.
    */
-  export interface QueryProductsList<
-    Include extends QueryProductsInclude | undefined
+  export interface ProductsListQuery<
+    Include extends ProductInclude | undefined
   > {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
@@ -298,25 +303,25 @@ export namespace PaddleAPI {
   /**
    * THe products list response.
    */
-  export type ResponseProductsList<
+  export type ProductsListResponse<
     DataDef extends CustomDataDef,
-    Include extends QueryProductsInclude | undefined
-  > = ResponseProductsListError | ResponseProductsListSuccess<DataDef, Include>;
+    Include extends ProductInclude | undefined
+  > = ProductsListResponseError | ProductsListResponseSuccess<DataDef, Include>;
 
   /**
    * The errored products list response.
    */
-  export interface ResponseProductsListError
+  export interface ProductsListResponseError
     extends ErrorResponse<ErrorCodeShared> {}
 
   /**
    * The successful products list response.
    */
-  export interface ResponseProductsListSuccess<
+  export interface ProductsListResponseSuccess<
     DataDef extends CustomDataDef,
-    Include extends QueryProductsInclude | undefined
+    Include extends ProductInclude | undefined
   > extends ResponseBase<
-      DataProductsListItem<
+      ProductsListDataItem<
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["Product"]>,
         Include
@@ -327,10 +332,10 @@ export namespace PaddleAPI {
   /**
    * The products list data item.
    */
-  export interface DataProductsListItem<
+  export interface ProductsListDataItem<
     PriceData extends Paddle.CustomData,
     ProductData extends Paddle.CustomData,
-    Include extends QueryProductsInclude | undefined
+    Include extends ProductInclude | undefined
   > extends Paddle.Product<ProductData> {
     /** The product prices */
     prices: undefined extends Include
@@ -343,32 +348,31 @@ export namespace PaddleAPI {
   /**
    * The create product body.
    */
-  export type BodyProductCreate<DataDef extends CustomDataDef> =
-    MakeFieldsOptional<
-      Pick<
+  export type ProductCreateBody<DataDef extends CustomDataDef> =
+    MakeNullableFieldsOptional<
+      Omit<
         Paddle.Product<CustomData<DataDef["Product"]>>,
-        "name" | "tax_category" | "description" | "image_url" | "custom_data"
-      >,
-      "description" | "image_url" | "custom_data"
+        ProductAutoAssignFields | "status"
+      >
     >;
 
   /**
    * The create product response.
    */
-  export type ResponseProductCreate<DataDef extends CustomDataDef> =
-    | ResponseProductCreateError
-    | ResponseProductCreateSuccess<CustomData<DataDef["Product"]>>;
+  export type ProductCreateResponse<DataDef extends CustomDataDef> =
+    | ProductCreateResponseError
+    | ProductCreateResponseSuccess<CustomData<DataDef["Product"]>>;
 
   /**
    * The errored product create response.
    */
-  export interface ResponseProductCreateError
+  export interface ProductCreateResponseError
     extends ErrorResponse<ErrorCodeProducts> {}
 
   /**
    * The successful product create response.
    */
-  export interface ResponseProductCreateSuccess<
+  export interface ProductCreateResponseSuccess<
     ProductData extends Paddle.CustomData
   > extends ResponseBase<Paddle.Product<ProductData>, MetaBasic> {}
 
@@ -377,9 +381,7 @@ export namespace PaddleAPI {
   /**
    * The get product query.
    */
-  export interface QueryProductGet<
-    Include extends QueryProductsInclude | undefined
-  > {
+  export interface ProductGetQuery<Include extends ProductInclude | undefined> {
     /** Include related entities in the response. */
     include?: Include;
   }
@@ -387,25 +389,25 @@ export namespace PaddleAPI {
   /**
    * The get product response.
    */
-  export type ResponseProductGet<
+  export type ProductGetResponse<
     DataDef extends CustomDataDef,
-    Include extends QueryProductsInclude | undefined
-  > = ResponseProductGetError | ResponseProductGetSuccess<DataDef, Include>;
+    Include extends ProductInclude | undefined
+  > = ProductGetResponseError | ProductGetResponseSuccess<DataDef, Include>;
 
   /**
    * The error response of getProduct function.
    */
-  export interface ResponseProductGetError
+  export interface ProductGetResponseError
     extends ErrorResponse<ErrorCodeProducts> {}
 
   /**
    * The successful product get response.
    */
-  export interface ResponseProductGetSuccess<
+  export interface ProductGetResponseSuccess<
     DataDef extends CustomDataDef,
-    Include extends QueryProductsInclude | undefined
+    Include extends ProductInclude | undefined
   > extends ResponseBase<
-      DataProduct<
+      ProductGetData<
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["Product"]>,
         Include
@@ -416,10 +418,10 @@ export namespace PaddleAPI {
   /**
    * The get product data.
    */
-  export interface DataProduct<
+  export interface ProductGetData<
     PriceData extends Paddle.CustomData,
     ProductData extends Paddle.CustomData,
-    Include extends QueryProductsInclude | undefined
+    Include extends ProductInclude | undefined
   > extends Paddle.Product<ProductData> {
     /** The product prices */
     prices: undefined extends Include
@@ -432,30 +434,27 @@ export namespace PaddleAPI {
   /**
    * The update product body.
    */
-  export type BodyProductUpdate = Partial<
-    Pick<
-      Paddle.Product,
-      "name" | "tax_category" | "description" | "image_url" | "custom_data"
-    >
+  export type ProductUpdateBody = Partial<
+    Omit<Paddle.Product, ProductAutoAssignFields>
   >;
 
   /**
    * The update product response.
    */
-  export type ResponseProductUpdate<DataDef extends CustomDataDef> =
-    | ResponseProductUpdateError
-    | ResponseProductUpdateSuccess<DataDef>;
+  export type ProductUpdateResponse<DataDef extends CustomDataDef> =
+    | ProductUpdateResponseError
+    | ProductUpdateResponseSuccess<DataDef>;
 
   /**
    * The errored product update response.
    */
-  export interface ResponseProductUpdateError
+  export interface ProductUpdateResponseError
     extends ErrorResponse<ErrorCodeProducts> {}
 
   /**
    * The successful product update response.
    */
-  export interface ResponseProductUpdateSuccess<DataDef extends CustomDataDef>
+  export interface ProductUpdateResponseSuccess<DataDef extends CustomDataDef>
     extends ResponseBase<
       Paddle.Product<CustomData<DataDef["Product"]>>,
       MetaBasic
@@ -464,18 +463,21 @@ export namespace PaddleAPI {
   /// Prices
 
   /**
-   * The prices list include query.
+   * The price's include query.
    */
-  export type QueryPricesInclude = "product";
+  export type PriceInclude = "product";
+
+  /**
+   * The price's auto-assign fields.
+   */
+  export type PriceAutoAssignFields = "id" | "created_at";
 
   //// List prices
 
   /**
    * The prices list query.
    */
-  export interface QueryPricesList<
-    Include extends QueryPricesInclude | undefined
-  > {
+  export interface PricesListQuery<Include extends PriceInclude | undefined> {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
     after?: string | undefined;
@@ -506,34 +508,34 @@ export namespace PaddleAPI {
   /**
    * The prices list response.
    */
-  export type ResponsePricesList<
+  export type PricesListResponse<
     DataDef extends CustomDataDef,
-    Include extends QueryPricesInclude | undefined
-  > = ResponsePricesListError | ResponsePricesListSuccess<DataDef, Include>;
+    Include extends PriceInclude | undefined
+  > = PricesListResponseError | PricesListResponseSuccess<DataDef, Include>;
 
   /**
    * The errored prices list response.
    */
-  export interface ResponsePricesListError
+  export interface PricesListResponseError
     extends ErrorResponse<ErrorCodeShared> {}
 
   /**
    * The successful prices list response.
    */
-  export interface ResponsePricesListSuccess<
+  export interface PricesListResponseSuccess<
     DataDef extends CustomDataDef,
-    Include extends QueryPricesInclude | undefined
+    Include extends PriceInclude | undefined
   > extends ResponseBase<
-      DataPricesListItem<CustomData<DataDef["Price"]>, Include>[],
+      PricesListDataItem<CustomData<DataDef["Price"]>, Include>[],
       MetaPaginated
     > {}
 
   /**
    * The prices list data item.
    */
-  export interface DataPricesListItem<
+  export interface PricesListDataItem<
     Data extends Paddle.CustomData,
-    Include extends QueryPricesInclude | undefined
+    Include extends PriceInclude | undefined
   > extends Paddle.Price<Paddle.TimeInterval | null, Data> {
     /** The related product object */
     product: undefined extends Include ? never : Paddle.Product;
@@ -602,4 +604,19 @@ export namespace PaddleAPI {
     Field
   > &
     Partial<Pick<Type, Field>>;
+
+  /**
+   * Lists keys that extend null.
+   */
+  type NullbleKeys<Type> = {
+    [Key in keyof Type]: null extends Type[Key] ? Key : never;
+  }[keyof Type];
+
+  /**
+   * Makes nullable fields optional
+   */
+  export type MakeNullableFieldsOptional<Type> = MakeFieldsOptional<
+    Type,
+    NullbleKeys<Type>
+  >;
 }

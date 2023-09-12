@@ -75,11 +75,11 @@ export async function paddleFetch(
  */
 export function listProducts<
   DataDef extends PaddleAPI.CustomDataDef,
-  Include extends PaddleAPI.QueryProductsInclude | undefined
+  Include extends PaddleAPI.ProductInclude | undefined
 >(
   client: PaddleAPI.Client<DataDef>,
-  query?: PaddleAPI.QueryProductsList<Include>
-): Promise<PaddleAPI.ResponseProductsList<DataDef, Include>> {
+  query?: PaddleAPI.ProductsListQuery<Include>
+): Promise<PaddleAPI.ProductsListResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
     path: "products" + prepareQuery(query),
@@ -96,8 +96,8 @@ export function listProducts<
  */
 export function createProduct<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
-  body: PaddleAPI.BodyProductCreate<DataDef>
-): Promise<PaddleAPI.ResponseProductCreate<DataDef>> {
+  body: PaddleAPI.ProductCreateBody<DataDef>
+): Promise<PaddleAPI.ProductCreateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "products",
@@ -118,12 +118,12 @@ export function createProduct<DataDef extends PaddleAPI.CustomDataDef>(
  */
 export function getProduct<
   DataDef extends PaddleAPI.CustomDataDef,
-  Include extends PaddleAPI.QueryProductsInclude | undefined
+  Include extends PaddleAPI.ProductInclude | undefined
 >(
   client: PaddleAPI.Client<DataDef>,
   productId: Paddle.ProductId,
-  query?: PaddleAPI.QueryProductGet<Include>
-): Promise<PaddleAPI.ResponseProductGet<DataDef, Include>> {
+  query?: PaddleAPI.ProductGetQuery<Include>
+): Promise<PaddleAPI.ProductGetResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
     path: "products/" + productId + prepareQuery(query),
@@ -142,8 +142,8 @@ export function getProduct<
 export function updateProduct<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   productId: string,
-  body: PaddleAPI.BodyProductUpdate
-): Promise<PaddleAPI.ResponseProductUpdate<DataDef>> {
+  body: PaddleAPI.ProductUpdateBody
+): Promise<PaddleAPI.ProductUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
     path: "products/" + productId,
@@ -168,11 +168,11 @@ export function updateProduct<DataDef extends PaddleAPI.CustomDataDef>(
  */
 export function listPrices<
   DataDef extends PaddleAPI.CustomDataDef,
-  Include extends PaddleAPI.QueryPricesInclude | undefined
+  Include extends PaddleAPI.PriceInclude | undefined
 >(
   client: PaddleAPI.Client<DataDef>,
-  query?: PaddleAPI.QueryPricesList<Include>
-): Promise<PaddleAPI.ResponsePricesList<DataDef, Include>> {
+  query?: PaddleAPI.PricesListQuery<Include>
+): Promise<PaddleAPI.PricesListResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
     path: "prices" + prepareQuery(query),
