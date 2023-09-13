@@ -208,6 +208,32 @@ export function createPrice<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Returns a price using its ID.
+ *
+ * Use the include parameter to include the related product entity in
+ * the response.
+ *
+ * @param client - The Paddle API client
+ * @param priceId - Paddle ID of the price entity to work with
+ * @param query - The query parameters used to filter the results
+ *
+ * @returns The price entity with included entities
+ */
+export function getPrice<
+  DataDef extends PaddleAPI.CustomDataDef,
+  Include extends PaddleAPI.PriceInclude | undefined
+>(
+  client: PaddleAPI.Client<DataDef>,
+  priceId: Paddle.PriceId,
+  query?: PaddleAPI.PriceGetQuery<Include>
+): Promise<PaddleAPI.PriceGetResponse<DataDef, Include>> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "prices/" + priceId + prepareQuery(query),
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;

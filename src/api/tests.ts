@@ -3,6 +3,7 @@ import {
   client,
   createPrice,
   createProduct,
+  getPrice,
   getProduct,
   listPrices,
   listProducts,
@@ -323,6 +324,39 @@ describe("createPrice", () => {
 
     expect(result.error).toBeUndefined();
     expect(!result.error && result.data).toBeInstanceOf(Object);
+  });
+});
+
+describe("getPrice", () => {
+  mockFetch();
+
+  it("sends a GET request to the correct URL with price_id as path param", async () => {
+    const result = await getPrice(testClient, "pri_123");
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/prices/pri_123",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Object);
+  });
+
+  it("sends a GET request to the correct URL with include query param", async () => {
+    await getPrice(testClient, "pri_123", { include: "product" });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/prices/pri_123?include=product",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
   });
 });
 

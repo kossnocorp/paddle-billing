@@ -583,6 +583,52 @@ export namespace PaddleAPI {
       MetaBasic
     > {}
 
+  //// Get Price
+
+  /**
+   * The get price query.
+   */
+  export interface PriceGetQuery<Include extends PriceInclude | undefined> {
+    /** Include related entities in the response. */
+    include?: Include;
+  }
+
+  /**
+   * The get price response.
+   */
+  export type PriceGetResponse<
+    DataDef extends CustomDataDef,
+    Include extends PriceInclude | undefined
+  > = PriceGetResponseError | PriceGetResponseSuccess<DataDef, Include>;
+
+  /**
+   * The error response of getPrice function.
+   */
+  export interface PriceGetResponseError
+    extends ErrorResponse<ErrorCodePrices> {}
+
+  /**
+   * The successful price get response.
+   */
+  export interface PriceGetResponseSuccess<
+    DataDef extends CustomDataDef,
+    Include extends PriceInclude | undefined
+  > extends ResponseBase<
+      PriceGetData<CustomData<DataDef["Price"]>, Include>,
+      MetaBasic
+    > {}
+
+  /**
+   * The get price data.
+   */
+  export interface PriceGetData<
+    PriceData extends Paddle.CustomData,
+    Include extends PriceInclude | undefined
+  > extends Paddle.Price<Paddle.TimeInterval | null, PriceData> {
+    /** The related product object */
+    product: undefined extends Include ? never : Paddle.Product;
+  }
+
   ///
 
   /**

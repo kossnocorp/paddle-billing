@@ -2,6 +2,7 @@ import {
   client,
   createPrice,
   createProduct,
+  getPrice,
   getProduct,
   listPrices,
   listProducts,
@@ -51,7 +52,7 @@ listProducts(apiCustomData, {}).then((products) => {
 listProducts(api);
 
 listProducts(api, {
-  order_by: `created_at[ASC]`,
+  order_by: "created_at[ASC]",
 });
 
 //// Create product
@@ -90,15 +91,27 @@ createProduct(apiCustomData, {
 
 //// Get product
 
-getProduct(api, `pro_123`).then((product) => {
+getProduct(api, "pro_12").then((product) => {
   if (product.error) return;
   // @ts-expect-error: prices must be undefined unless include is set to "prices"
-  products.data.prices[0]?.id;
+  product.data.prices[0]?.id;
+
+  // @ts-expect-error: custom_data can be null
+  product.data.custom_data.hello;
+  product.data.custom_data?.hello;
+  product.data.custom_data?.nope;
 });
 
-getProduct(api, `pro_123`, { include: "prices" }).then((product) => {
+getProduct(api, "pro_123", { include: "prices" }).then((product) => {
   if (product.error) return;
   product.data.prices[0]?.id;
+});
+
+getProduct(apiCustomData, "pro_123").then((product) => {
+  if (product.error) return;
+  product.data.custom_data.hello;
+  // @ts-expect-error: custom_data is defined
+  product.data.custom_data.nope;
 });
 
 //// Update product
@@ -170,7 +183,7 @@ listPrices(apiCustomData, {}).then((prices) => {
 listPrices(api);
 
 listPrices(api, {
-  order_by: `unit_price[ASC]`,
+  order_by: "unit_price[ASC]",
 });
 
 //// Create price
@@ -240,4 +253,28 @@ createPrice(api, {
   trial_period: null,
   tax_mode: "internal",
   unit_price_overrides: [],
+});
+
+//// Get price
+
+getPrice(api, "pri_123").then((price) => {
+  if (price.error) return;
+  // @ts-expect-error: product must be undefined unless include is set to "prices"
+  price.data.product?.id;
+
+  // @ts-expect-error: custom_data can be null
+  price.data.custom_data.hello;
+  price.data.custom_data?.hello;
+});
+
+getPrice(api, "pri_123", { include: "product" }).then((price) => {
+  if (price.error) return;
+  price.data.product?.id;
+});
+
+getPrice(apiCustomData, "pri_123").then((product) => {
+  if (product.error) return;
+  product.data.custom_data.foo;
+  // @ts-expect-error: custom_data is defined
+  product.data.custom_data.hello;
 });
