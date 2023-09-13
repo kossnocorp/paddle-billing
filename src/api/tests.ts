@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   client,
+  createDiscount,
   createPrice,
   createProduct,
   getPrice,
@@ -447,6 +448,43 @@ describe("listDiscounts", () => {
         body: null,
       }
     );
+  });
+});
+
+describe("createDiscount", () => {
+  mockFetch();
+
+  it("sends a POST request to the correct URL", async () => {
+    const discountData = {
+      amount: "20",
+      description: "20% off",
+      type: "percentage" as const,
+      enabled_for_checkout: true,
+      code: "DISC20",
+      currency_code: null,
+      recur: true,
+      maximum_recurring_intervals: null,
+      usage_limit: 50,
+      restrict_to: null,
+      expires_at: null,
+    };
+
+    const result = await createDiscount(testClient, discountData);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/discounts",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer test",
+        },
+        body: JSON.stringify(discountData),
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Object);
   });
 });
 

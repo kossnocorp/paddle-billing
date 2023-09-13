@@ -398,7 +398,7 @@ export namespace PaddleAPI {
    * The error response of getProduct function.
    */
   export interface ProductGetResponseError
-    extends ErrorResponse<ErrorCodeProducts> {}
+    extends ErrorResponse<ErrorCodeShared> {}
 
   /**
    * The successful product get response.
@@ -608,7 +608,7 @@ export namespace PaddleAPI {
    * The error response of getPrice function.
    */
   export interface PriceGetResponseError
-    extends ErrorResponse<ErrorCodePrices> {}
+    extends ErrorResponse<ErrorCodeShared> {}
 
   /**
    * The successful price get response.
@@ -668,6 +668,15 @@ export namespace PaddleAPI {
 
   /// Discounts
 
+  /**
+   * The discount's auto-assign fields.
+   */
+  export type DiscountAutoAssignFields =
+    | "id"
+    | "created_at"
+    | "times_used"
+    | "updated_at";
+
   //// List discounts
 
   /**
@@ -711,6 +720,34 @@ export namespace PaddleAPI {
   export type DiscountsListResponse =
     | DiscountsListResponseError
     | DiscountsListResponseSuccess;
+
+  //// Create a discount
+
+  /**
+   * The create discount body.
+   */
+  export type DiscountCreateBody = MakeNullableFieldsOptional<
+    Omit<Paddle.Discount, DiscountAutoAssignFields | "status">
+  >;
+
+  /**
+   * The create discount response.
+   */
+  export type DiscountCreateResponse =
+    | DiscountCreateResponseError
+    | DiscountCreateResponseSuccess;
+
+  /**
+   * The errored discount create response.
+   */
+  export interface DiscountCreateResponseError
+    extends ErrorResponse<ErrorCodeDiscounts> {}
+
+  /**
+   * The successful discount create response.
+   */
+  export interface DiscountCreateResponseSuccess
+    extends ResponseBase<Paddle.Discount, MetaBasic> {}
 
   ///
 

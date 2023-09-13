@@ -1,5 +1,6 @@
 import {
   client,
+  createDiscount,
   createPrice,
   createProduct,
   getPrice,
@@ -316,4 +317,20 @@ updatePrice(apiCustomData, "pri_12", {
 
 listDiscounts(api, {
   order_by: "created_at[ASC]",
+});
+
+//// Create discount
+
+createDiscount(api, {
+  amount: "10.00",
+  description: "Discount Description",
+  type: "percentage",
+  enabled_for_checkout: true,
+  code: "DISCOUNTCODE",
+  currency_code: "USD",
+  recur: false,
+  maximum_recurring_intervals: 3,
+  usage_limit: 100,
+  restrict_to: ["prod_123", "prod_456"],
+  expires_at: "2022-12-31T23:59:59Z",
 });

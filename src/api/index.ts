@@ -280,6 +280,27 @@ export function listDiscounts<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Creates a new discount.
+ *
+ * If successful, your response includes a copy of the new discount entity.
+ *
+ * @param client - the Paddle API client
+ * @param body - The request body for creating the discount
+ *
+ * @returns The created discount
+ */
+export function createDiscount<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  body: PaddleAPI.DiscountCreateBody
+): Promise<PaddleAPI.DiscountCreateResponse> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "discounts",
+    body,
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;
