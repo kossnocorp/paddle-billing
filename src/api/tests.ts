@@ -4,6 +4,7 @@ import {
   createDiscount,
   createPrice,
   createProduct,
+  getDiscount,
   getPrice,
   getProduct,
   listDiscounts,
@@ -480,6 +481,26 @@ describe("createDiscount", () => {
           Authorization: "Bearer test",
         },
         body: JSON.stringify(discountData),
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Object);
+  });
+});
+
+describe("getDiscount", () => {
+  mockFetch();
+
+  it("sends a GET request to the correct URL with discount_id as path param", async () => {
+    const result = await getDiscount(testClient, "dsc_123");
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/discounts/dsc_123",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
       }
     );
 

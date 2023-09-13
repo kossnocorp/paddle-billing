@@ -301,6 +301,24 @@ export function createDiscount<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Returns a discount using its ID.
+ *
+ * @param client - the Paddle API client
+ * @param discountId - Paddle ID of the discount entity to work with
+ *
+ * @returns the discount
+ */
+export function getDiscount<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  discountId: Paddle.DiscountId
+): Promise<PaddleAPI.DiscountGetResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "discounts/" + discountId,
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;

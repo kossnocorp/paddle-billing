@@ -3,6 +3,7 @@ import {
   createDiscount,
   createPrice,
   createProduct,
+  getDiscount,
   getPrice,
   getProduct,
   listDiscounts,
@@ -334,3 +335,7 @@ createDiscount(api, {
   restrict_to: ["prod_123", "prod_456"],
   expires_at: "2022-12-31T23:59:59Z",
 });
+
+//// Get discount
+
+getDiscount(api, "dsc_123");

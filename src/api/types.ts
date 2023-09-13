@@ -749,6 +749,27 @@ export namespace PaddleAPI {
   export interface DiscountCreateResponseSuccess
     extends ResponseBase<Paddle.Discount, MetaBasic> {}
 
+  //// Get a discount
+
+  /**
+   * The get discount response.
+   */
+  export type DiscountGetResponse =
+    | DiscountGetResponseError
+    | DiscountGetResponseSuccess;
+
+  /**
+   * The errored discount get response.
+   */
+  export interface DiscountGetResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful discount get response.
+   */
+  export interface DiscountGetResponseSuccess
+    extends ResponseBase<Paddle.Discount, MetaBasic> {}
+
   ///
 
   /**
