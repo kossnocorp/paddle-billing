@@ -8,6 +8,7 @@ import {
   listPrices,
   listProducts,
   paddleFetch,
+  updatePrice,
   updateProduct,
 } from ".";
 
@@ -357,6 +358,32 @@ describe("getPrice", () => {
         body: null,
       }
     );
+  });
+});
+
+describe("updatePrice", () => {
+  it("sends a PATCH request to the correct URL with priceId as path param", async () => {
+    const priceUpdateBody = {
+      description: "New Subscription Price",
+      billing_cycle: { interval: "month" as const, frequency: 1 },
+      unit_price: { currency_code: "USD" as const, amount: "10.00" },
+    };
+
+    const result = await updatePrice(testClient, "pri_123", priceUpdateBody);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/prices/pri_123",
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer test",
+        },
+        body: JSON.stringify(priceUpdateBody),
+      }
+    );
+
+    expect(result.error).toBeUndefined();
   });
 });
 

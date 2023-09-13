@@ -141,8 +141,8 @@ export function getProduct<
  */
 export function updateProduct<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
-  productId: string,
-  body: PaddleAPI.ProductUpdateBody
+  productId: Paddle.ProductId,
+  body: PaddleAPI.ProductUpdateBody<DataDef>
 ): Promise<PaddleAPI.ProductUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
@@ -231,6 +231,28 @@ export function getPrice<
   return paddleFetch(client, {
     method: "GET",
     path: "prices/" + priceId + prepareQuery(query),
+  });
+}
+
+/**
+ * Update a price using its ID. If successful, your response includes a
+ * copy of the updated price entity.
+ *
+ * @param client - the Paddle API client
+ * @param priceId - Paddle ID of the price entity to work with
+ * @param body - The request body containing the price update details
+ *
+ * @returns The updated price
+ */
+export function updatePrice<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  priceId: Paddle.PriceId,
+  body: PaddleAPI.PriceUpdateBody<DataDef>
+): Promise<PaddleAPI.PriceUpdateResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "PATCH",
+    path: "prices/" + priceId,
+    body,
   });
 }
 

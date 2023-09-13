@@ -6,6 +6,8 @@ import {
   getProduct,
   listPrices,
   listProducts,
+  updatePrice,
+  updateProduct,
 } from ".";
 
 const api = client("test");
@@ -116,7 +118,7 @@ getProduct(apiCustomData, "pro_123").then((product) => {
 
 //// Update product
 
-createProduct(api, {
+updateProduct(api, "pro_12", {
   name: "My Product",
   tax_category: "digital-goods",
   custom_data: {
@@ -133,7 +135,7 @@ createProduct(api, {
   product.data.custom_data?.world;
 });
 
-createProduct(apiCustomData, {
+updateProduct(apiCustomData, "pro_12", {
   name: "My Product",
   tax_category: "digital-goods",
   custom_data: {
@@ -146,12 +148,6 @@ createProduct(apiCustomData, {
   product.data.custom_data.hello;
   // @ts-expect-error: world is not a valid custom_data key
   product.data.custom_data.world;
-});
-
-// @ts-expect-error: custom_data must be defined
-createProduct(apiCustomData, {
-  name: "My Product",
-  tax_category: "digital-goods",
 });
 
 /// Prices
@@ -277,4 +273,38 @@ getPrice(apiCustomData, "pri_123").then((product) => {
   product.data.custom_data.foo;
   // @ts-expect-error: custom_data is defined
   product.data.custom_data.hello;
+});
+
+//// Update product
+
+updatePrice(api, "pri_12", {
+  description: "My Price",
+  billing_cycle: { interval: "month", frequency: 1 },
+  custom_data: {
+    hello: "world",
+    foo: "bar",
+  },
+}).then((product) => {
+  if (product.error) return;
+  // @ts-expect-error: custom_data can be null
+  product.data[0]?.custom_data.hello;
+  // @ts-expect-error: custom_data can be null
+  product.data[0]?.custom_data.world;
+  product.data.custom_data?.hello;
+  product.data.custom_data?.world;
+});
+
+updatePrice(apiCustomData, "pri_12", {
+  description: "My Price",
+  billing_cycle: { interval: "month", frequency: 1 },
+  custom_data: {
+    // @ts-expect-error: hello is not a valid custom_data key
+    hello: "world",
+    foo: "bar",
+  },
+}).then((product) => {
+  if (product.error) return;
+  product.data.custom_data.foo;
+  // @ts-expect-error: world is not a valid custom_data key
+  product.data.custom_data.world;
 });

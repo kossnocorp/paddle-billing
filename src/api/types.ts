@@ -434,8 +434,11 @@ export namespace PaddleAPI {
   /**
    * The update product body.
    */
-  export type ProductUpdateBody = Partial<
-    Omit<Paddle.Product, ProductAutoAssignFields>
+  export type ProductUpdateBody<DataDef extends CustomDataDef> = Partial<
+    Omit<
+      Paddle.Product<CustomData<DataDef["Product"]>>,
+      ProductAutoAssignFields
+    >
   >;
 
   /**
@@ -628,6 +631,40 @@ export namespace PaddleAPI {
     /** The related product object */
     product: undefined extends Include ? never : Paddle.Product;
   }
+
+  //// Update a price
+
+  /**
+   * The update price body.
+   */
+  export type PriceUpdateBody<DataDef extends CustomDataDef> = Partial<
+    Omit<
+      Paddle.Price<Paddle.TimeInterval | null, CustomData<DataDef["Price"]>>,
+      PriceAutoAssignFields
+    >
+  >;
+
+  /**
+   * The update price response.
+   */
+  export type PriceUpdateResponse<DataDef extends CustomDataDef> =
+    | PriceUpdateResponseError
+    | PriceUpdateResponseSuccess<DataDef>;
+
+  /**
+   * The errored price update response.
+   */
+  export interface PriceUpdateResponseError
+    extends ErrorResponse<ErrorCodePrices> {}
+
+  /**
+   * The successful price update response.
+   */
+  export interface PriceUpdateResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Price<Paddle.TimeInterval | null, CustomData<DataDef["Price"]>>,
+      MetaBasic
+    > {}
 
   ///
 
