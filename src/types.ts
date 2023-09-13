@@ -268,7 +268,7 @@ export namespace Paddle {
     /** RFC 3339 datetime string of when this subscription was canceled. */
     canceled_at: string | null;
     /** Details of the discount applied to this subscription. */
-    discount: Discount | null;
+    discount: SubscriptionDiscount | null;
     /** Current billing period for this subscription. Set automatically
      * by Paddle based on the billing cycle. */
     current_billing_period: TimeInterval | null;
@@ -324,7 +324,7 @@ export namespace Paddle {
   /**
    * Details of the discount applied to this subscription.
    */
-  export interface Discount {
+  export interface SubscriptionDiscount {
     /** Unique Paddle ID for this discount, prefixed with dsc_. */
     id: DiscountId;
     /** RFC 3339 datetime string of when this discount was first applied. */
@@ -1280,4 +1280,69 @@ export namespace Paddle {
      * Set automatically by Paddle. */
     updated_at: string;
   }
+
+  /**
+   * Discounts describe percentage or amount-based reductions for transactions.
+   * A discount can reduce a transaction total by a fixed percentage,
+   * a flat amount per transaction, or a flat amount per unit on a transaction.
+   */
+  export interface Discount {
+    /** Unique Paddle ID for this discount, prefixed with 'dsc_' */
+    id: DiscountId;
+    /** Whether this entity can be used in Paddle. expired and used are set
+     * automatically by Paddle. */
+    status: DiscountStatus;
+    /** Short description for reference. */
+    description: string;
+    /** Whether the discount can be applied by the customer at checkout. */
+    enabled_for_checkout: boolean;
+    /** Discount application code. Unique, up to 16 alpha-numeric characters. */
+    code: string | null;
+    /** Type of discount: 'flat', 'flat_per_seat' (flat per unit)
+     * or 'percentage' */
+    type: DiscountType;
+    /** Amount to discount by. For percentage discounts, must be an amount
+     * between 0.01 and 100. For flat and flat_per_seat discounts, amount in
+     * the lowest denomination for a currency. */
+    amount: string;
+    /** Three-letter ISO 4217 currency code for flat discounts. */
+    currency_code: CurrencyCode | null;
+    /** Whether the discount recurs for multiple billing periods. */
+    recur: boolean;
+    /** Maximum subscription billing periods the discount recurs for. Set
+     * to 'null' if discount recurs indefinitely. */
+    maximum_recurring_intervals: number | null;
+    /** Maximum usage limit for this discount, or 'null' if there's no
+     * usage limit. */
+    usage_limit: number | null;
+    /** Price or product IDs for which the discount applies. Set to 'null'
+     * if the discount applies to all products and prices. */
+    restrict_to: string[] | null;
+    /** RFC 3339 formatted expiry date string. Set to 'null' if the discount
+     * doesn't expire. */
+    expires_at: string | null;
+    /** Number of times the discount has been redeemed. */
+    times_used: number;
+    /** RFC 3339 formatted creation date string. */
+    created_at: string;
+    /** RFC 3339 formatted update date string. */
+    updated_at: string;
+  }
+
+  /**
+   * Discount statuses in Paddle
+   */
+  export type DiscountStatus =
+    | "active" // Entity is active and can be used.
+    | "archived" // Entity is archived, so can't be used.
+    | "expired" // Discount has expired. Automatically set by Paddle when the expires_at date elapses.
+    | "used"; // Discount has reached the maximum amount of redemptions. Automatically set by Paddle when the usage_limit is reached.
+
+  /**
+   * Type of discount.
+   */
+  export type DiscountType =
+    | "flat" // Discounts a transaction by a flat amount, e.g. -$100. Requires currency_code.
+    | "flat_per_seat" // Discounts a transaction by a flat amount per unit Requires currency_code.
+    | "percentage"; // Discounts a transaction by a percentage of the total, e.g. 10%. Maximum 100%.
 }

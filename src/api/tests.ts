@@ -5,6 +5,7 @@ import {
   createProduct,
   getPrice,
   getProduct,
+  listDiscounts,
   listPrices,
   listProducts,
   paddleFetch,
@@ -384,6 +385,68 @@ describe("updatePrice", () => {
     );
 
     expect(result.error).toBeUndefined();
+  });
+});
+
+/// Discounts
+
+describe("listDiscounts", () => {
+  mockFetch();
+
+  it("sends a GET request to the correct URL", async () => {
+    const result = await listDiscounts(testClient);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/discounts",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Array);
+  });
+
+  it("sends a GET request to the correct URL with query params", async () => {
+    await listDiscounts(testClient, {
+      after: "qwe",
+      code: ["dis_123", "dis_456"],
+      id: ["dsc_123", "dsc_456"],
+      order_by: ["created_at[ASC]", "amount[DESC]"],
+      per_page: 10,
+      status: "active",
+    });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/discounts?after=qwe&code=dis_123%2Cdis_456&id=dsc_123%2Cdsc_456&order_by=created_at%5BASC%5D%2Camount%5BDESC%5D&per_page=10&status=active",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
+  });
+
+  it("excludes undefined query params", async () => {
+    await listDiscounts(testClient, {
+      after: undefined,
+      code: undefined,
+      id: "dsc_123",
+      order_by: "created_at[ASC]",
+      per_page: undefined,
+      status: undefined,
+    });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/discounts?id=dsc_123&order_by=created_at%5BASC%5D",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
   });
 });
 

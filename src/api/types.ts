@@ -666,6 +666,52 @@ export namespace PaddleAPI {
       MetaBasic
     > {}
 
+  /// Discounts
+
+  //// List discounts
+
+  /**
+   * The Discounts query parameters.
+   */
+  export interface DiscountsListQuery {
+    /** Return entities after the specified cursor. Used for working through
+     * paginated results. */
+    after?: string | undefined;
+    /** Return entities that match the discount code. */
+    code?: string | string[] | undefined;
+    /** Return only the IDs specified. */
+    id?: Paddle.DiscountId | Paddle.DiscountId[] | undefined;
+    /** Order returned entities by the specified field and direction
+     * ([ASC] or [DESC]). */
+    order_by?:
+      | OrderQuery<Paddle.Discount>
+      | OrderQuery<Paddle.Discount>[]
+      | undefined;
+    /** Set how many entities are returned per page. */
+    per_page?: number | undefined;
+    /** Return entities that match the specified status. */
+    status?: Paddle.DiscountStatus | Paddle.DiscountStatus[] | undefined;
+  }
+
+  /**
+   * The errored Discounts list response.
+   */
+  export interface DiscountsListResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful Discounts list response.
+   */
+  export interface DiscountsListResponseSuccess
+    extends ResponseBase<Paddle.Discount[], MetaPaginated> {}
+
+  /**
+   * The Discounts list response.
+   */
+  export type DiscountsListResponse =
+    | DiscountsListResponseError
+    | DiscountsListResponseSuccess;
+
   ///
 
   /**

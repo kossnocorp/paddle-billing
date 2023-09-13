@@ -4,6 +4,7 @@ import {
   createProduct,
   getPrice,
   getProduct,
+  listDiscounts,
   listPrices,
   listProducts,
   updatePrice,
@@ -307,4 +308,12 @@ updatePrice(apiCustomData, "pri_12", {
   product.data.custom_data.foo;
   // @ts-expect-error: world is not a valid custom_data key
   product.data.custom_data.world;
+});
+
+/// Discounts
+
+//// List discounts
+
+listDiscounts(api, {
+  order_by: "created_at[ASC]",
 });

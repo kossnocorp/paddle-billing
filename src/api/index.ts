@@ -256,6 +256,30 @@ export function updatePrice<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/// Discounts
+
+/**
+ * Returns a paginated list of discounts. Use the query parameters to page
+ * through results.
+ *
+ * By default, Paddle returns discounts that are active. Use the status query
+ * parameter to return discounts that are archived or expired.
+ *
+ * @param client - the Paddle API client
+ * @param query - the query parameters to filter the list of discounts
+ *
+ * @returns list of discounts
+ */
+export function listDiscounts<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  query?: PaddleAPI.DiscountsListQuery
+): Promise<PaddleAPI.DiscountsListResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "discounts" + prepareQuery(query),
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;
