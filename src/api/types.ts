@@ -1027,6 +1027,31 @@ export namespace PaddleAPI {
   export interface AddressGetResponseSuccess
     extends ResponseBase<Paddle.Address, MetaBasic> {}
 
+  //// Update an address
+
+  export type AddressUpdateBody = Optional<
+    Omit<Paddle.Address, AddressAutoAssignFields>
+  >;
+
+  /**
+   * The update address response.
+   */
+  export type AddressUpdateResponse =
+    | AddressUpdateResponseError
+    | AddressUpdateResponseSuccess;
+
+  /**
+   * The error response of the updateAddress function.
+   */
+  export interface AddressUpdateResponseError
+    extends ErrorResponse<ErrorCodeAddresses> {}
+
+  /**
+   * The successful address update response.
+   */
+  export interface AddressUpdateResponseSuccess
+    extends ResponseBase<Paddle.Address, MetaBasic> {}
+
   ///
 
   /**

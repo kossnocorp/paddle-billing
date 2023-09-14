@@ -17,6 +17,7 @@ import {
   listPrices,
   listProducts,
   paddleFetch,
+  updateAddress,
   updateCustomer,
   updateDiscount,
   updatePrice,
@@ -805,6 +806,45 @@ describe("getAddress", () => {
         method: "GET",
         headers: { Authorization: "Bearer test" },
         body: null,
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Object);
+  });
+});
+
+describe("updateAddress", () => {
+  mockFetch();
+
+  it("sends a PATCH request to the correct URL", async () => {
+    const addressData = {
+      description: "Work Address",
+      first_line: "123 Elm Street",
+      second_line: null,
+      city: "New York",
+      postal_code: "10001",
+      region: "NY",
+      country_code: "US" as const,
+      status: "active" as const,
+    };
+
+    const result = await updateAddress(
+      testClient,
+      "ctm_123",
+      "add_456",
+      addressData
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/customers/ctm_123/addresses/add_456",
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer test",
+        },
+        body: JSON.stringify(addressData),
       }
     );
 

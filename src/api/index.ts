@@ -500,6 +500,31 @@ export function getAddress<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Update an address for a customer using its ID and related customer ID.
+ *
+ * If successful, your response includes a copy of the updated address entity.
+ *
+ * @param client - the Paddle API client
+ * @param customerId - Paddle ID of the customer entity to work with
+ * @param addressId - Paddle ID of the address entity to work with
+ * @param body - the request body containing the address update details
+ *
+ * @returns the updated address
+ */
+export function updateAddress<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  customerId: Paddle.CustomerId,
+  addressId: Paddle.AddressId,
+  body: PaddleAPI.AddressUpdateBody
+): Promise<PaddleAPI.AddressUpdateResponse> {
+  return paddleFetch(client, {
+    method: "PATCH",
+    path: "customers/" + customerId + "/addresses/" + addressId,
+    body,
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;

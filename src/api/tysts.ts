@@ -15,6 +15,7 @@ import {
   listDiscounts,
   listPrices,
   listProducts,
+  updateAddress,
   updateCustomer,
   updateDiscount,
   updatePrice,
@@ -424,4 +425,10 @@ createAddress(api, "ctm_123", {
 getAddress(api, "ctm_123", "add_123").then((customer) => {
   if (customer.error) return;
   customer.data.city?.toString();
+});
+
+//// Update address
+
+updateAddress(api, "ctm_123", "add_456", {
+  city: "Singapore",
 });
