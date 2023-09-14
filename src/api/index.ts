@@ -480,6 +480,26 @@ export function createAddress<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Returns an address for a customer using its ID and related customer ID.
+ *
+ * @param client - the Paddle API client
+ * @param customerId - Paddle ID of the customer entity to work with
+ * @param addressId - Paddle ID of the address entity to work with
+ *
+ * @returns the requested address
+ */
+export function getAddress<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  customerId: Paddle.CustomerId,
+  addressId: Paddle.AddressId
+): Promise<PaddleAPI.AddressGetResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "customers/" + customerId + "/addresses/" + addressId,
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;

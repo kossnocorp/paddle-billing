@@ -1006,6 +1006,27 @@ export namespace PaddleAPI {
   export interface AddressCreateResponseSuccess
     extends ResponseBase<Paddle.Address, MetaBasic> {}
 
+  //// Get an address
+
+  /**
+   * The get address response.
+   */
+  export type AddressGetResponse =
+    | AddressGetResponseError
+    | AddressGetResponseSuccess;
+
+  /**
+   * The error response of getAddress function.
+   */
+  export interface AddressGetResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful address get response.
+   */
+  export interface AddressGetResponseSuccess
+    extends ResponseBase<Paddle.Address, MetaBasic> {}
+
   ///
 
   /**

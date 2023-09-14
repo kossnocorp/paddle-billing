@@ -5,6 +5,7 @@ import {
   createDiscount,
   createPrice,
   createProduct,
+  getAddress,
   getCustomer,
   getDiscount,
   getPrice,
@@ -416,4 +417,11 @@ createAddress(api, "ctm_123", {
   city: "San Francisco",
   postal_code: "94102",
   region: "California",
+});
+
+//// Get address
+
+getAddress(api, "ctm_123", "add_123").then((customer) => {
+  if (customer.error) return;
+  customer.data.city?.toString();
 });

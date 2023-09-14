@@ -6,6 +6,7 @@ import {
   createDiscount,
   createPrice,
   createProduct,
+  getAddress,
   getCustomer,
   getDiscount,
   getPrice,
@@ -784,6 +785,26 @@ describe("createAddress", () => {
           Authorization: "Bearer test",
         },
         body: JSON.stringify(addressData),
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Object);
+  });
+});
+
+describe("getAddress", () => {
+  mockFetch();
+
+  it("sends a GET request to the correct URL with customer_id and address_id as path params", async () => {
+    const result = await getAddress(testClient, "ctm_123", "add_456");
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/customers/ctm_123/addresses/add_456",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
       }
     );
 
