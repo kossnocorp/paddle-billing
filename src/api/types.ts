@@ -1052,6 +1052,51 @@ export namespace PaddleAPI {
   export interface AddressUpdateResponseSuccess
     extends ResponseBase<Paddle.Address, MetaBasic> {}
 
+  //// List businesses
+
+  /**
+   * The businesses list query.
+   */
+  export interface BusinessesListQuery {
+    /** Return entities after the specified cursor. Used for working through
+     * paginated results. */
+    after?: string | undefined;
+    /** Return only the IDs specified. */
+    id?: Paddle.BusinessId | Paddle.BusinessId[] | undefined;
+    /** Order returned entities by the specified field and direction
+     * [ASC] or [DESC]). */
+    order_by?:
+      | OrderQuery<Paddle.Business>
+      | OrderQuery<Paddle.Business>[]
+      | undefined;
+    /** Set how many entities are returned per page. */
+    per_page?: number | undefined;
+    /** Return entities that match a search query. Searches all fields,
+     * including contacts, except status, created_at, and updated_at. */
+    search?: string | undefined;
+    /** Return entities that match the specified status. */
+    status?: Paddle.EntityStatus | Paddle.EntityStatus[] | undefined;
+  }
+
+  /**
+   * The businesses list response.
+   */
+  export type BusinessesListResponse =
+    | BusinessesListResponseError
+    | BusinessesListResponseSuccess;
+
+  /**
+   * The errored businesses list response.
+   */
+  export interface BusinessesListResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful businesses list response.
+   */
+  export interface BusinessesListResponseSuccess
+    extends ResponseBase<Paddle.Business[], MetaPaginated> {}
+
   ///
 
   /**

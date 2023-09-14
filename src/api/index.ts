@@ -24,6 +24,8 @@ export interface PaddleFetchProps {
   method: "GET" | "POST" | "PATCH" | "DELETE";
   /** The API path */
   path: string;
+  /** The request query */
+  query?: Object | undefined;
   /** The request body */
   body?: Object;
 }
@@ -46,14 +48,14 @@ export async function paddleFetch(
 
   if (props.body) headers["Content-Type"] = "application/json";
 
-  const response = await fetch(
-    (client.sandbox ? sandboxAPIURL : apiURL) + props.path,
-    {
-      method: props.method,
-      headers,
-      body: props.body ? JSON.stringify(props.body) : null,
-    }
-  );
+  const queryStr = props.query ? prepareQuery(props.query) : "";
+  const url = (client.sandbox ? sandboxAPIURL : apiURL) + props.path + queryStr;
+
+  const response = await fetch(url, {
+    method: props.method,
+    headers,
+    body: props.body ? JSON.stringify(props.body) : null,
+  });
   return response.json();
 }
 
@@ -82,7 +84,8 @@ export function listProducts<
 ): Promise<PaddleAPI.ProductsListResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
-    path: "products" + prepareQuery(query),
+    path: "products",
+    query,
   });
 }
 
@@ -126,7 +129,8 @@ export function getProduct<
 ): Promise<PaddleAPI.ProductGetResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
-    path: "products/" + productId + prepareQuery(query),
+    path: "products/" + productId,
+    query,
   });
 }
 
@@ -176,7 +180,8 @@ export function listPrices<
 ): Promise<PaddleAPI.PricesListResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
-    path: "prices" + prepareQuery(query),
+    path: "prices",
+    query,
   });
 }
 
@@ -230,7 +235,8 @@ export function getPrice<
 ): Promise<PaddleAPI.PriceGetResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
-    path: "prices/" + priceId + prepareQuery(query),
+    path: "prices/" + priceId,
+    query,
   });
 }
 
@@ -276,7 +282,8 @@ export function listDiscounts<DataDef extends PaddleAPI.CustomDataDef>(
 ): Promise<PaddleAPI.DiscountsListResponse> {
   return paddleFetch(client, {
     method: "GET",
-    path: "discounts" + prepareQuery(query),
+    path: "discounts",
+    query,
   });
 }
 
@@ -326,19 +333,19 @@ export function getDiscount<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @param client - the Paddle API client
  * @param discountId - Paddle ID of the discount entity to work with
- * @param paybodyoad - the request body containing the discount's new details
+ * @param body - the request body containing the discount's new details
  *
  * @returns the updated discount
  */
 export function updateDiscount<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   discountId: Paddle.DiscountId,
-  paybodyoad: PaddleAPI.DiscountUpdateBody
+  body: PaddleAPI.DiscountUpdateBody
 ): Promise<PaddleAPI.DiscountUpdateResponse> {
   return paddleFetch(client, {
     method: "PATCH",
     path: "discounts/" + discountId,
-    body: paybodyoad,
+    body,
   });
 }
 
@@ -362,7 +369,8 @@ export function listCustomers<DataDef extends PaddleAPI.CustomDataDef>(
 ): Promise<PaddleAPI.CustomersListResponse> {
   return paddleFetch(client, {
     method: "GET",
-    path: "customers" + prepareQuery(query),
+    path: "customers",
+    query,
   });
 }
 
@@ -449,7 +457,8 @@ export function listAddresses<DataDef extends PaddleAPI.CustomDataDef>(
 ): Promise<PaddleAPI.AddressListResponse> {
   return paddleFetch(client, {
     method: "GET",
-    path: "customers/" + customerId + "/addresses" + prepareQuery(query),
+    path: "customers/" + customerId + "/addresses",
+    query,
   });
 }
 
@@ -522,6 +531,31 @@ export function updateAddress<DataDef extends PaddleAPI.CustomDataDef>(
     method: "PATCH",
     path: "customers/" + customerId + "/addresses/" + addressId,
     body,
+  });
+}
+
+/**
+ * Returns a paginated list of businesses for a customer.
+ * Use the query parameters to page through results.
+ *
+ * By default, Paddle returns businesses that are active.
+ * Use the status query parameter to return businesses that are archived.
+ *
+ * @param client - the Paddle API client
+ * @param path - the path parameters to filter the list of businesses
+ * @param query - the query parameters to filter the list of businesses
+ *
+ * @returns list of businesses for a customer
+ */
+export function listBusinesses<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  customerId: Paddle.CustomerId,
+  query?: PaddleAPI.BusinessesListQuery
+): Promise<PaddleAPI.BusinessesListResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "customers/" + customerId + "/businesses",
+    query,
   });
 }
 
