@@ -925,6 +925,54 @@ export namespace PaddleAPI {
   export interface CustomerUpdateResponseSuccess
     extends ResponseBase<Paddle.Customer, MetaBasic> {}
 
+  /// Addresses
+
+  //// List addresses for a customer
+
+  /**
+   * The customer's list addresses query.
+   */
+  export interface AddressListQuery {
+    /** Return entities after the specified cursor. Used for working through
+     * paginated results. */
+    after?: string | undefined;
+    /** Return only the IDs specified. */
+    id?: Paddle.AddressId | Paddle.AddressId[] | undefined;
+    /** Order returned entities by the specified field and direction
+     * [ASC] or [DESC]. */
+    order_by?:
+      | OrderQuery<Paddle.Address>
+      | OrderQuery<Paddle.Address>[]
+      | undefined;
+    /** Set how many entities are returned per page. */
+    per_page?: number | undefined;
+    /** Return entities that match a search query. Searches all fields except
+     * status, created_at, and updated_at. */
+    search?: string | undefined;
+    /** Return entities that match the specified status. Use a comma
+     * separated list to specify multiple status values. */
+    status?: string | undefined;
+  }
+
+  /**
+   * The list addresses response.
+   */
+  export type AddressListResponse =
+    | AddressListResponseError
+    | AddressListResponseSuccess;
+
+  /**
+   * The error response of list addresses function.
+   */
+  export interface AddressListResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful list addresses response.
+   */
+  export interface AddressListResponseSuccess
+    extends ResponseBase<Paddle.Address[], MetaPaginated> {}
+
   ///
 
   /**

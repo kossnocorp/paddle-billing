@@ -8,6 +8,7 @@ import {
   getDiscount,
   getPrice,
   getProduct,
+  listAddresses,
   listCustomers,
   listDiscounts,
   listPrices,
@@ -394,4 +395,12 @@ getCustomer(api, "ctm_123").then((customer) => {
 updateCustomer(api, "ctm_123", {
   email: "hello@example.com",
   status: "archived",
+});
+
+/// Addresses
+
+//// List addresses
+
+listAddresses(api, "ctm_123", {
+  order_by: "city[ASC]",
 });

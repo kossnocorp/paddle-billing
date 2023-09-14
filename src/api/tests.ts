@@ -9,6 +9,7 @@ import {
   getDiscount,
   getPrice,
   getProduct,
+  listAddresses,
   listCustomers,
   listDiscounts,
   listPrices,
@@ -714,6 +715,68 @@ describe("updateCustomer", () => {
 
     expect(result.error).toBeUndefined();
     expect(!result.error && result.data).toBeInstanceOf(Object);
+  });
+});
+
+/// Addresses
+
+describe("listAddresses", () => {
+  mockFetch();
+
+  it("sends a GET request to the correct URL", async () => {
+    const result = await listAddresses(testClient, "ctm_123");
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/customers/ctm_123/addresses",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Array);
+  });
+
+  it("sends a GET request to the correct URL with query params", async () => {
+    await listAddresses(testClient, "ctm_123", {
+      after: "add_456",
+      id: ["add_789", "add_012"],
+      order_by: ["city[ASC]", "country_code[DESC]"],
+      per_page: 10,
+      search: "New York",
+      status: "active",
+    });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/customers/ctm_123/addresses?after=add_456&id=add_789%2Cadd_012&order_by=city%5BASC%5D%2Ccountry_code%5BDESC%5D&per_page=10&search=New+York&status=active",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
+  });
+
+  it("excludes undefined query params", async () => {
+    await listAddresses(testClient, "ctm_123", {
+      after: undefined,
+      id: ["add_789"],
+      order_by: undefined,
+      per_page: undefined,
+      search: undefined,
+      status: "active",
+    });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/customers/ctm_123/addresses?id=add_789&status=active",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
   });
 });
 

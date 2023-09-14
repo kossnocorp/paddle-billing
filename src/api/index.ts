@@ -428,6 +428,31 @@ export function updateCustomer<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/// Addresses
+
+/**
+ * Returns a paginated list of addresses for a customer. Use the query parameters to page through results.
+ *
+ * By default, Paddle returns addresses that are active. Use the status query parameter to return addresses that are
+ * archived.
+ *
+ * @param client - the Paddle API client
+ * @param customerId - Paddle ID of the customer entity to work with
+ * @param query - The customer's list addresses query
+ *
+ * @returns list of addresses for a customer
+ */
+export function listAddresses<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  customerId: Paddle.CustomerId,
+  query?: PaddleAPI.AddressListQuery
+): Promise<PaddleAPI.AddressListResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "customers/" + customerId + "/addresses" + prepareQuery(query),
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;
