@@ -5,6 +5,7 @@ import {
   createDiscount,
   createPrice,
   createProduct,
+  getCustomer,
   getDiscount,
   getPrice,
   getProduct,
@@ -662,6 +663,26 @@ describe("createCustomer", () => {
         }),
       }
     );
+  });
+});
+
+describe("getCustomer", () => {
+  mockFetch();
+
+  it("sends a GET request to the correct URL with customer_id as path param", async () => {
+    const result = await getCustomer(testClient, "ctm_123");
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/customers/ctm_123",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Object);
   });
 });
 

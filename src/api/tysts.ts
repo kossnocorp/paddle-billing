@@ -4,6 +4,7 @@ import {
   createDiscount,
   createPrice,
   createProduct,
+  getCustomer,
   getDiscount,
   getPrice,
   getProduct,
@@ -377,4 +378,12 @@ createCustomer(api, {
   email: "hello@example.com",
   // Allow setting locale to undefined
   locale: undefined,
+});
+
+//// Get customer
+
+getCustomer(api, "ctm_123").then((customer) => {
+  if (customer.error) return;
+  // Locale must be defined
+  customer.data.locale.toString();
 });

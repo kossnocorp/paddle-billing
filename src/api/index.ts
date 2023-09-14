@@ -387,6 +387,24 @@ export function createCustomer<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Returns a customer using its ID.
+ *
+ * @param client - the Paddle API client
+ * @param customerId - Paddle ID of the customer entity to work with
+ *
+ * @returns the customer
+ */
+export function getCustomer<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  customerId: Paddle.CustomerId
+): Promise<PaddleAPI.CustomerGetResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "customers/" + customerId,
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;

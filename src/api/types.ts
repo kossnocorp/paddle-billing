@@ -876,6 +876,27 @@ export namespace PaddleAPI {
   export interface CustomerCreateResponseSuccess
     extends ResponseBase<Paddle.Customer, MetaBasic> {}
 
+  //// Get a customer
+
+  /**
+   * The get customer response.
+   */
+  export type CustomerGetResponse =
+    | CustomerGetResponseError
+    | CustomerGetResponseSuccess;
+
+  /**
+   * The error response of getCustomer function.
+   */
+  export interface CustomerGetResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful customer get response.
+   */
+  export interface CustomerGetResponseSuccess
+    extends ResponseBase<Paddle.Customer, MetaBasic> {}
+
   ///
 
   /**
