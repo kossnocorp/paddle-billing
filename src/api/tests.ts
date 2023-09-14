@@ -7,10 +7,12 @@ import {
   getDiscount,
   getPrice,
   getProduct,
+  listCustomers,
   listDiscounts,
   listPrices,
   listProducts,
   paddleFetch,
+  updateDiscount,
   updatePrice,
   updateProduct,
 } from ".";
@@ -506,6 +508,106 @@ describe("getDiscount", () => {
 
     expect(result.error).toBeUndefined();
     expect(!result.error && result.data).toBeInstanceOf(Object);
+  });
+});
+
+describe("updateDiscount", () => {
+  mockFetch();
+
+  it("sends a PATCH request to the correct URL", async () => {
+    const discountData = {
+      status: "active" as const,
+      description: "New Year Sale",
+      enabled_for_checkout: true,
+      code: "NY2022",
+      type: "flat" as const,
+      amount: "50",
+      currency_code: "USD" as const,
+      recur: true,
+      maximum_recurring_intervals: 12,
+      usage_limit: 100,
+      restrict_to: ["prod_123"],
+      expires_at: "2023-01-01T00:00:00Z",
+    };
+
+    const result = await updateDiscount(testClient, "dsc_123", discountData);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/discounts/dsc_123",
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer test",
+        },
+        body: JSON.stringify(discountData),
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Object);
+  });
+});
+
+/// Customers
+
+describe("listCustomers", () => {
+  mockFetch();
+
+  it("sends a GET request to the correct URL", async () => {
+    const result = await listCustomers(testClient);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/customers",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Array);
+  });
+
+  it("sends a GET request to the correct URL with query params", async () => {
+    await listCustomers(testClient, {
+      after: "qwe",
+      id: "ctm_123",
+      order_by: "created_at[ASC]",
+      per_page: 10,
+      search: "john",
+      status: "active",
+    });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/customers?after=qwe&id=ctm_123&order_by=created_at%5BASC%5D&per_page=10&search=john&status=active",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
+  });
+
+  it("excludes undefined query params", async () => {
+    await listCustomers(testClient, {
+      after: undefined,
+      id: "ctm_123",
+      order_by: "created_at[ASC]",
+      per_page: undefined,
+      search: undefined,
+      status: undefined,
+    });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/customers?id=ctm_123&order_by=created_at%5BASC%5D",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
   });
 });
 

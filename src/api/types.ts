@@ -280,8 +280,7 @@ export namespace PaddleAPI {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
     after?: string | undefined;
-    /** Return only the IDs specified. Use a comma separated list to get
-     * multiple entities. */
+    /** Return only the IDs specified. */
     id?: Paddle.ProductId | Paddle.ProductId[] | undefined;
     /** Include related entities in the response. */
     include?: Include;
@@ -293,8 +292,7 @@ export namespace PaddleAPI {
       | undefined;
     /** Set how many entities are returned per page. */
     per_page?: number | undefined;
-    /** Return entities that match the specified status. Use a comma separated
-     * list to specify multiple status values. */
+    /** Return entities that match the specified status. */
     status?: Paddle.EntityStatus | Paddle.EntityStatus[] | undefined;
     /** Return entities that match the specified tax category. */
     tax_category?: Paddle.TaxCategory | undefined;
@@ -484,8 +482,7 @@ export namespace PaddleAPI {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
     after?: string | undefined;
-    /** Return only the IDs specified. Use a comma separated list to get
-     * multiple entities. */
+    /** Return only the IDs specified. */
     id?: Paddle.PriceId | Paddle.PriceId[] | undefined;
     /** Include related entities in the response. */
     include?: Include;
@@ -497,11 +494,9 @@ export namespace PaddleAPI {
       | undefined;
     /** Set how many entities are returned per page. */
     per_page?: number | undefined;
-    /** Return entities related to the specified product. Use a comma separated
-     * list to specify multiple product IDs. */
+    /** Return entities related to the specified product. */
     product_id?: Paddle.ProductId | Paddle.ProductId[] | undefined;
-    /** Return entities that match the specified status. Use a comma separated
-     * list to specify multiple status values. */
+    /** Return entities that match the specified status. */
     status?: Paddle.EntityStatus | Paddle.EntityStatus[] | undefined;
     /** Determine whether returned entities are for recurring prices (true) or
      * one-time prices (false). */
@@ -769,6 +764,82 @@ export namespace PaddleAPI {
    */
   export interface DiscountGetResponseSuccess
     extends ResponseBase<Paddle.Discount, MetaBasic> {}
+
+  //// Update a discount
+
+  /**
+   * The update discount body.
+   */
+  export type DiscountUpdateBody = Partial<
+    MakeNullableFieldsOptional<Omit<Paddle.Discount, DiscountAutoAssignFields>>
+  >;
+
+  /**
+   * The update discount response.
+   */
+  export type DiscountUpdateResponse =
+    | DiscountUpdateResponseError
+    | DiscountUpdateResponseSuccess;
+
+  /**
+   * The errored update discount response.
+   */
+  export interface DiscountUpdateResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful update discount response.
+   */
+  export interface DiscountUpdateResponseSuccess
+    extends ResponseBase<Paddle.Discount, MetaBasic> {}
+
+  /// Customers
+
+  /**
+   * The price's auto-assign fields.
+   */
+  export type CustomerAutoAssignFields = "id" | "created_at" | "updated_at";
+
+  //// List customers
+
+  /**
+   * The customers list query.
+   */
+  export interface CustomersListQuery {
+    /** Return entities after the specified cursor. Used for working through
+     * paginated results. */
+    after?: string | undefined;
+    /** Return only the IDs specified. */
+    id?: Paddle.CustomerId | Paddle.CustomerId[] | undefined;
+    /** Order returned entities by the specified field and direction
+     * [ASC] or [DESC]). */
+    order_by?: OrderQuery<Paddle.Customer> | undefined;
+    /** Set how many entities are returned per page. */
+    per_page?: number | undefined;
+    /** Return entities that match a search query. Searches id, name, and email fields. */
+    search?: string | undefined;
+    /** Return entities that match the specified status. */
+    status?: Paddle.EntityStatus | Paddle.EntityStatus[] | undefined;
+  }
+
+  /**
+   * The customers list response.
+   */
+  export type CustomersListResponse =
+    | CustomersListResponseError
+    | CustomersListResponseSuccess;
+
+  /**
+   * The errored customers list response.
+   */
+  export interface CustomersListResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful customers list response.
+   */
+  export interface CustomersListResponseSuccess
+    extends ResponseBase<Paddle.Customer[], MetaPaginated> {}
 
   ///
 

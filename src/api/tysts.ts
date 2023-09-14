@@ -6,9 +6,11 @@ import {
   getDiscount,
   getPrice,
   getProduct,
+  listCustomers,
   listDiscounts,
   listPrices,
   listProducts,
+  updateDiscount,
   updatePrice,
   updateProduct,
 } from ".";
@@ -339,3 +341,27 @@ createDiscount(api, {
 //// Get discount
 
 getDiscount(api, "dsc_123");
+
+//// Update discount
+
+updateDiscount(api, "dsc_123", {
+  amount: "10.00",
+  description: "Discount Description",
+  type: "percentage",
+  enabled_for_checkout: true,
+  code: "DISCOUNTCODE",
+  currency_code: "USD",
+  recur: false,
+  maximum_recurring_intervals: 3,
+  usage_limit: 100,
+  restrict_to: ["prod_123", "prod_456"],
+  expires_at: "2022-12-31T23:59:59Z",
+});
+
+/// Customers
+
+//// List customers
+
+listCustomers(api, {
+  order_by: "created_at[ASC]",
+});

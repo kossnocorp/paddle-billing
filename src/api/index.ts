@@ -319,6 +319,53 @@ export function getDiscount<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Updates a discount using its ID.
+ *
+ * If successful, your response includes a copy of the updated discount entity.
+ *
+ * @param client - the Paddle API client
+ * @param discountId - Paddle ID of the discount entity to work with
+ * @param paybodyoad - the request body containing the discount's new details
+ *
+ * @returns the updated discount
+ */
+export function updateDiscount<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  discountId: Paddle.DiscountId,
+  paybodyoad: PaddleAPI.DiscountUpdateBody
+): Promise<PaddleAPI.DiscountUpdateResponse> {
+  return paddleFetch(client, {
+    method: "PATCH",
+    path: "discounts/" + discountId,
+    body: paybodyoad,
+  });
+}
+
+/**
+ * Returns a paginated list of customers. Use the query parameters to page
+ * through results.
+ *
+ * By default, Paddle returns customers that are active. Use the status query
+ * parameter to return customers that are archived.
+ *
+ * Use the include parameter to include related price entities in the response.
+ *
+ * @param client - the Paddle API client
+ * @param query - the query parameters to filter the list of customers
+ *
+ * @returns list of customers
+ */
+export function listCustomers<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  query?: PaddleAPI.CustomersListQuery
+): Promise<PaddleAPI.CustomersListResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "customers" + prepareQuery(query),
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;
