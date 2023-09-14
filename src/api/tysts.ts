@@ -1,5 +1,6 @@
 import {
   client,
+  createAddress,
   createCustomer,
   createDiscount,
   createPrice,
@@ -403,4 +404,16 @@ updateCustomer(api, "ctm_123", {
 
 listAddresses(api, "ctm_123", {
   order_by: "city[ASC]",
+});
+
+//// Create address
+
+createAddress(api, "ctm_123", {
+  country_code: "US",
+  description: "Main Address",
+  first_line: "123 Main St",
+  second_line: undefined,
+  city: "San Francisco",
+  postal_code: "94102",
+  region: "California",
 });

@@ -927,6 +927,11 @@ export namespace PaddleAPI {
 
   /// Addresses
 
+  /**
+   * The address's auto-assign fields.
+   */
+  export type AddressAutoAssignFields = "id" | "created_at" | "updated_at";
+
   //// List addresses for a customer
 
   /**
@@ -972,6 +977,34 @@ export namespace PaddleAPI {
    */
   export interface AddressListResponseSuccess
     extends ResponseBase<Paddle.Address[], MetaPaginated> {}
+
+  //// Create an address
+
+  /**
+   * The create address body.
+   */
+  export type AddressCreateBody = MakeNullableFieldsOptional<
+    Omit<Paddle.Address, AddressAutoAssignFields | "status">
+  >;
+
+  /**
+   * The create address response.
+   */
+  export type AddressCreateResponse =
+    | AddressCreateResponseError
+    | AddressCreateResponseSuccess;
+
+  /**
+   * The errored address create response.
+   */
+  export interface AddressCreateResponseError
+    extends ErrorResponse<ErrorCodeAddresses> {}
+
+  /**
+   * The successful address create response.
+   */
+  export interface AddressCreateResponseSuccess
+    extends ResponseBase<Paddle.Address, MetaBasic> {}
 
   ///
 

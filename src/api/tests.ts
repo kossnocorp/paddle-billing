@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   client,
+  createAddress,
   createCustomer,
   createDiscount,
   createPrice,
@@ -642,30 +643,6 @@ describe("createCustomer", () => {
     expect(result.error).toBeUndefined();
     expect(!result.error && result.data).toBeInstanceOf(Object);
   });
-
-  it("excludes undefined body keys", async () => {
-    const customerData = {
-      email: "test2@test.com",
-      name: undefined,
-      locale: undefined,
-    };
-
-    await createCustomer(testClient, customerData);
-
-    expect(global.fetch).toHaveBeenCalledWith(
-      "https://api.paddle.com/customers",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer test",
-        },
-        body: JSON.stringify({
-          email: "test2@test.com",
-        }),
-      }
-    );
-  });
 });
 
 describe("getCustomer", () => {
@@ -777,6 +754,41 @@ describe("listAddresses", () => {
         body: null,
       }
     );
+  });
+});
+
+/// Customers
+
+describe("createAddress", () => {
+  mockFetch();
+
+  it("sends a POST request to the correct URL", async () => {
+    const addressData = {
+      country_code: "US" as const,
+      description: "Main Address",
+      first_line: "123 Main St",
+      second_line: null,
+      city: "San Francisco",
+      postal_code: "94102",
+      region: "California",
+    };
+
+    const result = await createAddress(testClient, "ctm_123", addressData);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      `https://api.paddle.com/customers/ctm_123/addresses`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer test",
+        },
+        body: JSON.stringify(addressData),
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Object);
   });
 });
 

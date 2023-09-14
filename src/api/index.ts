@@ -453,6 +453,33 @@ export function listAddresses<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Creates a new address for a customer.
+ *
+ * For tax calculation, fraud prevention, and compliance purposes,
+ * you must include a postal_code when creating addresses for some countries.
+ * For example, ZIP codes in the USA and postcodes in the UK.
+ *
+ * If successful, your response includes a copy of the new address entity.
+ *
+ * @param client - the Paddle API client
+ * @param customerId - Paddle ID of the customer entity to work with
+ * @param body - the request body containing the country code and other details
+ *
+ * @returns a copy of the new address entity if successful
+ */
+export function createAddress<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  customerId: Paddle.CustomerId,
+  body: PaddleAPI.AddressCreateBody
+): Promise<PaddleAPI.AddressCreateResponse> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "customers/" + customerId + "/addresses",
+    body,
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;
