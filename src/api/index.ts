@@ -338,5 +338,6 @@ function prepareQuery(query: Object | undefined): string {
       }
     });
 
-  return q.size === 0 ? "" : "?" + q.toString();
+  const qStr = q.toString();
+  return qStr ? `?${qStr}` : "";
 }
