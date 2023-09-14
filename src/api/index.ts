@@ -405,6 +405,29 @@ export function getCustomer<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Update a customer with the specified details.
+ *
+ * If successful, your response includes a copy of the updated customer entity.
+ *
+ * @param client - the Paddle API client
+ * @param customerId - Paddle ID of the customer entity to work with
+ * @param body - the request body containing the customer update details
+ *
+ * @returns the updated customer
+ */
+export function updateCustomer<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  customerId: Paddle.CustomerId,
+  body: PaddleAPI.CustomerUpdateBody
+): Promise<PaddleAPI.CustomerUpdateResponse> {
+  return paddleFetch(client, {
+    method: "PATCH",
+    path: "customers/" + customerId,
+    body,
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;

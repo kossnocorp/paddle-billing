@@ -432,7 +432,7 @@ export namespace PaddleAPI {
   /**
    * The update product body.
    */
-  export type ProductUpdateBody<DataDef extends CustomDataDef> = Partial<
+  export type ProductUpdateBody<DataDef extends CustomDataDef> = Optional<
     Omit<
       Paddle.Product<CustomData<DataDef["Product"]>>,
       ProductAutoAssignFields
@@ -770,7 +770,7 @@ export namespace PaddleAPI {
   /**
    * The update discount body.
    */
-  export type DiscountUpdateBody = Partial<
+  export type DiscountUpdateBody = Optional<
     MakeNullableFieldsOptional<Omit<Paddle.Discount, DiscountAutoAssignFields>>
   >;
 
@@ -895,6 +895,34 @@ export namespace PaddleAPI {
    * The successful customer get response.
    */
   export interface CustomerGetResponseSuccess
+    extends ResponseBase<Paddle.Customer, MetaBasic> {}
+
+  //// Update a customer
+
+  /**
+   * The update customer body.
+   */
+  export type CustomerUpdateBody = Optional<
+    Omit<Paddle.Customer, CustomerAutoAssignFields>
+  >;
+
+  /**
+   * The update customer response.
+   */
+  export type CustomerUpdateResponse =
+    | CustomerUpdateResponseError
+    | CustomerUpdateResponseSuccess;
+
+  /**
+   * The errored customer update response.
+   */
+  export interface CustomerUpdateResponseError
+    extends ErrorResponse<ErrorCodeCustomers> {}
+
+  /**
+   * The successful customer update response.
+   */
+  export interface CustomerUpdateResponseSuccess
     extends ResponseBase<Paddle.Customer, MetaBasic> {}
 
   ///

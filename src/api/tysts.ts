@@ -12,6 +12,7 @@ import {
   listDiscounts,
   listPrices,
   listProducts,
+  updateCustomer,
   updateDiscount,
   updatePrice,
   updateProduct,
@@ -386,4 +387,11 @@ getCustomer(api, "ctm_123").then((customer) => {
   if (customer.error) return;
   // Locale must be defined
   customer.data.locale.toString();
+});
+
+//// Update customer
+
+updateCustomer(api, "ctm_123", {
+  email: "hello@example.com",
+  status: "archived",
 });

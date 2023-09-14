@@ -14,6 +14,7 @@ import {
   listPrices,
   listProducts,
   paddleFetch,
+  updateCustomer,
   updateDiscount,
   updatePrice,
   updateProduct,
@@ -678,6 +679,36 @@ describe("getCustomer", () => {
         method: "GET",
         headers: { Authorization: "Bearer test" },
         body: null,
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Object);
+  });
+});
+
+describe("updateCustomer", () => {
+  mockFetch();
+
+  it("sends a PATCH request to the correct URL with customer_id as path param", async () => {
+    const customerData = {
+      name: "Updated Customer Name",
+      email: "updatedcustomer@example.com",
+      status: "active" as const,
+      locale: "en",
+    };
+
+    const result = await updateCustomer(testClient, "ctm_123", customerData);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/customers/ctm_123",
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer test",
+        },
+        body: JSON.stringify(customerData),
       }
     );
 
