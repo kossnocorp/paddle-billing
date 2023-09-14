@@ -559,6 +559,74 @@ export function listBusinesses<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Creates a new business for a customer.
+ *
+ * If successful, your response includes a copy of the new business entity.
+ *
+ * @param client - the Paddle API client
+ * @param customerId - Paddle ID of the customer entity to work with
+ * @param body - The details of the business to be created
+ *
+ * @returns the created business
+ */
+export function createBusiness<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  customerId: Paddle.CustomerId,
+  body: PaddleAPI.BusinessCreateBody
+): Promise<PaddleAPI.BusinessCreateResponse> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "customers/" + customerId + "/businesses",
+    body,
+  });
+}
+
+/**
+ * Returns a business for a customer using its ID and related customer ID.
+ *
+ * @param client - the Paddle API client
+ * @param customerId - Paddle ID of the customer entity to work with
+ * @param businessId - Paddle ID of the business entity to work with
+ *
+ * @returns the business entity
+ */
+export function getBusiness<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  customerId: Paddle.CustomerId,
+  businessId: Paddle.BusinessId
+): Promise<PaddleAPI.BusinessGetResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "customers/" + customerId + "/businesses/" + businessId,
+  });
+}
+
+/**
+ * Update a business for a customer using its ID and related customer ID.
+ *
+ * If successful, your response includes a copy of the updated business entity.
+ *
+ * @param client - the Paddle API client
+ * @param customerId - Paddle ID of the customer entity to work with
+ * @param businessId - Paddle ID of the business entity to work with
+ * @param body - the request body containing the business update details
+ *
+ * @returns The updated business entity or an error response
+ */
+export function updateBusiness<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  customerId: Paddle.CustomerId,
+  businessId: string,
+  body: PaddleAPI.BusinessUpdateBody
+): Promise<PaddleAPI.BusinessUpdateResponse> {
+  return paddleFetch(client, {
+    method: "PATCH",
+    path: `customers/${customerId}/businesses/${businessId}`,
+    body,
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;

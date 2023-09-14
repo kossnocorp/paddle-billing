@@ -2,11 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   client,
   createAddress,
+  createBusiness,
   createCustomer,
   createDiscount,
   createPrice,
   createProduct,
   getAddress,
+  getBusiness,
   getCustomer,
   getDiscount,
   getPrice,
@@ -19,6 +21,7 @@ import {
   listProducts,
   paddleFetch,
   updateAddress,
+  updateBusiness,
   updateCustomer,
   updateDiscount,
   updatePrice,
@@ -689,6 +692,94 @@ describe("businesses", () => {
           body: null,
         }
       );
+    });
+  });
+
+  describe("createBusiness", () => {
+    mockFetch();
+
+    it("sends a POST request", async () => {
+      const businessData = {
+        name: "Business Name",
+        company_number: "1234567890",
+        tax_identifier: "GB1234567890",
+        contacts: [
+          {
+            name: "John Doe",
+            email: "johndoe@example.com",
+          },
+        ],
+      };
+
+      const result = await createBusiness(testClient, "ctm_123", businessData);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/customers/ctm_123/businesses",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(businessData),
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+
+  describe("getBusiness", () => {
+    mockFetch();
+
+    it("sends a GET request", async () => {
+      await getBusiness(testClient, "ctm_123", "biz_456");
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/customers/ctm_123/businesses/biz_456",
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
+    });
+  });
+
+  describe("updateBusiness", () => {
+    mockFetch();
+
+    it("sends a PATCH request", async () => {
+      const businessData = {
+        name: "Business Name",
+        company_number: "12345678",
+        tax_identifier: "AB123",
+        status: "active" as const,
+        contacts: [{ name: "John Doe", email: "johndoe@example.com" }],
+      };
+
+      const result = await updateBusiness(
+        testClient,
+        "ctm_123",
+        "bus_456",
+        businessData
+      );
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/customers/ctm_123/businesses/bus_456",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(businessData),
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
     });
   });
 });

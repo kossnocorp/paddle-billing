@@ -1029,6 +1029,9 @@ export namespace PaddleAPI {
 
   //// Update an address
 
+  /**
+   * Address update body.
+   */
   export type AddressUpdateBody = Optional<
     Omit<Paddle.Address, AddressAutoAssignFields>
   >;
@@ -1051,6 +1054,13 @@ export namespace PaddleAPI {
    */
   export interface AddressUpdateResponseSuccess
     extends ResponseBase<Paddle.Address, MetaBasic> {}
+
+  /// Businesses
+
+  /**
+   * The price's auto-assign fields.
+   */
+  export type BusinessAutoAssignFields = "id" | "created_at" | "updated_at";
 
   //// List businesses
 
@@ -1096,6 +1106,84 @@ export namespace PaddleAPI {
    */
   export interface BusinessesListResponseSuccess
     extends ResponseBase<Paddle.Business[], MetaPaginated> {}
+
+  //// Create Business
+
+  /**
+   * The create business request body.
+   */
+  export type BusinessCreateBody = Omit<
+    Paddle.Business,
+    BusinessAutoAssignFields | "status"
+  >;
+
+  /**
+   * The create business response.
+   */
+  export type BusinessCreateResponse =
+    | BusinessCreateResponseError
+    | BusinessCreateResponseSuccess;
+
+  /**
+   * The errored create business response.
+   */
+  export interface BusinessCreateResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful create business response.
+   */
+  export interface BusinessCreateResponseSuccess
+    extends ResponseBase<Paddle.Business, MetaBasic> {}
+
+  //// Get a business
+
+  /**
+   * The response for getBusiness function.
+   */
+  export type BusinessGetResponse =
+    | BusinessGetResponseError
+    | BusinessGetResponseSuccess;
+
+  /**
+   * The error response for getBusiness function.
+   */
+  export interface BusinessGetResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful response for getBusiness function.
+   */
+  export interface BusinessGetResponseSuccess
+    extends ResponseBase<Paddle.Business, MetaBasic> {}
+
+  //// Update a business
+
+  /**
+   * The update business body.
+   */
+  export type BusinessUpdateBody = Partial<
+    Optional<Omit<Paddle.Business, BusinessAutoAssignFields>>
+  >;
+
+  /**
+   * The update business response.
+   */
+  export type BusinessUpdateResponse =
+    | BusinessUpdateResponseError
+    | BusinessUpdateResponseSuccess;
+
+  /**
+   * The errored business update response.
+   */
+  export interface BusinessUpdateResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful business update response.
+   */
+  export interface BusinessUpdateResponseSuccess
+    extends ResponseBase<Paddle.Business, MetaBasic> {}
 
   ///
 

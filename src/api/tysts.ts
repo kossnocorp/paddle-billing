@@ -1,21 +1,25 @@
 import {
   client,
   createAddress,
+  createBusiness,
   createCustomer,
   createDiscount,
   createPrice,
   createProduct,
   getAddress,
+  getBusiness,
   getCustomer,
   getDiscount,
   getPrice,
   getProduct,
   listAddresses,
+  listBusinesses,
   listCustomers,
   listDiscounts,
   listPrices,
   listProducts,
   updateAddress,
+  updateBusiness,
   updateCustomer,
   updateDiscount,
   updatePrice,
@@ -422,13 +426,48 @@ createAddress(api, "ctm_123", {
 
 //// Get address
 
-getAddress(api, "ctm_123", "add_123").then((customer) => {
-  if (customer.error) return;
-  customer.data.city?.toString();
+getAddress(api, "ctm_123", "add_123").then((address) => {
+  if (address.error) return;
+  address.data.city?.toString();
 });
 
 //// Update address
 
 updateAddress(api, "ctm_123", "add_456", {
   city: "Singapore",
+});
+
+/// Bussinesses
+
+//// List businesses
+
+listBusinesses(api, "ctm_123", {
+  order_by: "name[ASC]",
+});
+
+//// Create business
+
+createBusiness(api, "ctm_123", {
+  name: "Business Name",
+  company_number: "1234567890",
+  tax_identifier: "GB1234567890",
+  contacts: [
+    {
+      name: "John Doe",
+      email: "johndoe@example.com",
+    },
+  ],
+});
+
+//// Get business
+
+getBusiness(api, "ctm_123", "biz_123").then((business) => {
+  if (business.error) return;
+  business.data.name.toString();
+});
+
+//// Update businesses
+
+updateBusiness(api, "ctm_123", "biz_123", {
+  name: "ACME Inc.",
 });
