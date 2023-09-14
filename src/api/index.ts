@@ -366,6 +366,27 @@ export function listCustomers<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Creates a new customer with the specified details.
+ *
+ * If successful, your response includes a copy of the new customer entity.
+ *
+ * @param client - the Paddle API client
+ * @param body - The request body containing the customer details
+ *
+ * @returns The created customer
+ */
+export function createCustomer<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  body: PaddleAPI.CustomerCreateBody
+): Promise<PaddleAPI.CustomerCreateResponse> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "customers",
+    body,
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;

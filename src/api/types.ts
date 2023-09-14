@@ -798,7 +798,11 @@ export namespace PaddleAPI {
   /**
    * The price's auto-assign fields.
    */
-  export type CustomerAutoAssignFields = "id" | "created_at" | "updated_at";
+  export type CustomerAutoAssignFields =
+    | "id"
+    | "created_at"
+    | "updated_at"
+    | "marketing_consent";
 
   //// List customers
 
@@ -840,6 +844,37 @@ export namespace PaddleAPI {
    */
   export interface CustomersListResponseSuccess
     extends ResponseBase<Paddle.Customer[], MetaPaginated> {}
+
+  //// Create a customer
+
+  /**
+   * The create customer body.
+   */
+  export type CustomerCreateBody = MakeNullableFieldsOptional<
+    MakeFieldsOptional<
+      Omit<Paddle.Customer, CustomerAutoAssignFields | "status">,
+      "locale"
+    >
+  >;
+
+  /**
+   * The create customer response.
+   */
+  export type CustomerCreateResponse =
+    | CustomerCreateResponseError
+    | CustomerCreateResponseSuccess;
+
+  /**
+   * The errored customer create response.
+   */
+  export interface CustomerCreateResponseError
+    extends ErrorResponse<ErrorCodeCustomers> {}
+
+  /**
+   * The successful customer create response.
+   */
+  export interface CustomerCreateResponseSuccess
+    extends ResponseBase<Paddle.Customer, MetaBasic> {}
 
   ///
 
@@ -897,13 +932,20 @@ export namespace PaddleAPI {
   }
 
   /**
+   * Make all properties in the type optional
+   */
+  export type Optional<Type> = {
+    [Key in keyof Type]?: Type[Key] | undefined;
+  };
+
+  /**
    * Makes the specified fields optional.
    */
   export type MakeFieldsOptional<Type, Field extends keyof Type> = Omit<
     Type,
     Field
   > &
-    Partial<Pick<Type, Field>>;
+    Optional<Pick<Type, Field>>;
 
   /**
    * Lists keys that extend null.

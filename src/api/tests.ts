@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   client,
+  createCustomer,
   createDiscount,
   createPrice,
   createProduct,
@@ -606,6 +607,59 @@ describe("listCustomers", () => {
         method: "GET",
         headers: { Authorization: "Bearer test" },
         body: null,
+      }
+    );
+  });
+});
+
+describe("createCustomer", () => {
+  mockFetch();
+
+  it("sends a POST request to the correct URL", async () => {
+    const customerData = {
+      email: "test@test.com",
+      name: "Test Customer",
+      locale: "en",
+    };
+
+    const result = await createCustomer(testClient, customerData);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/customers",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer test",
+        },
+        body: JSON.stringify(customerData),
+      }
+    );
+
+    expect(result.error).toBeUndefined();
+    expect(!result.error && result.data).toBeInstanceOf(Object);
+  });
+
+  it("excludes undefined body keys", async () => {
+    const customerData = {
+      email: "test2@test.com",
+      name: undefined,
+      locale: undefined,
+    };
+
+    await createCustomer(testClient, customerData);
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/customers",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer test",
+        },
+        body: JSON.stringify({
+          email: "test2@test.com",
+        }),
       }
     );
   });

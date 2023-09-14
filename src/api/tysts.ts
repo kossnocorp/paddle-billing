@@ -1,5 +1,6 @@
 import {
   client,
+  createCustomer,
   createDiscount,
   createPrice,
   createProduct,
@@ -364,4 +365,16 @@ updateDiscount(api, "dsc_123", {
 
 listCustomers(api, {
   order_by: "created_at[ASC]",
+});
+
+//// Create customer
+
+createCustomer(api, {
+  email: "hello@example.com",
+});
+
+createCustomer(api, {
+  email: "hello@example.com",
+  // Allow setting locale to undefined
+  locale: undefined,
 });
