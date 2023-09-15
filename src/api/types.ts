@@ -1225,8 +1225,6 @@ export namespace PaddleAPI {
     | "updated_at"
     | "billed_at";
 
-  // TODO:
-
   /**
    * Represents a transaction response entity with included entities.
    */
@@ -1369,9 +1367,12 @@ export namespace PaddleAPI {
   /**
    * The create transaction response.
    */
-  export type TransactionCreateResponse<DataDef extends CustomDataDef> =
+  export type TransactionCreateResponse<
+    DataDef extends CustomDataDef,
+    Include extends PaddleAPI.TransactionResponseInclude | undefined
+  > =
     | TransactionCreateResponseError
-    | TransactionCreateResponseSuccess<DataDef>;
+    | TransactionCreateResponseSuccess<DataDef, Include>;
 
   /**
    * The errored transaction create response.
@@ -1383,12 +1384,14 @@ export namespace PaddleAPI {
    * The successful transaction create response.
    */
   export interface TransactionCreateResponseSuccess<
-    DataDef extends CustomDataDef
+    DataDef extends CustomDataDef,
+    Include extends PaddleAPI.TransactionResponseInclude | undefined
   > extends ResponseBase<
-      Paddle.Transaction<
+      TransactionWithIncluded<
         Paddle.TimeInterval | null,
         CustomData<DataDef["Price"]>,
-        CustomData<DataDef["Transaction"]>
+        CustomData<DataDef["Transaction"]>,
+        Include
       >,
       MetaBasic
     > {}
@@ -1602,7 +1605,8 @@ export namespace PaddleAPI {
     | `[LT]${string}`
     | `[LTE]${string}`
     | `[GT]${string}`
-    | `[GTE]${string}`;
+    | `[GTE]${string}`
+    | (string & {});
 
   /**
    * The response include query.

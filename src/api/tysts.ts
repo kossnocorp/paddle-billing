@@ -6,24 +6,29 @@ import {
   createDiscount,
   createPrice,
   createProduct,
+  createTransaction,
   getAddress,
   getBusiness,
   getCustomer,
   getDiscount,
+  getInvoice,
   getPrice,
   getProduct,
+  getTransaction,
   listAddresses,
   listBusinesses,
   listCustomers,
   listDiscounts,
   listPrices,
   listProducts,
+  listTransactions,
   updateAddress,
   updateBusiness,
   updateCustomer,
   updateDiscount,
   updatePrice,
   updateProduct,
+  updateTransaction,
 } from ".";
 
 const api = client("test");
@@ -31,6 +36,7 @@ const api = client("test");
 const apiCustomData = client<{
   Product: CustomDataProduct;
   Price: CustomDataPrice;
+  Transaction: CustomDataTransaction;
 }>("test");
 
 interface CustomDataProduct {
@@ -39,6 +45,10 @@ interface CustomDataProduct {
 
 interface CustomDataPrice {
   foo: "bar";
+}
+
+interface CustomDataTransaction {
+  qwe: "123";
 }
 
 /// Products
@@ -85,9 +95,9 @@ createProduct(api, {
 }).then((product) => {
   if (product.error) return;
   // @ts-expect-error: custom_data can be null
-  product.data[0]?.custom_data.hello;
+  product.data.custom_data.hello;
   // @ts-expect-error: custom_data can be null
-  product.data[0]?.custom_data.world;
+  product.data.custom_data.world;
   product.data.custom_data?.hello;
   product.data.custom_data?.world;
 });
@@ -216,9 +226,9 @@ createPrice(api, {
 }).then((price) => {
   if (price.error) return;
   // @ts-expect-error: custom_data can be null
-  price.data[0]?.custom_data.hello;
+  price.data.custom_data.hello;
   // @ts-expect-error: custom_data can be null
-  price.data[0]?.custom_data.world;
+  price.data.custom_data.world;
   price.data.custom_data?.hello;
   price.data.custom_data?.world;
 });
@@ -303,9 +313,9 @@ updatePrice(api, "pri_12", {
 }).then((product) => {
   if (product.error) return;
   // @ts-expect-error: custom_data can be null
-  product.data[0]?.custom_data.hello;
+  product.data.custom_data.hello;
   // @ts-expect-error: custom_data can be null
-  product.data[0]?.custom_data.world;
+  product.data.custom_data.world;
   product.data.custom_data?.hello;
   product.data.custom_data?.world;
 });
@@ -474,5 +484,231 @@ updateBusiness(api, "ctm_123", "biz_123", {
 
 /// Transactions
 
-// OperatorQuery!;
-// k
+//// List transactions
+
+listTransactions(api, {
+  include: {
+    address: true,
+    adjustment: true,
+    adjustments_totals: true,
+    business: true,
+    customer: true,
+    discount: true,
+  },
+}).then((transactions) => {
+  if (transactions.error) return;
+  transactions.data[0]?.address?.id;
+  transactions.data[0]?.adjustment?.[0]?.toString();
+  transactions.data[0]?.adjustments_totals?.total;
+  transactions.data[0]?.business?.id;
+  transactions.data[0]?.customer?.id;
+  transactions.data[0]?.discount?.id;
+  // @ts-expect-error: custom_data can be null
+  transactions.data[0]?.custom_data.nope;
+  // @ts-expect-error: custom_data can be null
+  transactions.data[0]?.custom_data.hello;
+  transactions.data[0]?.custom_data?.nope;
+  transactions.data[0]?.custom_data?.hello;
+});
+
+listTransactions(apiCustomData, {}).then((transactions) => {
+  if (transactions.error) return;
+  // @ts-expect-error: it's not included
+  transactions.data[0]?.adjustment?.[0]?.toString();
+  // @ts-expect-error: it's not included
+  transactions.data[0]?.adjustments_totals?.total;
+  // @ts-expect-error: it's not included
+  transactions.data[0]?.business?.id;
+  // @ts-expect-error: it's not included
+  transactions.data[0]?.customer?.id;
+  // @ts-expect-error: it's not included
+  transactions.data[0]?.discount?.id;
+  transactions.data[0]?.custom_data.qwe;
+  // @ts-expect-error: custom_data is defined
+  transactions.data[0]?.custom_data.asd;
+});
+
+listTransactions(api);
+
+listTransactions(api, {
+  order_by: "created_at[ASC]",
+  billed_at: "[GT]2021-01-01T00:00:00Z",
+});
+
+listTransactions(api, {
+  // @ts-expect-error: invalid field
+  order_by: "nope[ASC]",
+});
+
+//// Create product
+
+createTransaction(api, {
+  items: [],
+  customer_id: "ctm_789",
+  address_id: "add_101",
+  status: "billed",
+  currency_code: "USD",
+  collection_mode: "manual",
+  custom_data: { hello: "world" },
+}).then((transaction) => {
+  if (transaction.error) return;
+  // @ts-expect-error: custom_data can be null
+  transaction.data.custom_data.hello;
+  // @ts-expect-error: custom_data can be null
+  transaction.data.custom_data.world;
+  transaction.data.custom_data?.hello;
+  transaction.data.custom_data?.world;
+});
+
+createTransaction(apiCustomData, {
+  items: [],
+  customer_id: "ctm_789",
+  address_id: "add_101",
+  status: "billed",
+  currency_code: "USD",
+  collection_mode: "manual",
+  custom_data: {
+    qwe: "123",
+    // @ts-expect-error: foo is not a valid custom_data key
+    nope: "nah",
+  },
+}).then((product) => {
+  if (product.error) return;
+  product.data.custom_data.qwe;
+  // @ts-expect-error: world is not a valid custom_data key
+  product.data.custom_data.world;
+});
+
+createTransaction(
+  api,
+  {
+    items: [],
+    customer_id: "ctm_789",
+    address_id: "add_101",
+    status: "billed",
+    currency_code: "USD",
+    collection_mode: "manual",
+    custom_data: { hello: "world" },
+  },
+  {
+    include: {
+      address: true,
+      adjustment: true,
+      adjustments_totals: true,
+      business: true,
+      customer: true,
+      discount: true,
+    },
+  }
+).then((transaction) => {
+  if (transaction.error) return;
+  transaction.data.address?.id;
+  transaction.data.adjustment?.[0]?.toString();
+  transaction.data.adjustments_totals?.total;
+  transaction.data.business?.id;
+  transaction.data.customer?.id;
+  transaction.data.discount?.id;
+});
+
+createTransaction(api, {
+  items: [],
+  customer_id: "ctm_789",
+  address_id: "add_101",
+  status: "billed",
+  currency_code: "USD",
+  collection_mode: "manual",
+}).then((transaction) => {
+  if (transaction.error) return;
+  // @ts-expect-error: it's not included
+  transaction.data.adjustment?.[0]?.toString();
+  // @ts-expect-error: it's not included
+  transaction.data.adjustments_totals?.total;
+  // @ts-expect-error: it's not included
+  transaction.data.business?.id;
+  // @ts-expect-error: it's not included
+  transaction.data.customer?.id;
+  // @ts-expect-error: it's not included
+  transaction.data.discount?.id;
+});
+
+//// Get product
+
+getTransaction(api, "txn_123").then((product) => {
+  if (product.error) return;
+  // @ts-expect-error: custom_data can be null
+  product.data.custom_data.hello;
+  product.data.custom_data?.hello;
+  product.data.custom_data?.nope;
+});
+
+getTransaction(api, "txn_123", {
+  include: {
+    address: true,
+    adjustment: true,
+    adjustments_totals: true,
+    business: true,
+    customer: true,
+    discount: true,
+  },
+}).then((transaction) => {
+  if (transaction.error) return;
+  transaction.data.address?.id;
+  transaction.data.adjustment?.[0]?.toString();
+  transaction.data.adjustments_totals?.total;
+  transaction.data.business?.id;
+  transaction.data.customer?.id;
+  transaction.data.discount?.id;
+});
+
+getTransaction(api, "txn_123").then((product) => {
+  if (product.error) return;
+  // @ts-expect-error: it's not included
+  transaction.data.adjustment?.[0]?.toString();
+  // @ts-expect-error: it's not included
+  transaction.data.adjustments_totals?.total;
+  // @ts-expect-error: it's not included
+  transaction.data.business?.id;
+  // @ts-expect-error: it's not included
+  transaction.data.customer?.id;
+  // @ts-expect-error: it's not included
+  transaction.data.discount?.id;
+});
+
+//// Update product
+
+updateTransaction(api, "txn_123", {
+  status: "billed",
+  custom_data: {
+    hello: "world",
+    foo: "bar",
+  },
+}).then((product) => {
+  if (product.error) return;
+  // @ts-expect-error: custom_data can be null
+  product.data.custom_data.hello;
+  product.data.custom_data?.hello;
+  product.data.custom_data?.nope;
+});
+
+updateTransaction(apiCustomData, "txn_123", {
+  status: "billed",
+  custom_data: {
+    qwe: "123",
+    // @ts-expect-error: foo is not a valid custom_data key
+    foo: "bar",
+  },
+}).then((product) => {
+  if (product.error) return;
+  product.data.custom_data.qwe;
+  // @ts-expect-error: world is not a valid custom_data key
+  product.data.custom_data.world;
+});
+
+/// Invoices
+
+//// Get invoice
+
+getInvoice(api, "txn_123").then((invoice) => {
+  if (invoice.error) return;
+  invoice.data.url;
+});

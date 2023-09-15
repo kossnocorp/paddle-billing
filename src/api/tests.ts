@@ -7,25 +7,31 @@ import {
   createDiscount,
   createPrice,
   createProduct,
+  createTransaction,
   getAddress,
   getBusiness,
   getCustomer,
   getDiscount,
+  getInvoice,
   getPrice,
   getProduct,
+  getTransaction,
   listAddresses,
   listBusinesses,
   listCustomers,
   listDiscounts,
   listPrices,
   listProducts,
+  listTransactions,
   paddleFetch,
+  previewTransaction,
   updateAddress,
   updateBusiness,
   updateCustomer,
   updateDiscount,
   updatePrice,
   updateProduct,
+  updateTransaction,
 } from ".";
 
 global.fetch = vi.fn();
@@ -198,7 +204,7 @@ describe("products", () => {
     mockFetch();
 
     it("sends a POST request", async () => {
-      const productData = {
+      const body = {
         name: "Product Name",
         tax_category: "digital-goods" as const,
         description: "Product Description",
@@ -206,7 +212,7 @@ describe("products", () => {
         custom_data: { key1: "value1", key2: "value2" },
       };
 
-      const result = await createProduct(testClient, productData);
+      const result = await createProduct(testClient, body);
 
       expect(global.fetch).toHaveBeenCalledWith(
         "https://api.paddle.com/products",
@@ -216,7 +222,7 @@ describe("products", () => {
             "Content-Type": "application/json",
             Authorization: "Bearer test",
           },
-          body: JSON.stringify(productData),
+          body: JSON.stringify(body),
         }
       );
 
@@ -246,13 +252,13 @@ describe("products", () => {
     mockFetch();
 
     it("sends a PUT request", async () => {
-      const productData = {
+      const body = {
         name: "Updated Product Name",
         custom_data: { key1: "value1", key2: "value2" },
         status: "active" as const,
       };
 
-      const result = await updateProduct(testClient, "pro_123", productData);
+      const result = await updateProduct(testClient, "pro_123", body);
 
       expect(global.fetch).toHaveBeenCalledWith(
         "https://api.paddle.com/products/pro_123",
@@ -262,7 +268,7 @@ describe("products", () => {
             "Content-Type": "application/json",
             Authorization: "Bearer test",
           },
-          body: JSON.stringify(productData),
+          body: JSON.stringify(body),
         }
       );
 
@@ -303,7 +309,7 @@ describe("prices", () => {
     mockFetch();
 
     it("sends a POST request", async () => {
-      const priceData = {
+      const body = {
         description: "Monthly Subscription",
         product_id: "pro_123" as const,
         unit_price: { currency_code: "USD" as const, amount: "10.00" },
@@ -315,7 +321,7 @@ describe("prices", () => {
         custom_data: { key1: "value1", key2: "value2" },
       };
 
-      const result = await createPrice(testClient, priceData);
+      const result = await createPrice(testClient, body);
 
       expect(global.fetch).toHaveBeenCalledWith(
         "https://api.paddle.com/prices",
@@ -325,7 +331,7 @@ describe("prices", () => {
             "Content-Type": "application/json",
             Authorization: "Bearer test",
           },
-          body: JSON.stringify(priceData),
+          body: JSON.stringify(body),
         }
       );
 
@@ -353,13 +359,13 @@ describe("prices", () => {
 
   describe("updatePrice", () => {
     it("sends a PATCH request", async () => {
-      const priceUpdateBody = {
+      const body = {
         description: "New Subscription Price",
         billing_cycle: { interval: "month" as const, frequency: 1 },
         unit_price: { currency_code: "USD" as const, amount: "10.00" },
       };
 
-      const result = await updatePrice(testClient, "pri_123", priceUpdateBody);
+      const result = await updatePrice(testClient, "pri_123", body);
 
       expect(global.fetch).toHaveBeenCalledWith(
         "https://api.paddle.com/prices/pri_123",
@@ -369,7 +375,7 @@ describe("prices", () => {
             "Content-Type": "application/json",
             Authorization: "Bearer test",
           },
-          body: JSON.stringify(priceUpdateBody),
+          body: JSON.stringify(body),
         }
       );
 
@@ -407,7 +413,7 @@ describe("discounts", () => {
     mockFetch();
 
     it("sends a POST request", async () => {
-      const discountData = {
+      const body = {
         amount: "20",
         description: "20% off",
         type: "percentage" as const,
@@ -421,7 +427,7 @@ describe("discounts", () => {
         expires_at: null,
       };
 
-      const result = await createDiscount(testClient, discountData);
+      const result = await createDiscount(testClient, body);
 
       expect(global.fetch).toHaveBeenCalledWith(
         "https://api.paddle.com/discounts",
@@ -431,7 +437,7 @@ describe("discounts", () => {
             "Content-Type": "application/json",
             Authorization: "Bearer test",
           },
-          body: JSON.stringify(discountData),
+          body: JSON.stringify(body),
         }
       );
 
@@ -464,7 +470,7 @@ describe("discounts", () => {
     mockFetch();
 
     it("sends a PATCH request", async () => {
-      const discountData = {
+      const body = {
         status: "active" as const,
         description: "New Year Sale",
         enabled_for_checkout: true,
@@ -479,7 +485,7 @@ describe("discounts", () => {
         expires_at: "2023-01-01T00:00:00Z",
       };
 
-      const result = await updateDiscount(testClient, "dsc_123", discountData);
+      const result = await updateDiscount(testClient, "dsc_123", body);
 
       expect(global.fetch).toHaveBeenCalledWith(
         "https://api.paddle.com/discounts/dsc_123",
@@ -489,7 +495,7 @@ describe("discounts", () => {
             "Content-Type": "application/json",
             Authorization: "Bearer test",
           },
-          body: JSON.stringify(discountData),
+          body: JSON.stringify(body),
         }
       );
 
@@ -528,13 +534,13 @@ describe("customers", () => {
     mockFetch();
 
     it("sends a POST request", async () => {
-      const customerData = {
+      const body = {
         email: "test@test.com",
         name: "Test Customer",
         locale: "en",
       };
 
-      const result = await createCustomer(testClient, customerData);
+      const result = await createCustomer(testClient, body);
 
       expect(global.fetch).toHaveBeenCalledWith(
         "https://api.paddle.com/customers",
@@ -544,7 +550,7 @@ describe("customers", () => {
             "Content-Type": "application/json",
             Authorization: "Bearer test",
           },
-          body: JSON.stringify(customerData),
+          body: JSON.stringify(body),
         }
       );
 
@@ -577,14 +583,14 @@ describe("customers", () => {
     mockFetch();
 
     it("sends a PATCH request", async () => {
-      const customerData = {
+      const body = {
         name: "Updated Customer Name",
         email: "updatedcustomer@example.com",
         status: "active" as const,
         locale: "en",
       };
 
-      const result = await updateCustomer(testClient, "ctm_123", customerData);
+      const result = await updateCustomer(testClient, "ctm_123", body);
 
       expect(global.fetch).toHaveBeenCalledWith(
         "https://api.paddle.com/customers/ctm_123",
@@ -594,7 +600,7 @@ describe("customers", () => {
             "Content-Type": "application/json",
             Authorization: "Bearer test",
           },
-          body: JSON.stringify(customerData),
+          body: JSON.stringify(body),
         }
       );
 
@@ -633,7 +639,7 @@ describe("addresses", () => {
     mockFetch();
 
     it("sends a POST request", async () => {
-      const addressData = {
+      const body = {
         country_code: "US" as const,
         description: "Main Address",
         first_line: "123 Main St",
@@ -643,7 +649,7 @@ describe("addresses", () => {
         region: "California",
       };
 
-      const result = await createAddress(testClient, "ctm_123", addressData);
+      const result = await createAddress(testClient, "ctm_123", body);
 
       expect(global.fetch).toHaveBeenCalledWith(
         `https://api.paddle.com/customers/ctm_123/addresses`,
@@ -653,7 +659,7 @@ describe("addresses", () => {
             "Content-Type": "application/json",
             Authorization: "Bearer test",
           },
-          body: JSON.stringify(addressData),
+          body: JSON.stringify(body),
         }
       );
 
@@ -686,7 +692,7 @@ describe("addresses", () => {
     mockFetch();
 
     it("sends a PATCH request", async () => {
-      const addressData = {
+      const body = {
         description: "Work Address",
         first_line: "123 Elm Street",
         second_line: null,
@@ -701,7 +707,7 @@ describe("addresses", () => {
         testClient,
         "ctm_123",
         "add_456",
-        addressData
+        body
       );
 
       expect(global.fetch).toHaveBeenCalledWith(
@@ -712,7 +718,7 @@ describe("addresses", () => {
             "Content-Type": "application/json",
             Authorization: "Bearer test",
           },
-          body: JSON.stringify(addressData),
+          body: JSON.stringify(body),
         }
       );
 
@@ -751,7 +757,7 @@ describe("businesses", () => {
     mockFetch();
 
     it("sends a POST request", async () => {
-      const businessData = {
+      const body = {
         name: "Business Name",
         company_number: "1234567890",
         tax_identifier: "GB1234567890",
@@ -763,7 +769,7 @@ describe("businesses", () => {
         ],
       };
 
-      const result = await createBusiness(testClient, "ctm_123", businessData);
+      const result = await createBusiness(testClient, "ctm_123", body);
 
       expect(global.fetch).toHaveBeenCalledWith(
         "https://api.paddle.com/customers/ctm_123/businesses",
@@ -773,7 +779,7 @@ describe("businesses", () => {
             "Content-Type": "application/json",
             Authorization: "Bearer test",
           },
-          body: JSON.stringify(businessData),
+          body: JSON.stringify(body),
         }
       );
 
@@ -803,7 +809,7 @@ describe("businesses", () => {
     mockFetch();
 
     it("sends a PATCH request", async () => {
-      const businessData = {
+      const body = {
         name: "Business Name",
         company_number: "12345678",
         tax_identifier: "AB123",
@@ -815,7 +821,7 @@ describe("businesses", () => {
         testClient,
         "ctm_123",
         "bus_456",
-        businessData
+        body
       );
 
       expect(global.fetch).toHaveBeenCalledWith(
@@ -826,12 +832,173 @@ describe("businesses", () => {
             "Content-Type": "application/json",
             Authorization: "Bearer test",
           },
-          body: JSON.stringify(businessData),
+          body: JSON.stringify(body),
         }
       );
 
       expect(result.error).toBeUndefined();
       expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+});
+
+describe("transactions", () => {
+  describe("listTransactions", () => {
+    mockFetch();
+
+    it("sends a GET request", async () => {
+      await listTransactions(testClient, {
+        created_at: "2023-04-18T17:03:26",
+        customer_id: ["ctm_123", "ctm_456"],
+        id: ["txn_123", "txn_456"],
+        include: { customer: true, address: true },
+        order_by: ["created_at[ASC]", "id[DESC]"],
+        per_page: 10,
+        subscription_id: "sub_123",
+      });
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/transactions?created_at=2023-04-18T17%3A03%3A26&customer_id=ctm_123%2Cctm_456&id=txn_123%2Ctxn_456&include=customer%2Caddress&order_by=created_at%5BASC%5D%2Cid%5BDESC%5D&per_page=10&subscription_id=sub_123",
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
+    });
+  });
+
+  describe("createTransaction", () => {
+    mockFetch();
+
+    it("sends a POST request", async () => {
+      const body = {
+        items: [],
+        customer_id: "ctm_789" as const,
+        address_id: "add_101" as const,
+        status: "billed" as const,
+        currency_code: "USD" as const,
+        collection_mode: "manual" as const,
+        custom_data: { key1: "value1", key2: "value2" },
+      };
+
+      const result = await createTransaction(testClient, body);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/transactions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+
+  describe("getTransaction", () => {
+    mockFetch();
+
+    it("sends a GET request", async () => {
+      await getTransaction(testClient, "txn_123", {
+        include: { address: true, customer: true },
+      });
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/transactions/txn_123?include=address%2Ccustomer",
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
+    });
+  });
+
+  describe("updateTransaction", () => {
+    mockFetch();
+
+    it("sends a PATCH request", async () => {
+      const body = {
+        status: "billed" as const,
+        customer_id: "ctm_123" as const,
+        address_id: "add_123" as const,
+        business_id: "biz_123" as const,
+        currency_code: "USD" as const,
+        collection_mode: "manual" as const,
+      };
+
+      const result = await updateTransaction(testClient, "txn_123", body);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/transactions/txn_123",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+
+  describe("previewTransaction", () => {
+    it("sends a POST request", async () => {
+      const body = {
+        items: [],
+        customer_id: "ctm_321" as const,
+        currency_code: "USD" as const,
+        discount_id: "dsc_456" as const,
+        customer_ip_address: "192.0.2.0",
+        address: { country: "US", postcode: "90210" },
+        ignore_trials: true,
+      };
+
+      const result = await previewTransaction(testClient, body);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/transactions/preview",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+});
+
+describe("invoices", () => {
+  describe("getInvoice", () => {
+    mockFetch();
+
+    it("sends a GET request", async () => {
+      await getInvoice(testClient, "txn_123");
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        `https://api.paddle.com/transactions/txn_123/invoice`,
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
     });
   });
 });

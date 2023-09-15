@@ -627,6 +627,197 @@ export function updateBusiness<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/// Transactions
+
+/**
+ * Returns a paginated list of transactions. Uses the query parameters to
+ * filter the results.
+ *
+ * Each transaction includes certain properties by default. Utilize
+ * the `include` parameter to include related entities in the response.
+ *
+ * @param client - the Paddle API client
+ * @param query - the query parameters to filter the list of transactions
+ *
+ * @returns list of transactions
+ */
+export function listTransactions<
+  DataDef extends PaddleAPI.CustomDataDef,
+  Include extends PaddleAPI.TransactionResponseInclude | undefined
+>(
+  client: PaddleAPI.Client<DataDef>,
+  query?: PaddleAPI.TransactionsListQuery<Include>
+): Promise<PaddleAPI.TransactionsListResponse<DataDef, Include>> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "transactions",
+    query,
+  });
+}
+
+/**
+ * Creates a new transaction.
+ *
+ * Transactions are typically created with the status of draft or
+ * ready initially:
+ *
+ * Draft transactions have items against them, but don't have all of
+ * the required fields for billing.
+ *
+ * Paddle creates draft transactions automatically when a checkout is opened.
+ *
+ * Paddle automatically marks transactions as ready when all of the required
+ * fields are present for billing. This includes customer_id and address_id
+ * for automatically-collected transactions, and billing_details
+ * for manually-collected transactions.
+ *
+ * The collection_mode against a transaction determines how Paddle tries
+ * to collect for payment.
+ *
+ * @param client - the Paddle API client
+ * @param body - the request body containing the transaction details
+ * @param query - the query parameters
+ *
+ * @returns the created transaction
+ */
+export function createTransaction<
+  DataDef extends PaddleAPI.CustomDataDef,
+  Include extends PaddleAPI.TransactionResponseInclude | undefined
+>(
+  client: PaddleAPI.Client<DataDef>,
+  body: PaddleAPI.TransactionCreateBody<DataDef>,
+  query?: PaddleAPI.TransactionCreateQuery<Include>
+): Promise<PaddleAPI.TransactionCreateResponse<DataDef, Include>> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "transactions",
+    body,
+    query,
+  });
+}
+
+/**
+ * Returns a transaction using its ID.
+ *
+ * Use the include parameter to include related entities in the response.
+ *
+ * @param client - the Paddle API client
+ * @param transactionId - Paddle ID of the transaction entity to work with
+ * @param query - The query parameters to include related entities in the response
+ *
+ * @returns the transaction
+ */
+export function getTransaction<
+  DataDef extends PaddleAPI.CustomDataDef,
+  Include extends PaddleAPI.TransactionResponseInclude | undefined
+>(
+  client: PaddleAPI.Client<DataDef>,
+  transactionId: Paddle.TransactionId,
+  query?: PaddleAPI.TransactionGetQuery<Include>
+): Promise<PaddleAPI.TransactionGetResponse<DataDef, Include>> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "transactions/" + transactionId,
+    query,
+  });
+}
+
+/**
+ * Updates a transaction using its ID.
+ *
+ * You can update transactions that are draft or ready. billed and completed
+ * transactions are considered records for tax and legal purposes, so they
+ * can't be changed.
+ *
+ * @param client - the Paddle API client
+ * @param transactionId - Paddle ID of the transaction
+ * @param body - the request body containing the transaction update details
+ *
+ * @returns the updated transaction
+ */
+export function updateTransaction<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  transactionId: Paddle.TransactionId,
+  body: PaddleAPI.TransactionUpdateBody<DataDef>
+): Promise<PaddleAPI.TransactionUpdateResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "PATCH",
+    path: "transactions/" + transactionId,
+    body,
+  });
+}
+
+/**
+ * Previews a transaction without creating a transaction entity. Typically
+ * used for creating more advanced, dynamic pricing pages where users can
+ * build their own plans.
+ *
+ * You can provide location information to preview a transaction. Paddle
+ * uses this to calculate tax. You can provide one of: customer_ip_address,
+ * address, or customer_id, address_id, and business_id.
+ *
+ * When supplying items, you can exclude items from the total calculation
+ * using the include_in_totals boolean.
+ *
+ * By default, recurring items with trials are considered to have a zero charge
+ * when previewing. Set ignore_trials to true to ignore trial periods against
+ * prices for transaction preview calculations.
+ *
+ * If successful, your response includes the data you sent with a details
+ * object that includes totals for the supplied prices.
+ *
+ * Transaction previews do not create transactions, so no id is returned.
+ *
+ * @param client - the Paddle API client
+ * @param body - the request body containing the preview transaction details
+ *
+ * @returns the previewed transaction
+ */
+export function previewTransaction<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  body: PaddleAPI.TransactionPreviewBody<DataDef>
+): Promise<PaddleAPI.TransactionPreviewResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "transactions/preview",
+    body,
+  });
+}
+
+/// Invoices
+
+/**
+ * Returns a link to an invoice PDF for a transaction.
+ *
+ * Invoice PDFs are created for both automatically and manually-collected
+ * transactions.
+ *
+ * The PDF for manually-collected transactions includes payment terms, purchase
+ * order number, and notes for your customer. It's a demand for payment from
+ * your customer.
+ *
+ * The PDF for automatically-collected transactions lets your customer know
+ * that payment was taken successfully. Customers may require this for
+ * tax-reporting purposes.
+ *
+ * The link returned is not a permanent link. It expires at the date and
+ * time returned in the Expires header.
+ *
+ * @param client - the Paddle API client
+ * @param transactionId - Paddle ID of the transaction entity to work with
+ *
+ * @returns a link to an invoice PDF for a transaction
+ */
+export function getInvoice<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  transactionId: Paddle.TransactionId
+): Promise<PaddleAPI.InvoiceGetResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "transactions/" + transactionId + "/invoice",
+  });
+}
+
 const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;
