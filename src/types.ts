@@ -459,7 +459,7 @@ export namespace Paddle {
    * Represents the transaction entity.
    */
   export interface Transaction<
-    BillingCycle extends TimeInterval | null,
+    BillingCycle extends TimeInterval | null = TimeInterval | null,
     PriceData extends CustomData = CustomData,
     TransactionData extends CustomData = CustomData
   > {
@@ -497,6 +497,8 @@ export namespace Paddle {
     discount_id: DiscountId | null;
     /** Details for invoicing. */
     billing_details: BillingDetails | null;
+    /**  */
+    billing_period: TimePeriod | null;
     /** List of items on this transaction. */
     items: TransactionItem<BillingCycle, PriceData>[];
     /** Details for this transaction. */
@@ -724,6 +726,38 @@ export namespace Paddle {
    * Transaction item ID.
    */
   export type TransactionItemId = `txnitm_${string}`;
+
+  /**
+   * Object containing totals for all adjustments on a transaction.
+   */
+  export interface AdjustmentsTotals {
+    /** Total before tax. */
+    subtotal: string;
+    /** Total tax on the subtotal. */
+    tax: string;
+    /** Total after tax. */
+    total: string;
+    /** Total fee taken by Paddle. */
+    fee: string;
+    /** Total earnings. This is the subtotal minus the Paddle fee. */
+    earnings: string;
+    /** Breakdown of the total adjustments by adjustment action. */
+    breakdown: AdjustmentsTotalsBreakdown;
+    /** Three-letter ISO 4217 currency code used for adjustments for this transaction. */
+    currency_code: CurrencyCode;
+  }
+
+  /**
+   * Breakdown of the total adjustments by adjustment action.
+   */
+  export interface AdjustmentsTotalsBreakdown {
+    /** Total amount of credit adjustments. */
+    credit: string;
+    /** Total amount of refund adjustments. */
+    refund: string;
+    /** Total amount of chargeback adjustments. */
+    chargeback: string;
+  }
 
   /**
    * List of payment attempts for this transaction.

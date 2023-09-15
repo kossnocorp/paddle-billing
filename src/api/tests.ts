@@ -114,6 +114,58 @@ describe("paddleFetch", () => {
       }
     );
   });
+
+  it("transforms query operators", async () => {
+    await paddleFetch(
+      { key: "test" },
+      {
+        method: "GET",
+        path: "products",
+        query: {
+          a: "[GT]ok",
+          b: "[GTE]ok",
+          c: "[LT]ok",
+          d: "[LTE]ok",
+          e: "ok",
+        },
+      }
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/products?a%5BGT%5D=ok&b%5BGTE%5D=ok&c%5BLT%5D=ok&d%5BLTE%5D=ok&e=ok",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
+  });
+
+  it("transforms include query parameter", async () => {
+    await paddleFetch(
+      { key: "test" },
+      {
+        method: "GET",
+        path: "products",
+        query: {
+          include: {
+            prices: true,
+            something: false,
+            else: true,
+          },
+        },
+      }
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://api.paddle.com/products?include=prices%2Celse",
+      {
+        method: "GET",
+        headers: { Authorization: "Bearer test" },
+        body: null,
+      }
+    );
+  });
 });
 
 describe("products", () => {
@@ -124,7 +176,7 @@ describe("products", () => {
       await listProducts(testClient, {
         after: "qwe",
         id: ["pro_123", "pro_456"],
-        include: "prices",
+        include: { prices: true },
         order_by: ["created_at[ASC]", "name[DESC]"],
         per_page: 10,
         status: "active",

@@ -46,7 +46,7 @@ interface CustomDataPrice {
 //// List products
 
 listProducts(api, {
-  include: "prices",
+  include: { prices: true },
 }).then((products) => {
   if (products.error) return;
   products.data[0]?.prices[0]?.id;
@@ -471,3 +471,8 @@ getBusiness(api, "ctm_123", "biz_123").then((business) => {
 updateBusiness(api, "ctm_123", "biz_123", {
   name: "ACME Inc.",
 });
+
+/// Transactions
+
+// OperatorQuery!;
+// k

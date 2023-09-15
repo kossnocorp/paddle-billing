@@ -265,6 +265,11 @@ export namespace PaddleAPI {
   export type ProductInclude = "prices";
 
   /**
+   * The product's include map.
+   */
+  export type ProductResponseInclude = ResponseInclude<ProductInclude>;
+
+  /**
    * The product's auto-assign fields.
    */
   export type ProductAutoAssignFields = "id" | "created_at";
@@ -275,7 +280,7 @@ export namespace PaddleAPI {
    * The products list query.
    */
   export interface ProductsListQuery<
-    Include extends ProductInclude | undefined
+    Include extends ProductResponseInclude | undefined
   > {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
@@ -303,7 +308,7 @@ export namespace PaddleAPI {
    */
   export type ProductsListResponse<
     DataDef extends CustomDataDef,
-    Include extends ProductInclude | undefined
+    Include extends ProductResponseInclude | undefined
   > = ProductsListResponseError | ProductsListResponseSuccess<DataDef, Include>;
 
   /**
@@ -317,7 +322,7 @@ export namespace PaddleAPI {
    */
   export interface ProductsListResponseSuccess<
     DataDef extends CustomDataDef,
-    Include extends ProductInclude | undefined
+    Include extends ProductResponseInclude | undefined
   > extends ResponseBase<
       ProductsListDataItem<
         CustomData<DataDef["Price"]>,
@@ -333,12 +338,14 @@ export namespace PaddleAPI {
   export interface ProductsListDataItem<
     PriceData extends Paddle.CustomData,
     ProductData extends Paddle.CustomData,
-    Include extends ProductInclude | undefined
+    Include extends ProductResponseInclude | undefined
   > extends Paddle.Product<ProductData> {
     /** The product prices */
-    prices: undefined extends Include
-      ? never
-      : Paddle.Price<Paddle.TimeInterval | null, PriceData>[];
+    prices: ResponseIncludedField<
+      Include,
+      "prices",
+      Paddle.Price<Paddle.TimeInterval | null, PriceData>[]
+    >;
   }
 
   //// Create a product
@@ -632,7 +639,7 @@ export namespace PaddleAPI {
   /**
    * The update price body.
    */
-  export type PriceUpdateBody<DataDef extends CustomDataDef> = Partial<
+  export type PriceUpdateBody<DataDef extends CustomDataDef> = Optional<
     Omit<
       Paddle.Price<Paddle.TimeInterval | null, CustomData<DataDef["Price"]>>,
       PriceAutoAssignFields
@@ -1162,8 +1169,8 @@ export namespace PaddleAPI {
   /**
    * The update business body.
    */
-  export type BusinessUpdateBody = Partial<
-    Optional<Omit<Paddle.Business, BusinessAutoAssignFields>>
+  export type BusinessUpdateBody = Optional<
+    Omit<Paddle.Business, BusinessAutoAssignFields>
   >;
 
   /**
@@ -1185,6 +1192,398 @@ export namespace PaddleAPI {
   export interface BusinessUpdateResponseSuccess
     extends ResponseBase<Paddle.Business, MetaBasic> {}
 
+  /// Transactions
+
+  /**
+   * The transaction includes.
+   */
+  export type TransactionInclude =
+    | "address"
+    | "adjustment"
+    | "adjustments_totals"
+    | "business"
+    | "customer"
+    | "discount";
+
+  /**
+   * The transactions's include map.
+   */
+  export type TransactionResponseInclude = ResponseInclude<TransactionInclude>;
+
+  /**
+   * Transaction's auto-assign fields.
+   */
+  export type TransactionAutoAssignFields =
+    | "id"
+    | "origin"
+    | "subscription_id"
+    | "invoice_id"
+    | "invoice_number"
+    | "details"
+    | "checkout"
+    | "created_at"
+    | "updated_at"
+    | "billed_at";
+
+  // TODO:
+
+  /**
+   * Represents a transaction response entity with included entities.
+   */
+  export interface TransactionWithIncluded<
+    BillingCycle extends Paddle.TimeInterval | null,
+    PriceData extends Paddle.CustomData,
+    TransactionData extends Paddle.CustomData,
+    Include extends TransactionResponseInclude | undefined
+  > extends Paddle.Transaction<BillingCycle, PriceData, TransactionData> {
+    /** The address object related to the transaction */
+    address: ResponseIncludedField<Include, "address", Paddle.Address>;
+    /** The array of adjustments related to the transaction */
+    adjustment: ResponseIncludedField<
+      Include,
+      "adjustment",
+      Paddle.Adjustment[]
+    >;
+    /** The object that includes totals for all adjustments against the transaction */
+    adjustments_totals: ResponseIncludedField<
+      Include,
+      "adjustments_totals",
+      Paddle.AdjustmentsTotals
+    >;
+    /** The business object related to the transaction */
+    business: ResponseIncludedField<Include, "business", Paddle.Business>;
+    /** The customer object related to the transaction */
+    customer: ResponseIncludedField<Include, "customer", Paddle.Customer>;
+    /** The discount object related to the transaction */
+    discount: ResponseIncludedField<Include, "discount", Paddle.Discount>;
+  }
+
+  //// List transactions
+
+  /**
+   * The transactions list query.
+   */
+  export interface TransactionsListQuery<
+    Include extends TransactionResponseInclude | undefined
+  > {
+    /** Return entities after the specified cursor. Used for working through
+     * paginated results. */
+    after?: string | undefined;
+    /** Return entities billed at a specific time. Pass an RFC 3339 datetime
+     * string, or use [LT] (less than), [LTE] (less than or equal to),
+     * [GT] (greater than), or [GTE] (greater than or equal to) operators.
+     * For example, billed_at=2023-04-18T17:03:26 or
+     * billed_at[LT]=2023-04-18T17:03:26. */
+    billed_at?: OperatorQuery | undefined;
+    /** Return entities that match the specified collection mode. */
+    collection_mode?: Paddle.CollectionMode | undefined;
+    /** Return entities created at a specific time */
+    created_at?: string | undefined;
+    /** Return entities related to the specified customer */
+    customer_id?: Paddle.CustomerId | Paddle.CustomerId[] | undefined;
+    /** Return only the IDs specified */
+    id?: Paddle.TransactionId | Paddle.TransactionId[] | undefined;
+    /** Include related entities in the response */
+    include?: Include;
+    /** Return entities that match the invoice number */
+    invoice_number?: string | string[] | undefined;
+    /** Order returned entities by the specified field and direction */
+    order_by?:
+      | OrderQuery<Paddle.Transaction>
+      | OrderQuery<Paddle.Transaction>[]
+      | undefined;
+    /** Return entities that match the specified status */
+    status?: Paddle.TransactionStatus | Paddle.TransactionStatus[] | undefined;
+    /** Return entities related to the specified subscription */
+    subscription_id?:
+      | Paddle.SubscriptionId
+      | Paddle.SubscriptionId[]
+      | undefined;
+    /** Set how many entities are returned per page */
+    per_page?: number | undefined;
+    /** Return entities updated at a specific time */
+    updated_at?: OperatorQuery | undefined;
+  }
+
+  /**
+   * The transactions list response.
+   */
+  export type TransactionsListResponse<
+    DataDef extends CustomDataDef,
+    Include extends TransactionResponseInclude | undefined
+  > =
+    | TransactionsListResponseError
+    | TransactionsListResponseSuccess<DataDef, Include>;
+
+  /**
+   * The errored transactions list response.
+   */
+  export interface TransactionsListResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful transactions list response.
+   */
+  export interface TransactionsListResponseSuccess<
+    DataDef extends CustomDataDef,
+    Include extends TransactionResponseInclude | undefined
+  > extends ResponseBase<
+      TransactionWithIncluded<
+        Paddle.TimeInterval | null,
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Transaction"]>,
+        Include
+      >[],
+      MetaPaginated
+    > {}
+
+  //// Create a transaction
+
+  /**
+   * The create transaction query.
+   */
+  export interface TransactionCreateQuery<
+    Include extends TransactionResponseInclude | undefined
+  > {
+    include?: Include;
+  }
+
+  /**
+   * The create transaction body.
+   */
+  export type TransactionCreateBody<DataDef extends CustomDataDef> =
+    MakeNullableFieldsOptional<
+      Omit<
+        Paddle.Transaction<
+          Paddle.TimeInterval | null,
+          CustomData<DataDef["Price"]>,
+          CustomData<DataDef["Transaction"]>
+        >,
+        TransactionAutoAssignFields | "status"
+      >
+    > & {
+      /** Status of this transaction. */
+      status?: "billed" | undefined;
+    };
+
+  /**
+   * The create transaction response.
+   */
+  export type TransactionCreateResponse<DataDef extends CustomDataDef> =
+    | TransactionCreateResponseError
+    | TransactionCreateResponseSuccess<DataDef>;
+
+  /**
+   * The errored transaction create response.
+   */
+  export interface TransactionCreateResponseError
+    extends ErrorResponse<ErrorCodeTransactions> {}
+
+  /**
+   * The successful transaction create response.
+   */
+  export interface TransactionCreateResponseSuccess<
+    DataDef extends CustomDataDef
+  > extends ResponseBase<
+      Paddle.Transaction<
+        Paddle.TimeInterval | null,
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Transaction"]>
+      >,
+      MetaBasic
+    > {}
+
+  /// Get a transaction
+
+  /**
+   * The get transaction query.
+   */
+  export interface TransactionGetQuery<
+    Include extends TransactionResponseInclude | undefined
+  > {
+    /** Include related entities in the response. */
+    include?: Include;
+  }
+
+  /**
+   * The get transaction response.
+   */
+  export type TransactionGetResponse<
+    DataDef extends CustomDataDef,
+    Include extends TransactionResponseInclude | undefined
+  > =
+    | TransactionGetResponseError
+    | TransactionGetResponseSuccess<DataDef, Include>;
+
+  /**
+   * The error response of getTransaction function.
+   */
+  export interface TransactionGetResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful transaction get response.
+   */
+  export interface TransactionGetResponseSuccess<
+    DataDef extends CustomDataDef,
+    Include extends TransactionResponseInclude | undefined
+  > extends ResponseBase<
+      TransactionWithIncluded<
+        Paddle.TimeInterval | null,
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Transaction"]>,
+        Include
+      >,
+      MetaBasic
+    > {}
+
+  /// Update a transaction
+
+  /**
+   * The update transaction body.
+   */
+  export type TransactionUpdateBody<DataDef extends CustomDataDef> = Optional<
+    Omit<
+      Paddle.Transaction<
+        Paddle.TimeInterval | null,
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Transaction"]>
+      >,
+      TransactionAutoAssignFields | "status"
+    >
+  > & {
+    /** Status of this transaction. */
+    status?: "billed" | "canceled" | undefined;
+  };
+
+  /**
+   * The update transaction response.
+   */
+  export type TransactionUpdateResponse<DataDef extends CustomDataDef> =
+    | TransactionUpdateResponseError
+    | TransactionUpdateResponseSuccess<DataDef>;
+
+  /**
+   * The errored transaction update response.
+   */
+  export interface TransactionUpdateResponseError
+    extends ErrorResponse<ErrorCodeTransactions> {}
+
+  /**
+   * The successful transaction update response.
+   */
+  export interface TransactionUpdateResponseSuccess<
+    DataDef extends CustomDataDef
+  > extends ResponseBase<
+      Paddle.Transaction<
+        Paddle.TimeInterval,
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Transaction"]>
+      >,
+      MetaBasic
+    > {}
+
+  //// Preview a transaction
+
+  /**
+   * The transacation preview fields.
+   */
+  export type PreviewTransactionFields =
+    | PreviewTransactionFieldsOptional
+    | "items";
+
+  /**
+   * The optional transacation preview fields.
+   */
+  export type PreviewTransactionFieldsOptional =
+    | "customer_id"
+    | "address_id"
+    | "business_id"
+    | "currency_code"
+    | "discount_id";
+
+  /**
+   * The payload for previewing a transaction.
+   */
+  export type TransactionPreviewBody<DataDef extends CustomDataDef> =
+    MakeFieldsOptional<
+      Pick<
+        Paddle.Transaction<
+          Paddle.TimeInterval | null,
+          CustomData<DataDef["Price"]>,
+          CustomData<DataDef["Transaction"]>
+        >,
+        PreviewTransactionFields
+      >,
+      PreviewTransactionFieldsOptional
+    > & {
+      /** IP address for this transaction preview. */
+      customer_ip_address?: string | null;
+      /** Address object to be used for the transaction preview. */
+      address?: object | null;
+      /** Determines whether trials should be ignored in transaction
+       * preview calculations. */
+      ignore_trials?: boolean;
+    };
+
+  /**
+   * The response of the transaction preview API.
+   */
+  export type TransactionPreviewResponse<DataDef extends CustomDataDef> =
+    | TransactionPreviewResponseError
+    | TransactionPreviewResponseSuccess<DataDef>;
+
+  /**
+   * The error response of transaction preview API.
+   */
+  export interface TransactionPreviewResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful response of transaction preview API.
+   */
+  export interface TransactionPreviewResponseSuccess<
+    DataDef extends CustomDataDef
+  > extends ResponseBase<
+      Paddle.Transaction<
+        Paddle.TimeInterval | null,
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Transaction"]>
+      >,
+      MetaBasic
+    > {}
+
+  //// Invoices
+
+  // Get an invoice
+
+  /**
+   * The get invoice response.
+   */
+  export type InvoiceGetResponse =
+    | InvoiceGetResponseError
+    | InvoiceGetResponseSuccess;
+
+  /**
+   * The errored get invoice response.
+   */
+  export interface InvoiceGetResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful get invoice response.
+   */
+  export interface InvoiceGetResponseSuccess
+    extends ResponseBase<InvoiceGetData, MetaBasic> {}
+
+  /**
+   * The get invoice data.
+   */
+  export interface InvoiceGetData {
+    /** URL of the invoice PDF. */
+    url: string;
+  }
+
   ///
 
   /**
@@ -1192,6 +1591,34 @@ export namespace PaddleAPI {
    */
   export type OrderQuery<Type> = keyof Type extends string
     ? `${keyof Type}[ASC]` | `${keyof Type}[DESC]`
+    : never;
+
+  /**
+   * The operator query. Used for filtering by date. Transforms to
+   * Paddle's format:
+   * created_at=[LT]2023-04-18T17:03:26 -> created_at[LT]=2023-04-18T17:03:26
+   */
+  export type OperatorQuery =
+    | `[LT]${string}`
+    | `[LTE]${string}`
+    | `[GT]${string}`
+    | `[GTE]${string}`;
+
+  /**
+   * The response include query.
+   */
+  export type ResponseInclude<Include extends string> = {
+    [Key in Include]?: boolean;
+  };
+
+  export type ResponseIncludedField<
+    Include extends ResponseInclude<Key> | undefined,
+    Key extends string,
+    Field extends any
+  > = Include extends ResponseInclude<Key>
+    ? Include[Key] extends true
+      ? Field
+      : never
     : never;
 
   /**

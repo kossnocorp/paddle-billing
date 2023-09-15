@@ -77,7 +77,7 @@ export async function paddleFetch(
  */
 export function listProducts<
   DataDef extends PaddleAPI.CustomDataDef,
-  Include extends PaddleAPI.ProductInclude | undefined
+  Include extends PaddleAPI.ProductResponseInclude | undefined
 >(
   client: PaddleAPI.Client<DataDef>,
   query?: PaddleAPI.ProductsListQuery<Include>
@@ -631,6 +631,8 @@ const apiURL = `https://api.paddle.com/`;
 
 const sandboxAPIURL = `https://sandbox-api.paddle.com/`;
 
+const operatorRegExp = /^(\[(?:GT|GTE|LT|LTE)\])(.*)/;
+
 function prepareQuery(query: Object | undefined): string {
   const q = new URLSearchParams();
 
@@ -640,10 +642,19 @@ function prepareQuery(query: Object | undefined): string {
 
       if (Array.isArray(value)) {
         const str = value.filter((item) => item !== undefined).join(",");
-        q.append(key, str);
-      } else {
-        q.append(key, value.toString());
+        return q.append(key, str);
+      } else if (key === "include" && value && typeof value === "object") {
+        const val = Object.entries(value)
+          .filter(([_, val]) => val)
+          .map(([key, val]) => key)
+          .join(",");
+        return q.append(key, val);
+      } else if (typeof value === "string") {
+        const [_, op, val] = value.match(operatorRegExp) || [];
+        if (op && val) return q.append(key + op, val);
       }
+
+      q.append(key, value.toString());
     });
 
   const qStr = q.toString();
