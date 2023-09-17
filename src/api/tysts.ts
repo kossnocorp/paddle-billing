@@ -21,6 +21,7 @@ import {
   listDiscounts,
   listPrices,
   listProducts,
+  listSubscriptions,
   listTransactions,
   updateAddress,
   updateBusiness,
@@ -37,6 +38,8 @@ const apiCustomData = client<{
   Product: CustomDataProduct;
   Price: CustomDataPrice;
   Transaction: CustomDataTransaction;
+  Subscription: CustomDataSubscription;
+  SubscriptionItem: CustomDataSubscriptionItem;
 }>("test");
 
 interface CustomDataProduct {
@@ -49,6 +52,14 @@ interface CustomDataPrice {
 
 interface CustomDataTransaction {
   qwe: "123";
+}
+
+interface CustomDataSubscription {
+  sub: "scription";
+}
+
+interface CustomDataSubscriptionItem {
+  item: number;
 }
 
 /// Products
@@ -711,4 +722,52 @@ updateTransaction(apiCustomData, "txn_123", {
 getInvoice(api, "txn_123").then((invoice) => {
   if (invoice.error) return;
   invoice.data.url;
+});
+
+/// Subscriptions
+
+//// List subscriptions
+
+listSubscriptions(api, {
+  order_by: "created_at[ASC]",
+}).then((subscriptions) => {
+  if (subscriptions.error) return;
+
+  const sub = subscriptions.data[0];
+  if (!sub) return;
+  // @ts-expect-error: custom_data can be null
+  sub.custom_data.random;
+  sub.custom_data?.random;
+
+  const item = sub.items[0];
+  if (!item) return;
+  // @ts-expect-error: custom_data can be null
+  item.custom_data.random;
+  item.custom_data?.random;
+  // @ts-expect-error: custom_data can be null
+  item.price.custom_data.random;
+  item.price.custom_data?.random;
+});
+
+listSubscriptions(apiCustomData, {
+  order_by: "created_at[ASC]",
+}).then((subscriptions) => {
+  if (subscriptions.error) return;
+
+  const sub = subscriptions.data[0];
+  if (!sub) return;
+  sub.custom_data.sub;
+  // @ts-expect-error: custom_data is specified
+  sub.custom_data.random;
+
+  const item = sub.items[0];
+  if (!item) return;
+
+  item.custom_data.item.toFixed(2);
+  // @ts-expect-error: custom_data is specified
+  item.custom_data.random;
+
+  item.price.custom_data.foo.at(0);
+  // @ts-expect-error: custom_data is specified
+  item.price.custom_data.random;
 });

@@ -1,6 +1,8 @@
 import { Paddle } from "../types";
 import type { PaddleAPI } from "./types";
 
+/// Generic
+
 /**
  * Creates a Paddle API client.
  *
@@ -818,11 +820,27 @@ export function getInvoice<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
-const apiURL = `https://api.paddle.com/`;
+/**
+ * Returns a paginated list of subscriptions. Use the query parameters to page
+ * through results.
+ *
+ * @param client - the Paddle API client
+ * @param query - the query parameters to filter the list of subscriptions
+ *
+ * @returns list of subscriptions
+ */
+export function listSubscriptions<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  query?: PaddleAPI.SubscriptionsListQuery
+): Promise<PaddleAPI.SubscriptionsListResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "subscriptions",
+    query,
+  });
+}
 
-const sandboxAPIURL = `https://sandbox-api.paddle.com/`;
-
-const operatorRegExp = /^(\[(?:GT|GTE|LT|LTE)\])(.*)/;
+/// Private
 
 function prepareQuery(query: Object | undefined): string {
   const q = new URLSearchParams();
@@ -851,3 +869,9 @@ function prepareQuery(query: Object | undefined): string {
   const qStr = q.toString();
   return qStr ? `?${qStr}` : "";
 }
+
+const apiURL = `https://api.paddle.com/`;
+
+const sandboxAPIURL = `https://sandbox-api.paddle.com/`;
+
+const operatorRegExp = /^(\[(?:GT|GTE|LT|LTE)\])(.*)/;

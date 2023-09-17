@@ -304,7 +304,7 @@ export namespace PaddleAPI {
   }
 
   /**
-   * THe products list response.
+   * The products list response.
    */
   export type ProductsListResponse<
     DataDef extends CustomDataDef,
@@ -1586,6 +1586,65 @@ export namespace PaddleAPI {
     /** URL of the invoice PDF. */
     url: string;
   }
+
+  /// Subscriptions
+
+  //// List subscriptions
+
+  /**
+   * The subscriptions list query.
+   */
+  export interface SubscriptionsListQuery {
+    /** Return entities after the specified cursor. Used for working through
+     * paginated results. */
+    after?: string | undefined;
+    /** Return entities related to the specified customer. */
+    customer_id?: Paddle.CustomerId | Paddle.CustomerId[] | undefined;
+    /** Order returned entities by the specified field and direction
+     * [ASC] or [DESC]). */
+    order_by?:
+      | OrderQuery<Paddle.Subscription>
+      | OrderQuery<Paddle.Subscription>[]
+      | undefined;
+    /** Set how many entities are returned per page. */
+    per_page?: number | undefined;
+    /** Return entities related to the specified price. */
+    price_id?: Paddle.PriceId | Paddle.PriceId[] | undefined;
+    /** Return entities that match the specified status. */
+    status?:
+      | Paddle.SubscriptionStatus
+      | Paddle.SubscriptionStatus[]
+      | undefined;
+  }
+
+  /**
+   * The Subscriptions list response.
+   */
+  export type SubscriptionsListResponse<DataDef extends CustomDataDef> =
+    | SubscriptionsListResponseError
+    | SubscriptionsListResponseSuccess<DataDef>;
+
+  /**
+   * The errored subscriptions list response.
+   */
+  export interface SubscriptionsListResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful subscriptions list response.
+   */
+  export interface SubscriptionsListResponseSuccess<
+    DataDef extends CustomDataDef
+  > extends ResponseBase<
+      Paddle.Subscription<
+        Paddle.CollectionMode,
+        Paddle.TimeInterval | null,
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["SubscriptionItem"]>,
+        CustomData<DataDef["Subscription"]>
+      >[],
+      MetaPaginated
+    > {}
 
   ///
 

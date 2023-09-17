@@ -22,6 +22,7 @@ import {
   listDiscounts,
   listPrices,
   listProducts,
+  listSubscriptions,
   listTransactions,
   paddleFetch,
   previewTransaction,
@@ -993,6 +994,32 @@ describe("invoices", () => {
 
       expect(global.fetch).toHaveBeenCalledWith(
         `https://api.paddle.com/transactions/txn_123/invoice`,
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
+    });
+  });
+});
+
+describe("subscriptions", () => {
+  describe("listSubscriptions", () => {
+    mockFetch();
+
+    it("sends a GET request", async () => {
+      await listSubscriptions(testClient, {
+        after: "abc",
+        customer_id: ["ctm_123", "ctm_456"],
+        order_by: ["created_at[ASC]", "status[DESC]"],
+        per_page: 10,
+        status: "active",
+        price_id: ["pri_123", "pri_456"],
+      });
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/subscriptions?after=abc&customer_id=ctm_123%2Cctm_456&order_by=created_at%5BASC%5D%2Cstatus%5BDESC%5D&per_page=10&status=active&price_id=pri_123%2Cpri_456",
         {
           method: "GET",
           headers: { Authorization: "Bearer test" },

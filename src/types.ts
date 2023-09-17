@@ -230,11 +230,11 @@ export namespace Paddle {
    * Subscription interface.
    */
   export interface Subscription<
-    Mode extends CollectionMode,
-    BillingCycle extends TimeInterval | null,
-    PriceData extends CustomData,
-    SubscriptionItemData extends CustomData,
-    SubscriptionData extends CustomData
+    Mode extends CollectionMode = CollectionMode,
+    BillingCycle extends TimeInterval | null = TimeInterval | null,
+    PriceData extends CustomData = CustomData,
+    SubscriptionItemData extends CustomData = CustomData,
+    SubscriptionData extends CustomData = CustomData
   > {
     /** Unique Paddle ID for this subscription entity, prefixed with sub_. */
     id: SubscriptionId;
