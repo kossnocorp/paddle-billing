@@ -967,6 +967,65 @@ export function updatePaymentMethodTransaction<
   });
 }
 
+/// Charges
+
+/**
+ * Creates a new one-time charge for a subscription. Use to bill non-recurring
+ * items to a subscription.  Non-recurring items are price entities where
+ * the billing_cycle is null.
+ *
+ * If successful, Paddle responds with the updated subscription entity. However,
+ * one-time charges aren't held against the subscription entity, so the charges
+ * billed aren't returned in the response.
+ *
+ * @param client - the Paddle API client
+ * @param params - Paddle ID of the subscription entity to work with
+ * @param body - the request body
+ *
+ * @returns the updated subscription entity
+ */
+export function createCharge<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  subscriptionId: Paddle.SubscriptionId,
+  body: PaddleAPI.ChargeCreateBody
+): Promise<PaddleAPI.SubscriptionUpdateResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "subscriptions/" + subscriptionId + "/charge",
+    body,
+  });
+}
+
+/**
+ * Previews creating a one-time charge for a subscription without billing that
+ * charge. Typically used for previewing calculations before making changes to
+ * a subscription.
+ *
+ * One-time charges are non-recurring items. These are price entities where
+ * the billing_cycle is null.
+ *
+ * If successful, your response includes immediate_transaction,
+ * next_transaction, and recurring_transaction_details so you can see expected
+ * transactions for the changes.
+ *
+ * @param client - the Paddle API client
+ * @param params - Paddle ID of the subscription entity to work with
+ * @param body - the request body
+ *
+ * @returns the updated subscription entity
+ */
+export function previewCharge<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  subscriptionId: Paddle.SubscriptionId,
+  body: PaddleAPI.ChargeCreateBody
+): Promise<PaddleAPI.SubscriptionPreviewUpdateResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "subscriptions/" + subscriptionId + "/charge/preview",
+    body,
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {

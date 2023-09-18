@@ -2001,6 +2001,39 @@ export namespace PaddleAPI {
       MetaBasic
     > {}
 
+  /// One-time charges
+
+  /**
+   * When the charge takes effect.
+   */
+  export type ChargeEffective =
+    | "next_billing_period" // Bill for one-time charges on the next billing period. Paddle adds the charges to the transaction created when the subscription next renews.
+    | "immediately"; // Bill for one-time charges on the next billing period. Paddle adds the charges to the transaction created when the subscription next renews.
+
+  /**
+   * The item to add for billing.
+   */
+  export interface ChargeBillingItem {
+    /** Price entity's Paddle ID to charge for. Must be a non-recurring price. */
+    price_id: Paddle.PriceId;
+    /** Quantity to charge for. */
+    quantity: number;
+  }
+
+  //// Create one-time charge
+
+  /**
+   * The create charge body.
+   */
+  export interface ChargeCreateBody {
+    /** When one-time charges should be billed. */
+    effective_from: ChargeEffective;
+    /** The items to charge according to their quantity. Corresponds to
+     * non-recurring price entities (i.e., items where the billing_cycle
+     * is null). */
+    items: ChargeBillingItem[];
+  }
+
   ///
 
   /**

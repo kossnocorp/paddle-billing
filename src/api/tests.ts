@@ -3,6 +3,7 @@ import {
   client,
   createAddress,
   createBusiness,
+  createCharge,
   createCustomer,
   createDiscount,
   createPrice,
@@ -26,6 +27,7 @@ import {
   listSubscriptions,
   listTransactions,
   paddleFetch,
+  previewCharge,
   previewTransaction,
   previewUpdateSubscription,
   updateAddress,
@@ -1146,6 +1148,64 @@ describe("subscriptions", () => {
           method: "GET",
           headers: { Authorization: "Bearer test" },
           body: null,
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+});
+
+describe("charges", () => {
+  describe("createCharge", () => {
+    mockFetch();
+
+    it("sends a POST request", async () => {
+      const body = {
+        effective_from: "next_billing_period" as const,
+        items: [],
+      };
+
+      const result = await createCharge(testClient, "sub_123", body);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/subscriptions/sub_123/charge",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+
+  describe("previewCharge", () => {
+    mockFetch();
+
+    it("sends a POST request", async () => {
+      const body = {
+        effective_from: "next_billing_period" as const,
+        items: [],
+      };
+
+      const result = await previewCharge(testClient, "sub_123", body);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/subscriptions/sub_123/charge/preview",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(body),
         }
       );
 
