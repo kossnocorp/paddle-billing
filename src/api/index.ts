@@ -1124,6 +1124,28 @@ export function previewCharge<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/// Adjustments
+
+/**
+ * Returns a paginated list of adjustments. Use the query parameters to page
+ * through results.
+ *
+ * @param client - the Paddle API client
+ * @param query - the query parameters to filter the list of adjustments
+ *
+ * @returns list of adjustments
+ */
+export function listAdjustments<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  query?: PaddleAPI.AdjustmentsListQuery
+): Promise<PaddleAPI.AdjustmentsListResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "adjustments",
+    query,
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {

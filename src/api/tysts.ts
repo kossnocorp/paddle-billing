@@ -19,6 +19,7 @@ import {
   getSubscription,
   getTransaction,
   listAddresses,
+  listAdjustments,
   listBusinesses,
   listCustomers,
   listDiscounts,
@@ -1223,4 +1224,15 @@ previewCharge(apiCustomData, "sub_123", {
   item.price.custom_data.foo.at(0);
   // @ts-expect-error: custom_data is specified
   item.price.custom_data.random;
+});
+
+/// Adjustments
+
+//// List adjustments
+
+listAdjustments(api, {
+  status: "rejected",
+}).then((adjustments) => {
+  if (adjustments.error) return;
+  adjustments.data[0]?.credit_applied_to_balance;
 });

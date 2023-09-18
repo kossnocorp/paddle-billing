@@ -2081,6 +2081,57 @@ export namespace PaddleAPI {
     items: ChargeBillingItem[];
   }
 
+  /// Adjustments
+
+  /**
+   * Represents list adjustments query.
+   */
+  export interface AdjustmentsListQuery {
+    /** Return entities for the specified action. */
+    action?: Paddle.AdjustmentAction | undefined;
+    /** Return entities after the specified cursor. Used for working through paginated results. */
+    after?: string | undefined;
+    /** Return entities related to the specified customer. Use a comma-separated list to specify multiple customer IDs. */
+    customer_id?: Paddle.CustomerId | Paddle.CustomerId[] | undefined;
+    /** Order returned entities by the specified field and direction ([ASC] or [DESC]). */
+    order_by?:
+      | OrderQuery<Paddle.Adjustment>
+      | OrderQuery<Paddle.Adjustment>[]
+      | undefined;
+    /** Set how many entities are returned per page. */
+    per_page?: number | undefined;
+    /** Return entities that match the specified status. Use a comma-separated list to specify multiple status values. */
+    status?: Paddle.AdjustmentStatus | Paddle.AdjustmentStatus[] | undefined;
+    /** Return entities related to the specified subscription. Use a comma-separated list to specify multiple subscription IDs. */
+    subscription_id?:
+      | Paddle.SubscriptionId
+      | Paddle.SubscriptionId[]
+      | undefined;
+    /** Return entities related to the specified transaction. Use a comma-separated list to specify multiple transaction IDs. */
+    transaction_id?: Paddle.TransactionId | Paddle.TransactionId[] | undefined;
+    /** Return only the IDs specified. Use a comma separated list to get multiple entities. */
+    id?: Paddle.AdjustmentId | Paddle.AdjustmentId[] | undefined;
+  }
+
+  /**
+   * Represents list adjustments response.
+   */
+  export type AdjustmentsListResponse =
+    | AdjustmentsListResponseError
+    | AdjustmentsListResponseSuccess;
+
+  /**
+   * Represents list adjustments error response.
+   */
+  export interface AdjustmentsListResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * Represents list adjustments success response.
+   */
+  export interface AdjustmentsListResponseSuccess
+    extends ResponseBase<Paddle.Adjustment[], MetaPaginated> {}
+
   ///
 
   /**

@@ -20,6 +20,7 @@ import {
   getSubscription,
   getTransaction,
   listAddresses,
+  listAdjustments,
   listBusinesses,
   listCustomers,
   listDiscounts,
@@ -1287,6 +1288,35 @@ describe("charges", () => {
 
       expect(result.error).toBeUndefined();
       expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+});
+
+describe("adjustments", () => {
+  describe("listAdjustments", () => {
+    mockFetch();
+
+    it("sends a GET request", async () => {
+      await listAdjustments(testClient, {
+        action: "credit",
+        after: "adj_123",
+        customer_id: "ctm_123",
+        order_by: ["created_at[DESC]", "updated_at[DESC]"],
+        per_page: 20,
+        status: "approved",
+        subscription_id: "sub_123",
+        transaction_id: "txn_123",
+        id: "adj_345",
+      });
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/adjustments?action=credit&after=adj_123&customer_id=ctm_123&order_by=created_at%5BDESC%5D%2Cupdated_at%5BDESC%5D&per_page=20&status=approved&subscription_id=sub_123&transaction_id=txn_123&id=adj_345",
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
     });
   });
 });
