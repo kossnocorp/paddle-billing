@@ -2013,4 +2013,68 @@ export namespace Paddle {
    * Occurs when a customer is updated.
    */
   export type EventCustomerUpdated = EventBase<"customer.updated", Customer>;
+
+  /// Notification settings
+
+  /**
+   * Notification settings entities describe subscriptions to events.
+   * They are also called notification destinations.
+   *
+   * You can get notifications for events that happen in your Paddle system
+   * by creating notification destinations.
+   */
+  export interface NotificationSetting {
+    /** Unique Paddle ID for this notification setting, prefixed with
+     * ntfset_. */
+    id: NotificationSettingId;
+    /** Short description for this notification destination. Shown in
+     * the Paddle Dashboard. */
+    description: string;
+    /** Where notifications should be sent for this destination. */
+    type: NotificationSettingType;
+    /** Webhook endpoint URL or email address. */
+    destination: string;
+    /** Whether Paddle should try to deliver events to this notification
+     * destination. */
+    active: boolean;
+    /** API version that returned objects for events should conform to. Must
+     * be a valid version of the Paddle API. Cannot be a version older than your
+     * account default. Defaults to your account default if not included. */
+    api_version: number;
+    /** Whether potentially sensitive fields should be sent to this notification
+     * destination. */
+    include_sensitive_fields: boolean;
+    /** Represents an event type. */
+    subscribed_events: NotificationSettingEvent[];
+    /** Webhook destination secret key, prefixed with pdl_ntfset_.
+     * Used for signature verification. */
+    endpoint_secret_key: string;
+  }
+
+  /**
+   * Represents a notification destination type.
+   */
+  export type NotificationSettingType =
+    | "email" // Deliver to an email address
+    | "url"; // Deliver to a webhook endpoint
+
+  /**
+   * Represents a notification event.
+   */
+  export interface NotificationSettingEvent {
+    /*** Type of event sent by Paddle, in the format entity.event_type. */
+    name: string;
+    /** Short description of this event type. */
+    description: string;
+    /** Group for this event type. Typically the entity that this event
+     * relates to. */
+    group: string;
+    /** List of API versions that this event type supports. */
+    available_versions: number[];
+  }
+
+  /**
+   * Notification setting id.
+   */
+  export type NotificationSettingId = `ntfset_${string}`;
 }
