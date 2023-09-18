@@ -3,6 +3,7 @@ import {
   cancelSubscription,
   client,
   createAddress,
+  createAdjustment,
   createBusiness,
   createCharge,
   createCustomer,
@@ -1317,6 +1318,36 @@ describe("adjustments", () => {
           body: null,
         }
       );
+    });
+  });
+
+  describe("createAdjustment", () => {
+    mockFetch();
+
+    it("sends a POST request", async () => {
+      const body = {
+        action: "refund" as const,
+        items: [],
+        reason: "Customer request",
+        transaction_id: "txn_123" as const,
+      };
+
+      const result = await createAdjustment(testClient, body);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/adjustments",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
     });
   });
 });

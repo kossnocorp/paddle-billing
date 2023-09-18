@@ -1146,6 +1146,41 @@ export function listAdjustments<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Creates an adjustment for one or more transaction items.
+ *
+ * You may create adjustments for billed or completed transactions:
+ *
+ * Where an adjustment is for a manually-collected transaction with the status
+ * of billed (an issued invoice), credit adjustments reduce the balance to pay
+ * on the invoice.
+ *
+ * Where an adjustment is a refund, the total is returned to a customer's
+ * original payment method.
+ *
+ * Refunds must be approved by Paddle. They're created with the status
+ * pending_approval, before moving to approved or rejected.
+ *
+ * Adjustments can apply to some or all items on a transaction. You'll need
+ * the Paddle ID of the transaction to create a refund or credit for, along with
+ * the Paddle ID of any transaction items.
+ *
+ * @param client - the Paddle API client
+ * @param body - the request body containing the adjustment details
+ *
+ * @returns the created adjustment
+ */
+export function createAdjustment<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  body: PaddleAPI.AdjustmentCreateBody
+): Promise<PaddleAPI.AdjustmentCreateResponse> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "adjustments",
+    body,
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {

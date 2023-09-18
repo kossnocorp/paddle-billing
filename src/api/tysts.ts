@@ -2,6 +2,7 @@ import {
   cancelSubscription,
   client,
   createAddress,
+  createAdjustment,
   createBusiness,
   createCharge,
   createCustomer,
@@ -1235,4 +1236,16 @@ listAdjustments(api, {
 }).then((adjustments) => {
   if (adjustments.error) return;
   adjustments.data[0]?.credit_applied_to_balance;
+});
+
+//// Create adjustment
+
+createAdjustment(api, {
+  action: "refund",
+  items: [],
+  reason: "Customer request",
+  transaction_id: "txn_123",
+}).then((adjustment) => {
+  if (adjustment.error) return;
+  adjustment.data.credit_applied_to_balance;
 });

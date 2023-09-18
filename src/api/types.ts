@@ -2083,6 +2083,8 @@ export namespace PaddleAPI {
 
   /// Adjustments
 
+  //// List adjustments
+
   /**
    * Represents list adjustments query.
    */
@@ -2131,6 +2133,49 @@ export namespace PaddleAPI {
    */
   export interface AdjustmentsListResponseSuccess
     extends ResponseBase<Paddle.Adjustment[], MetaPaginated> {}
+
+  //// Create adjustment
+
+  /**
+   * The create adjustment auto-assign fields.
+   */
+  export type AdjustmentCreateAutoAssignFields =
+    | "id"
+    | "subscription_id"
+    | "customer_id"
+    | "credit_applied_to_balance"
+    | "currency_code"
+    | "status"
+    | "totals"
+    | "payout_totals"
+    | "created_at"
+    | "updated_at";
+
+  /**
+   * The create adjustment body.
+   */
+  export type AdjustmentCreateBody = MakeNullableFieldsOptional<
+    Omit<Paddle.Adjustment, AdjustmentCreateAutoAssignFields>
+  >;
+
+  /**
+   * The create adjustment response.
+   */
+  export type AdjustmentCreateResponse =
+    | AdjustmentCreateResponseError
+    | AdjustmentCreateResponseSuccess;
+
+  /**
+   * The errored adjustment create response.
+   */
+  export interface AdjustmentCreateResponseError
+    extends ErrorResponse<ErrorCodeAdjustments> {}
+
+  /**
+   * The successful adjustment create response.
+   */
+  export interface AdjustmentCreateResponseSuccess
+    extends ResponseBase<Paddle.Adjustment, MetaBasic> {}
 
   ///
 
