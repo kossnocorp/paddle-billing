@@ -2305,6 +2305,29 @@ export namespace PaddleAPI {
       MetaPaginated
     > {}
 
+  /// Notification settings
+
+  //// List notification settings
+
+  /**
+   * The list notification settings response.
+   */
+  export type NotificationSettingsListResponse =
+    | NotificationSettingsListResponseError
+    | NotificationSettingsListResponseSuccess;
+
+  /**
+   * The errored list notification settings response.
+   */
+  export interface NotificationSettingsListResponseError
+    extends ErrorResponse<ErrorCodeSubscriptions> {}
+
+  /**
+   * The successful list notification settings response.
+   */
+  export interface NotificationSettingsListResponseSuccess
+    extends ResponseBase<Paddle.EventType[], MetaBasic> {}
+
   ///
 
   /**

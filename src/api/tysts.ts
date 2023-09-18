@@ -26,6 +26,7 @@ import {
   listDiscounts,
   listEventTypes,
   listEvents,
+  listNotificationSettings,
   listPrices,
   listProducts,
   listSubscriptions,
@@ -1481,4 +1482,13 @@ listEvents(apiCustomData).then((events) => {
       return;
     }
   }
+});
+
+/// Notification settings
+
+//// List notification settings
+
+listNotificationSettings(api).then((settings) => {
+  if (settings.error) return;
+  settings.data[0]?.available_versions.join(", ");
 });

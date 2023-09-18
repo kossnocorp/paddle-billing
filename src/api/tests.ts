@@ -27,6 +27,7 @@ import {
   listDiscounts,
   listEventTypes,
   listEvents,
+  listNotificationSettings,
   listPrices,
   listProducts,
   listSubscriptions,
@@ -1421,6 +1422,25 @@ describe("events", () => {
 
       expect(global.fetch).toHaveBeenCalledWith(
         "https://api.paddle.com/events?after=evt_123&order_by=occurred_at%5BDESC%5D&per_page=20",
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
+    });
+  });
+});
+
+describe("notification settings", () => {
+  describe("listNotificationSettings", () => {
+    mockFetch();
+
+    it("sends a GET request", async () => {
+      await listNotificationSettings(testClient);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/notification-settings",
         {
           method: "GET",
           headers: { Authorization: "Bearer test" },

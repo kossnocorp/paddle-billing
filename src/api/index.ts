@@ -1262,6 +1262,28 @@ export function listEvents<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/// Notification settings
+
+/**
+ * Returns a list of notification settings (notification destinations).
+ *
+ * The response is not paginated.
+ *
+ * @param client - the Paddle API client
+ *
+ * @returns list of notification settings
+ */
+export function listNotificationSettings<
+  DataDef extends PaddleAPI.CustomDataDef
+>(
+  client: PaddleAPI.Client<DataDef>
+): Promise<PaddleAPI.NotificationSettingsListResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "notification-settings",
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {
