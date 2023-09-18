@@ -934,6 +934,39 @@ export function previewUpdateSubscription<
   });
 }
 
+/**
+ * Returns a transaction that you can pass to a checkout to let customers update
+ * their payment details. Only for subscriptions where collection_mode
+ * is automatic.
+ *
+ * The transaction returned depends on the status of the related subscription:
+ * - Where a subscription is past_due, it returns the most recent past_due
+ *   transaction.
+ * - Where a subscription is active, it creates a new zero amount transaction
+ *   for the items on a subscription.
+ *
+ * You can use the returned checkout.url, or pass the returned transaction ID
+ * to Paddle.js to open a checkout to present customers with a way of updating
+ * their payment details.
+ *
+ * @param client - the Paddle API client
+ * @param subscriptionId - Paddle ID of the subscription entity to work with
+ *
+ * @returns a transaction that can be passed to a checkout to allow customers to update their payment details
+ */
+export function updatePaymentMethodTransaction<
+  DataDef extends PaddleAPI.CustomDataDef
+>(
+  client: PaddleAPI.Client<DataDef>,
+  subscriptionId: Paddle.SubscriptionId
+): Promise<PaddleAPI.UpdatePaymentMethodTransactionResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "GET",
+    path:
+      "subscriptions/" + subscriptionId + "/update-payment-method-transaction",
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {

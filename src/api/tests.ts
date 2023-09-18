@@ -32,6 +32,7 @@ import {
   updateBusiness,
   updateCustomer,
   updateDiscount,
+  updatePaymentMethodTransaction,
   updatePrice,
   updateProduct,
   updateSubscription,
@@ -1120,6 +1121,31 @@ describe("subscriptions", () => {
             Authorization: "Bearer test",
           },
           body: JSON.stringify(body),
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+
+  describe("updatePaymentMethodTransaction", () => {
+    mockFetch();
+
+    it("sends a GET request", async () => {
+      const subscriptionId = "sub_123";
+
+      const result = await updatePaymentMethodTransaction(
+        testClient,
+        subscriptionId
+      );
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        `https://api.paddle.com/subscriptions/${subscriptionId}/update-payment-method-transaction`,
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
         }
       );
 

@@ -1970,6 +1970,37 @@ export namespace PaddleAPI {
     | "credit" // Changes to the subscription results in a prorated credit.
     | "charge"; // Changes to the subscription results in a prorated charge.
 
+  //// Update payment method transaction
+
+  /**
+   * The update payment method transaction response.
+   */
+  export type UpdatePaymentMethodTransactionResponse<
+    DataDef extends CustomDataDef
+  > =
+    | UpdatePaymentMethodTransactionResponseError
+    | UpdatePaymentMethodTransactionSuccess<DataDef>;
+
+  /**
+   * The errored update payment method transaction response.
+   */
+  export interface UpdatePaymentMethodTransactionResponseError
+    extends ErrorResponse<ErrorCodeSubscriptions> {}
+
+  /**
+   * The successful update payment method transaction response.
+   */
+  export interface UpdatePaymentMethodTransactionSuccess<
+    DataDef extends CustomDataDef
+  > extends ResponseBase<
+      Paddle.Transaction<
+        Paddle.TimeInterval | null,
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Transaction"]>
+      >,
+      MetaBasic
+    > {}
+
   ///
 
   /**

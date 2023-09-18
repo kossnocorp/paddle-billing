@@ -29,6 +29,7 @@ import {
   updateBusiness,
   updateCustomer,
   updateDiscount,
+  updatePaymentMethodTransaction,
   updatePrice,
   updateProduct,
   updateSubscription,
@@ -566,6 +567,7 @@ createTransaction(api, {
   custom_data: { hello: "world" },
 }).then((transaction) => {
   if (transaction.error) return;
+
   // @ts-expect-error: custom_data can be null
   transaction.data.custom_data.hello;
   // @ts-expect-error: custom_data can be null
@@ -586,11 +588,12 @@ createTransaction(apiCustomData, {
     // @ts-expect-error: foo is not a valid custom_data key
     nope: "nah",
   },
-}).then((product) => {
-  if (product.error) return;
-  product.data.custom_data.qwe;
+}).then((transaction) => {
+  if (transaction.error) return;
+
+  transaction.data.custom_data.qwe;
   // @ts-expect-error: world is not a valid custom_data key
-  product.data.custom_data.world;
+  transaction.data.custom_data.world;
 });
 
 createTransaction(
@@ -950,6 +953,41 @@ previewUpdateSubscription(apiCustomData, "sub_123", {
   item.custom_data.item.toFixed(2);
   // @ts-expect-error: custom_data is specified
   item.custom_data.random;
+
+  item.price.custom_data.foo.at(0);
+  // @ts-expect-error: custom_data is specified
+  item.price.custom_data.random;
+});
+
+//// Update payment method transaction
+
+updatePaymentMethodTransaction(api, "sub_123").then((transaction) => {
+  if (transaction.error) return;
+
+  // @ts-expect-error: custom_data can be null
+  transaction.data.custom_data.hello;
+  // @ts-expect-error: custom_data can be null
+  transaction.data.custom_data.world;
+  transaction.data.custom_data?.hello;
+  transaction.data.custom_data?.world;
+
+  const item = transaction.data.items[0];
+  if (!item) return;
+
+  // @ts-expect-error: custom_data can be null
+  item.price.custom_data.random;
+  item.price.custom_data?.random;
+});
+
+updatePaymentMethodTransaction(apiCustomData, "sub_123").then((transaction) => {
+  if (transaction.error) return;
+
+  transaction.data.custom_data.qwe;
+  // @ts-expect-error: world is not a valid custom_data key
+  transaction.data.custom_data.world;
+
+  const item = transaction.data.items[0];
+  if (!item) return;
 
   item.price.custom_data.foo.at(0);
   // @ts-expect-error: custom_data is specified
