@@ -840,6 +840,32 @@ export function listSubscriptions<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Returns a subscription using its ID.
+ *
+ * Use the include parameter to include transaction information in the response.
+ *
+ * @param client - the Paddle API client
+ * @param subscriptionId - Paddle ID of the subscription entity to work with
+ * @param query - include related entities in the response
+ *
+ * @returns a subscription entity with included entities
+ */
+export function getSubscription<
+  DataDef extends PaddleAPI.CustomDataDef,
+  Include extends PaddleAPI.SubscriptionGetResponseInclude | undefined
+>(
+  client: PaddleAPI.Client<DataDef>,
+  subscriptionId: Paddle.SubscriptionId,
+  query?: PaddleAPI.SubscriptionGetQuery<Include>
+): Promise<PaddleAPI.SubscriptionGetResponse<DataDef, Include>> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "subscriptions/" + subscriptionId,
+    query,
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {

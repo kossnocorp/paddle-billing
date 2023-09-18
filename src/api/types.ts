@@ -1589,6 +1589,11 @@ export namespace PaddleAPI {
 
   /// Subscriptions
 
+  /**
+   * The subscription auto-assign fields.
+   */
+  export type SubscriptionAutoAssignFields = "id" | "created_at" | "updated_at";
+
   //// List subscriptions
 
   /**
@@ -1645,6 +1650,167 @@ export namespace PaddleAPI {
       >[],
       MetaPaginated
     > {}
+
+  //// Get subscription
+
+  /**
+   * The subscription get's include query.
+   */
+  export type SubscriptionGetInclude =
+    | "next_transaction"
+    | "recurring_transaction_details";
+
+  /**
+   * The subscription get's include map.
+   */
+  export type SubscriptionGetResponseInclude =
+    ResponseInclude<SubscriptionGetInclude>;
+
+  export interface SubscriptionGetQuery<
+    Include extends SubscriptionGetResponseInclude | undefined
+  > {
+    /** Include related entities in the response. */
+    include?: Include;
+  }
+
+  /**
+   * The get subscription response.
+   */
+  export type SubscriptionGetResponse<
+    DataDef extends CustomDataDef,
+    Include extends SubscriptionGetResponseInclude | undefined
+  > =
+    | SubscriptionGetResponseError
+    | SubscriptionGetResponseSuccess<DataDef, Include>;
+
+  /**
+   * The error response of getProduct function.
+   */
+  export interface SubscriptionGetResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful subscription get response.
+   */
+  export interface SubscriptionGetResponseSuccess<
+    DataDef extends CustomDataDef,
+    Include extends SubscriptionGetResponseInclude | undefined
+  > extends ResponseBase<SubscriptionGetData<DataDef, Include>, MetaBasic> {}
+
+  /**
+   * The subscription get data.
+   */
+  export interface SubscriptionGetData<
+    DataDef extends CustomDataDef,
+    Include extends SubscriptionGetResponseInclude | undefined
+  > extends Paddle.Subscription<
+      Paddle.CollectionMode,
+      Paddle.TimeInterval | null,
+      CustomData<DataDef["Price"]>,
+      CustomData<DataDef["SubscriptionItem"]>,
+      CustomData<DataDef["Subscription"]>
+    > {
+    /** Preview of the next transaction for this subscription. May include
+     * prorated charges that are not yet billed and one-time charges.
+     * Returned when the include parameter is used with the next_transaction
+     * value. null if the subscription is scheduled to cancel or pause. */
+    next_transaction: ResponseIncludedField<
+      Include,
+      "next_transaction",
+      SubscriptionGetDataNextTransaction<CustomData<DataDef["Product"]>>
+    >;
+    /** Preview of the recurring transaction for this subscription. This is what
+     * the customer can expect to be billed when there are no prorated or
+     * one-time charges. Returned when the include parameter is used with
+     * the recurring_transaction_details value.  */
+    recurring_transaction_details: ResponseIncludedField<
+      Include,
+      "recurring_transaction_details",
+      SubscriptionGetDataTransactionDetails<CustomData<DataDef["Product"]>>
+    >;
+  }
+
+  /**
+   * Preview of a transaction.
+   */
+  export interface SubscriptionGetDataNextTransaction<
+    ProductData extends Paddle.CustomData
+  > {
+    /** Billing period for the next transaction. */
+    billing_period: Paddle.TimePeriod;
+    /** Calculated totals for a transaction preview, including discounts, tax,
+     * and currency conversion. Considered the source of truth for totals on
+     * a transaction preview. */
+    details: SubscriptionGetDataTransactionDetails<ProductData>;
+    /** Not documented. TODO: Request documentation from Paddle. */
+    adjustments: unknown[];
+  }
+
+  /**
+   * Transaction preview details.
+   */
+  export interface SubscriptionGetDataTransactionDetails<
+    ProductData extends Paddle.CustomData
+  > {
+    /** List of tax rates applied to this transaction preview. */
+    tax_rates_used: Paddle.TaxRate[];
+    /** Breakdown of the total for a transaction preview. fee and earnings
+     * always return null for transaction previews. */
+    totals: SubscriptionGetDataTransactionTotals;
+    /** Information about line items for this transaction preview. Different
+     * from transaction preview items as they include totals calculated
+     * by Paddle. Considered the source of truth for line item totals. */
+    line_items: SubscriptionGetDataTransactionLineItem<ProductData>[];
+  }
+
+  /**
+   * Breakdown of the total for a transaction.
+   */
+  export interface SubscriptionGetDataTransactionTotals
+    extends Paddle.TotalsBase {
+    /** Total discount as a result of any discounts applied. Except
+     * for percentage discounts, Paddle applies tax to discounts based on
+     * the line item price.tax_mode. If price.tax_mode for a line item
+     * is internal, Paddle removes tax from the discount applied. */
+    discount: string;
+    /** Total credit applied to this transaction. This includes credits applied
+     * using a customer's credit balance and adjustments to a billed
+     * transaction. */
+    credit: string;
+    /** Total due on a transaction after credits and any payments. */
+    balance: string;
+    /** Total due on a transaction after credits but before any payments. */
+    grand_total: string;
+    /** Total fee taken by Paddle for this transaction. null until
+     * the transaction is completed and the fee is processed. */
+    fee: string | null;
+    /** Total earnings for this transaction. This is the total minus
+     * the Paddle fee. null until the transaction is completed and the fee
+     * is processed. */
+    earnings: string | null;
+  }
+
+  /**
+   * Information about line items for this transaction preview.
+   */
+  export interface SubscriptionGetDataTransactionLineItem<
+    ProductData extends Paddle.CustomData
+  > {
+    /** Paddle ID for the price related to this transaction line item */
+    price_id: Paddle.PriceId;
+    /** Quantity of this transaction line item */
+    quantity: number;
+    /** Rate used to calculate tax for this transaction line item */
+    tax_rate: string;
+    /** Breakdown of the charge for one unit in the lowest denomination of
+     * a curreny (e.g. cents for USD) */
+    unit_totals: Paddle.TotalsWithDiscount;
+    /** Breakdown of a charge in the lowest unit of a currency
+     * (e.g. cents for USD) */
+    totals: Paddle.TotalsWithDiscount;
+    /** Related product entity for this trasaction line item price */
+    product: Paddle.Product<ProductData>;
+  }
 
   ///
 

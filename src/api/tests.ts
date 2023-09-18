@@ -15,6 +15,7 @@ import {
   getInvoice,
   getPrice,
   getProduct,
+  getSubscription,
   getTransaction,
   listAddresses,
   listBusinesses,
@@ -1020,6 +1021,26 @@ describe("subscriptions", () => {
 
       expect(global.fetch).toHaveBeenCalledWith(
         "https://api.paddle.com/subscriptions?after=abc&customer_id=ctm_123%2Cctm_456&order_by=created_at%5BASC%5D%2Cstatus%5BDESC%5D&per_page=10&status=active&price_id=pri_123%2Cpri_456",
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
+    });
+  });
+
+  describe("getSubscription", () => {
+    mockFetch();
+
+    it("sends a GET request", async () => {
+      const subscriptionId = "sub_123";
+      await getSubscription(testClient, subscriptionId, {
+        include: { next_transaction: true },
+      });
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        `https://api.paddle.com/subscriptions/${subscriptionId}?include=next_transaction`,
         {
           method: "GET",
           headers: { Authorization: "Bearer test" },

@@ -14,6 +14,7 @@ import {
   getInvoice,
   getPrice,
   getProduct,
+  getSubscription,
   getTransaction,
   listAddresses,
   listBusinesses,
@@ -741,9 +742,11 @@ listSubscriptions(api, {
 
   const item = sub.items[0];
   if (!item) return;
+
   // @ts-expect-error: custom_data can be null
   item.custom_data.random;
   item.custom_data?.random;
+
   // @ts-expect-error: custom_data can be null
   item.price.custom_data.random;
   item.price.custom_data?.random;
@@ -770,4 +773,73 @@ listSubscriptions(apiCustomData, {
   item.price.custom_data.foo.at(0);
   // @ts-expect-error: custom_data is specified
   item.price.custom_data.random;
+});
+
+//// Get subscription
+
+getSubscription(api, "sub_123").then((subscription) => {
+  if (subscription.error) return;
+
+  // @ts-expect-error: custom_data can be null
+  subscription.data.custom_data.random;
+  subscription.data.custom_data?.random;
+
+  const item = subscription.data.items[0];
+  if (!item) return;
+
+  // @ts-expect-error: custom_data can be null
+  item.custom_data.random;
+  item.custom_data?.random;
+
+  // @ts-expect-error: custom_data can be null
+  item.price.custom_data.random;
+  item.price.custom_data?.random;
+});
+
+getSubscription(apiCustomData, "sub_123").then((subscription) => {
+  if (subscription.error) return;
+
+  subscription.data.custom_data.sub;
+  // @ts-expect-error: custom_data is specified
+  subscription.data.custom_data.random;
+
+  const item = subscription.data.items[0];
+  if (!item) return;
+
+  item.custom_data.item.toFixed(2);
+  // @ts-expect-error: custom_data is specified
+  item.custom_data.random;
+
+  item.price.custom_data.foo.at(0);
+  // @ts-expect-error: custom_data is specified
+  item.price.custom_data.random;
+});
+
+getSubscription(api, "sub_123").then((subscription) => {
+  if (subscription.error) return;
+
+  // @ts-expect-error: next_transaction is never
+  subscription.data.next_transaction?.billing_period;
+  // @ts-expect-error: next_transaction is never
+  subscription.data.recurring_transaction_details.tax_rates_used;
+});
+
+getSubscription(api, "sub_123", { include: { next_transaction: true } }).then(
+  (subscription) => {
+    if (subscription.error) return;
+
+    subscription.data.next_transaction?.billing_period;
+    // @ts-expect-error: next_transaction is never
+    subscription.data.recurring_transaction_details.tax_rates_used;
+  }
+);
+
+getSubscription(api, "sub_123", {
+  include: { recurring_transaction_details: true },
+}).then((subscription) => {
+  if (subscription.error) return;
+
+  // @ts-expect-error: next_transaction is never
+  subscription.data.next_transaction?.billing_period;
+  subscription.data.recurring_transaction_details.tax_rates_used;
 });
