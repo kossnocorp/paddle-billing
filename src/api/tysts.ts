@@ -30,6 +30,7 @@ import {
   updateDiscount,
   updatePrice,
   updateProduct,
+  updateSubscription,
   updateTransaction,
 } from ".";
 
@@ -842,4 +843,25 @@ getSubscription(api, "sub_123", {
   // @ts-expect-error: next_transaction is never
   subscription.data.next_transaction?.billing_period;
   subscription.data.recurring_transaction_details.tax_rates_used;
+});
+
+//// Create subscription
+
+updateSubscription(api, "sub_123", {
+  scheduled_change: null,
+  items: [],
+  custom_data: {
+    nope: "okay",
+    what: "ever",
+  },
+});
+
+updateSubscription(apiCustomData, "sub_123", {
+  scheduled_change: null,
+  items: [],
+  custom_data: {
+    sub: "scription",
+    // @ts-expect-error: nope is not a valid custom_data key
+    nope: "okay",
+  },
 });

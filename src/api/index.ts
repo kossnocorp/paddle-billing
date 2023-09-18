@@ -866,6 +866,42 @@ export function getSubscription<
   });
 }
 
+/**
+ * Updates a subscription using its ID.
+ *
+ * When making changes to items on a subscription, you must include
+ * the proration_billing_mode field to tell Paddle how to bill for those
+ * changes. Paddle returns an error if this field is missing when sending items.
+ *
+ * Send the complete list of items that you'd like to be on a subscription —
+ * including existing items. If you omit items, they're removed from
+ * the subscription.
+ *
+ * For each item, send price_id and quantity. Paddle responds with the full
+ * price object for each price. If you're updating an existing item, you can
+ * omit the quantity if you don't want to update it.
+ *
+ * If successful, your response includes a copy of the updated subscription
+ * entity.
+ *
+ * @param client - the Paddle API client
+ * @param subscriptionId - Paddle ID of the subscription entity to work with
+ * @param body - the request body containing the subscription update details
+ *
+ * @returns the updated subscription
+ */
+export function updateSubscription<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  subscriptionId: Paddle.SubscriptionId,
+  body: PaddleAPI.SubscriptionUpdateBody<DataDef>
+): Promise<PaddleAPI.SubscriptionUpdateResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "PATCH",
+    path: "subscriptions/" + subscriptionId,
+    body,
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {

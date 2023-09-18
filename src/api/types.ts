@@ -1396,7 +1396,7 @@ export namespace PaddleAPI {
       MetaBasic
     > {}
 
-  /// Get a transaction
+  //// Get a transaction
 
   /**
    * The get transaction query.
@@ -1440,7 +1440,7 @@ export namespace PaddleAPI {
       MetaBasic
     > {}
 
-  /// Update a transaction
+  //// Update a transaction
 
   /**
    * The update transaction body.
@@ -1556,9 +1556,9 @@ export namespace PaddleAPI {
       MetaBasic
     > {}
 
-  //// Invoices
+  /// Invoices
 
-  // Get an invoice
+  //// Get an invoice
 
   /**
    * The get invoice response.
@@ -1588,11 +1588,6 @@ export namespace PaddleAPI {
   }
 
   /// Subscriptions
-
-  /**
-   * The subscription auto-assign fields.
-   */
-  export type SubscriptionAutoAssignFields = "id" | "created_at" | "updated_at";
 
   //// List subscriptions
 
@@ -1811,6 +1806,69 @@ export namespace PaddleAPI {
     /** Related product entity for this trasaction line item price */
     product: Paddle.Product<ProductData>;
   }
+
+  //// Update subscription
+
+  /**
+   * The subscription auto-assign fields.
+   */
+  export type SubscriptionUpdateAutoAssignFields =
+    | "id"
+    | "status"
+    | "created_at"
+    | "updated_at"
+    | "started_at"
+    | "first_billed_at"
+    | "paused_at"
+    | "canceled_at"
+    | "current_billing_period"
+    | "billing_cycle"
+    | "management_urls";
+
+  /**
+   * The update subscription body.
+   */
+  export type SubscriptionUpdateBody<DataDef extends CustomDataDef> = Optional<
+    Omit<
+      Paddle.Subscription<
+        Paddle.CollectionMode,
+        Paddle.TimeInterval | null,
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["SubscriptionItem"]>,
+        CustomData<DataDef["Subscription"]>
+      >,
+      SubscriptionUpdateAutoAssignFields
+    >
+  >;
+
+  /**
+   * The update subscription response.
+   */
+  export type SubscriptionUpdateResponse<DataDef extends CustomDataDef> =
+    | SubscriptionUpdateResponseError
+    | SubscriptionUpdateResponseSuccess<DataDef>;
+
+  /**
+   * The errored subscription update response.
+   */
+  export interface SubscriptionUpdateResponseError
+    extends ErrorResponse<ErrorCodeSubscriptions> {}
+
+  /**
+   * The successful subscription update response.
+   */
+  export interface SubscriptionUpdateResponseSuccess<
+    DataDef extends CustomDataDef
+  > extends ResponseBase<
+      Paddle.Subscription<
+        Paddle.CollectionMode,
+        Paddle.TimeInterval | null,
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["SubscriptionItem"]>,
+        CustomData<DataDef["Subscription"]>
+      >,
+      MetaBasic
+    > {}
 
   ///
 

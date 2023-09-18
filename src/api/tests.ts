@@ -33,6 +33,7 @@ import {
   updateDiscount,
   updatePrice,
   updateProduct,
+  updateSubscription,
   updateTransaction,
 } from ".";
 
@@ -1047,6 +1048,42 @@ describe("subscriptions", () => {
           body: null,
         }
       );
+    });
+  });
+
+  describe("updateSubscription", () => {
+    mockFetch();
+
+    it("sends a PATCH request", async () => {
+      const body = {
+        customer_id: "ctm_123" as const,
+        address_id: "add_123" as const,
+        business_id: "biz_123" as const,
+        currency_code: "USD" as const,
+        next_billed_at: "2022-12-31T23:59:59Z",
+        collection_mode: "automatic" as const,
+        scheduled_change: null,
+        items: [],
+        custom_data: { key1: "value1", key2: "value2" },
+        proration_billing_mode: "prorate",
+      };
+
+      const result = await updateSubscription(testClient, "sub_123", body);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/subscriptions/sub_123",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
     });
   });
 });
