@@ -166,7 +166,8 @@ export function updateProduct<DataDef extends PaddleAPI.CustomDataDef>(
  * By default, Paddle returns prices that are active. Use the status query
  * parameter to return prices that are archived.
  *
- * Use the include parameter to include the related product entity in the response.
+ * Use the include parameter to include the related product entity in
+ * the response.
  *
  * @param client - the Paddle API client
  * @param query - the query parameters to filter the list of prices
@@ -441,10 +442,11 @@ export function updateCustomer<DataDef extends PaddleAPI.CustomDataDef>(
 /// Addresses
 
 /**
- * Returns a paginated list of addresses for a customer. Use the query parameters to page through results.
+ * Returns a paginated list of addresses for a customer. Use the query
+ * parameters to page through results.
  *
- * By default, Paddle returns addresses that are active. Use the status query parameter to return addresses that are
- * archived.
+ * By default, Paddle returns addresses that are active. Use the status query
+ * parameter to return addresses that are archived.
  *
  * @param client - the Paddle API client
  * @param customerId - Paddle ID of the customer entity to work with
@@ -705,7 +707,8 @@ export function createTransaction<
  *
  * @param client - the Paddle API client
  * @param transactionId - Paddle ID of the transaction entity to work with
- * @param query - The query parameters to include related entities in the response
+ * @param query - The query parameters to include related entities in
+ * the response
  *
  * @returns the transaction
  */
@@ -952,7 +955,8 @@ export function previewUpdateSubscription<
  * @param client - the Paddle API client
  * @param subscriptionId - Paddle ID of the subscription entity to work with
  *
- * @returns a transaction that can be passed to a checkout to allow customers to update their payment details
+ * @returns a transaction that can be passed to a checkout to allow customers
+ * to update their payment details
  */
 export function updatePaymentMethodTransaction<
   DataDef extends PaddleAPI.CustomDataDef
@@ -1177,6 +1181,38 @@ export function createAdjustment<DataDef extends PaddleAPI.CustomDataDef>(
   return paddleFetch(client, {
     method: "POST",
     path: "adjustments",
+    body,
+  });
+}
+
+/// Pricing preview
+
+/**
+ * Previews calculations for one or more prices. Typically used for building
+ * pricing pages.
+ *
+ * You can provide location information when previewing prices. Paddle uses
+ * this to calculate tax. You can provide one of: customer_ip_address, address,
+ * customer_id, address_id, business_id.
+ *
+ * If successful, your response includes the data you sent with a details object
+ * that includes totals for the supplied prices. Each line item includes
+ * formatted_unit_totals and formatted_totals objects that return totals
+ * formatted for the country or region you're working with, including
+ * the currency symbol.
+ *
+ * @param client - the Paddle API client
+ * @param body - the request body containing the details for the products
+ *
+ * @returns object of price details for the products
+ */
+export function previewPrices<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  body: PaddleAPI.PreviewPricesBody
+): Promise<PaddleAPI.PreviewPricesResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "pricing-preview",
     body,
   });
 }

@@ -30,6 +30,7 @@ import {
   listTransactions,
   pauseSubscription,
   previewCharge,
+  previewPrices,
   previewUpdateSubscription,
   resumeSubscription,
   updateAddress,
@@ -1248,4 +1249,41 @@ createAdjustment(api, {
 }).then((adjustment) => {
   if (adjustment.error) return;
   adjustment.data.credit_applied_to_balance;
+});
+
+/// Pricing preview
+
+//// Preview prices
+
+previewPrices(api, { items: [] }).then((result) => {
+  if (result.error) return;
+
+  const item = result.data.details.line_items[0];
+  if (!item) return;
+
+  // @ts-expect-error: custom_data can be null
+  item.price.custom_data.random;
+  item.price.custom_data?.random;
+
+  // @ts-expect-error: custom_data can be null
+  item.product.custom_data.hello;
+  // @ts-expect-error: custom_data can be null
+  item.product.custom_data.world;
+  item.product.custom_data?.hello;
+  item.product.custom_data?.world;
+});
+
+previewPrices(apiCustomData, { items: [] }).then((result) => {
+  if (result.error) return;
+
+  const item = result.data.details.line_items[0];
+  if (!item) return;
+
+  item.price.custom_data.foo.at(0);
+  // @ts-expect-error: custom_data is specified
+  item.price.custom_data.random;
+
+  item.product.custom_data.hello;
+  // @ts-expect-error: world is not a valid custom_data key
+  item.product.custom_data.world;
 });

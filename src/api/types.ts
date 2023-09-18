@@ -2177,6 +2177,168 @@ export namespace PaddleAPI {
   export interface AdjustmentCreateResponseSuccess
     extends ResponseBase<Paddle.Adjustment, MetaBasic> {}
 
+  /// Pricing preview
+
+  //// Preview prices
+
+  /**
+   * The Request body for pricing-previews.
+   */
+  export interface PreviewPricesBody {
+    /** List of items to preview price calculations for. */
+    items: PreviewPricesItem[];
+  }
+
+  /**
+   * Pricing item to preview calculation for.
+   */
+  interface PreviewPricesItem {
+    /** Paddle ID for the price to add to this transaction, prefixed with pri_. */
+    price_id: Paddle.PriceId;
+    /** Quantity of the item. */
+    quantity: number;
+    /** Paddle ID of the customer, prefixed with ctm_. */
+    customer_id?: Paddle.CustomerId | null;
+    /** Paddle ID of the address, prefixed with add_. */
+    address_id?: Paddle.AddressId | null;
+    /** Paddle ID of the business, prefixed with biz_. */
+    business_id?: Paddle.BusinessId | null;
+    /** Supported three-letter ISO 4217 currency code. */
+    currency_code?: string;
+    /** Paddle ID of the discount applied, prefixed with dsc_. */
+    discount_id?: Paddle.DiscountId | null;
+    /** Address for this preview. */
+    address?: PreviewPricesAddress | null;
+    /** IP address for transaction preview. */
+    customer_ip_address?: string | null;
+  }
+
+  /**
+   * Pricing item to preview calculation for.
+   */
+  export interface PreviewPricesAddress {
+    /** ZIP or postal code. */
+    postal_code?: string | null;
+    /** Supported two-letter ISO 3166-1 alpha-2 country code. */
+    country_code: string;
+  }
+
+  /**
+   * Pricing previews response data.
+   */
+  export interface PreviewPricesData<
+    PriceData extends Paddle.CustomData,
+    ProductData extends Paddle.CustomData
+  > {
+    /** Paddle ID of the customer that this preview is for, prefixed with
+     * ctm_. */
+    customer_id?: Paddle.CustomerId | null;
+    /** Paddle ID of the address that this preview is for, prefixed with add_.
+     * Send one of address_id, customer_ip_address, or the address object when
+     * previewing. */
+    address_id?: Paddle.AddressId | null;
+    /** Paddle ID of the business that this preview is for, prefixed with
+     * biz_. */
+    business_id?: Paddle.BusinessId | null;
+    /** Supported three-letter ISO 4217 currency code. */
+    currency_code: Paddle.CurrencyCode;
+    /** Paddle ID of the discount applied to this preview, prefixed with
+     * dsc_. */
+    discount_id?: Paddle.DiscountId | null;
+    /** Address for this preview. Send one of address_id, customer_ip_address,
+     * or the address object when previewing. */
+    address?: PreviewPricesAddress | null;
+    /** IP address for this transaction preview. Send one of address_id,
+     * customer_ip_address, or the address object when previewing. */
+    customer_ip_address?: string | null;
+    /** Calculated totals for a price preview, including discounts, tax,
+     * and currency conversion. */
+    details: PreviewPricesDetails<PriceData, ProductData>;
+  }
+
+  /**
+   * Pricing previews response details.
+   */
+  export interface PreviewPricesDetails<
+    PriceData extends Paddle.CustomData,
+    ProductData extends Paddle.CustomData
+  > {
+    /** Information about line items for this preview. Includes totals
+     * calculated by Paddle. Considered the source of truth for line
+     * item totals. */
+    line_items: PreviewPricesLineItem<PriceData, ProductData>[];
+  }
+
+  /**
+   * Pricing previews response line item.
+   */
+  export interface PreviewPricesLineItem<
+    PriceData extends Paddle.CustomData,
+    ProductData extends Paddle.CustomData
+  > {
+    /** Related price entity for this preview line item. */
+    price: Paddle.Price<Paddle.TimeInterval | null, PriceData>;
+    /** Quantity of this preview line item. */
+    quantity: number;
+    /** Rate used to calculate tax for this preview line item. */
+    tax_rate: string;
+    /** Breakdown of the charge for one unit in the lowest denomination
+     * of a currency. */
+    unit_totals: Paddle.TotalsWithDiscount;
+    /** Breakdown of the charge for one unit in the format of a given
+     * currency. */
+    formatted_unit_totals: Paddle.TotalsWithDiscount;
+    /** The financial breakdown of a charge in the lowest denomination of
+     * a currency. */
+    totals: Paddle.TotalsWithDiscount;
+    /** The financial breakdown of a charge in the format of a given
+     * currency. */
+    formatted_totals: Paddle.TotalsWithDiscount;
+    /** Related product entity for this preview line item price. */
+    product: Paddle.Product<ProductData>;
+    /** List of discounts applied to this preview line item. Empty if no
+     * discounts applied. */
+    discounts: PreviewPricesDiscount[];
+  }
+
+  /**
+   * Preview prices discounts.
+   */
+  export interface PreviewPricesDiscount {
+    /** Related discount entity for this preview line item. */
+    discount: Paddle.Discount;
+    /** Total amount discounted as a result of this discount. */
+    total: string;
+    /** Total amount discounted as a result of this discount in the format of
+     * a given currency. */
+    formatted_total: string;
+  }
+
+  /**
+   * Represents pricing previews response.
+   */
+  export type PreviewPricesResponse<DataDef extends CustomDataDef> =
+    | PreviewPricesResponseError
+    | PreviewPricesResponseSuccess<DataDef>;
+
+  /**
+   * Represents pricing previews error response.
+   */
+  export interface PreviewPricesResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * Represents pricing previews success response.
+   */
+  export interface PreviewPricesResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      PreviewPricesData<
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Product"]>
+      >,
+      MetaPaginated
+    > {}
+
   ///
 
   /**

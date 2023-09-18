@@ -32,6 +32,7 @@ import {
   paddleFetch,
   pauseSubscription,
   previewCharge,
+  previewPrices,
   previewTransaction,
   previewUpdateSubscription,
   resumeSubscription,
@@ -1343,6 +1344,37 @@ describe("adjustments", () => {
             Authorization: "Bearer test",
           },
           body: JSON.stringify(body),
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+});
+
+/// Pricing preview
+
+describe("pricing preview", () => {
+  describe("previewPrices", () => {
+    mockFetch();
+
+    it("sends a POST request", async () => {
+      const previewPriceData = {
+        items: [],
+      };
+
+      const result = await previewPrices(testClient, previewPriceData);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/pricing-preview",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(previewPriceData),
         }
       );
 
