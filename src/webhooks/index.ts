@@ -1,5 +1,5 @@
 import { createHmac } from "crypto";
-import type { PaddleWebhooks } from "./types";
+import type { Paddle } from "../types";
 
 /**
  * Validates Paddle event using the secrete key and the signature.
@@ -14,7 +14,7 @@ export function parseWebhookBody(
   secret: string,
   signature: string,
   body: string
-): PaddleWebhooks.Event | null {
+): Paddle.Event | null {
   const captures = signature.match(/^ts=(\d+);h1=(.+)$/);
   if (!captures) return null;
 

@@ -29,7 +29,7 @@ export namespace Paddle {
     /** Limits on how many times the related product can be purchased
      * at this price. Useful for discount campaigns. */
     quantity: Quantity;
-    /** Whether this entity can be used in Paddle. */
+    /** Whether this entity can be used in  */
     status: EntityStatus;
     /** Your own structured key-value data. */
     custom_data: Data;
@@ -175,7 +175,7 @@ export namespace Paddle {
   }
 
   /**
-   * Whether this entity can be used in Paddle.
+   * Whether this entity can be used in
    */
   export type EntityStatus =
     | "active" // Entity is active and can be used.
@@ -219,10 +219,10 @@ export namespace Paddle {
     image_url: string | null;
     /** Your own structured key-value data. */
     custom_data: Data;
-    /** Whether this entity can be used in Paddle. */
+    /** Whether this entity can be used in  */
     status: EntityStatus;
     /** RFC 3339 datetime string of when this entity was created. Set
-     * automatically by Paddle. */
+     * automatically by  */
     created_at: string;
   }
 
@@ -453,7 +453,7 @@ export namespace Paddle {
     | "subscription_payment_method_change" // Transaction created automatically as part of updating a payment method. May be a zero value transaction.
     | "subscription_recurring" // Transaction created automatically by Paddle as a result of a subscription renewal.
     | "subscription_update" // Transaction created automatically by Paddle as a result of an update to a subscription.
-    | "web"; // Transaction created automatically by Paddle.js for a checkout.
+    | "web"; // Transaction created automatically by js for a checkout.
 
   /**
    * Represents the transaction entity.
@@ -737,7 +737,7 @@ export namespace Paddle {
     tax: string;
     /** Total after tax. */
     total: string;
-    /** Total fee taken by Paddle. */
+    /** Total fee taken by  */
     fee: string;
     /** Total earnings. This is the subtotal minus the Paddle fee. */
     earnings: string;
@@ -1134,7 +1134,7 @@ export namespace Paddle {
      * automatically by Paddle based on the currency_code of the related
      * transaction. */
     currency_code: CurrencyCode;
-    /** Status of this adjustment. Set automatically by Paddle. */
+    /** Status of this adjustment. Set automatically by  */
     status: AdjustmentStatus;
     /** List of items on this adjustment. */
     items: AdjustmentItem[];
@@ -1143,10 +1143,10 @@ export namespace Paddle {
     /** Breakdown of how this adjustment affects your payout balance. */
     payout_totals: AdjustmentPayoutTotals | null;
     /** RFC 3339 datetime string of when this entity was created.
-     * Set automatically by Paddle. */
+     * Set automatically by  */
     created_at: string;
     /** RFC 3339 datetime string of when this entity was updated.
-     * Set automatically by Paddle. */
+     * Set automatically by  */
     updated_at: string;
   }
 
@@ -1184,7 +1184,7 @@ export namespace Paddle {
      * type is partial. */
     amount: string | null;
     /** How proration was calculated for this adjustment item. Set
-     * automatically by Paddle. */
+     * automatically by  */
     proration: Proration | null;
     /** Breakdown of the total for an adjustment item. */
     totals: AdjustmentItemTotals;
@@ -1303,15 +1303,15 @@ export namespace Paddle {
      * Paddle where a customer checks the marketing consent box when using
      * Paddle Checkout; false otherwise. */
     marketing_consent: boolean;
-    /** Whether this entity can be used in Paddle. */
+    /** Whether this entity can be used in  */
     status: EntityStatus;
     /** Valid IETF BCP 47 short form locale tag. If omitted, defaults to en. */
     locale: string;
     /** RFC 3339 datetime string of when this entity was created.
-     * Set automatically by Paddle. */
+     * Set automatically by  */
     created_at: string;
     /** RFC 3339 datetime string of when this entity was updated.
-     * Set automatically by Paddle. */
+     * Set automatically by  */
     updated_at: string;
   }
 
@@ -1323,8 +1323,8 @@ export namespace Paddle {
   export interface Discount {
     /** Unique Paddle ID for this discount, prefixed with 'dsc_' */
     id: DiscountId;
-    /** Whether this entity can be used in Paddle. expired and used are set
-     * automatically by Paddle. */
+    /** Whether this entity can be used in  expired and used are set
+     * automatically by  */
     status: DiscountStatus;
     /** Short description for reference. */
     description: string;
@@ -1379,4 +1379,593 @@ export namespace Paddle {
     | "flat" // Discounts a transaction by a flat amount, e.g. -$100. Requires currency_code.
     | "flat_per_seat" // Discounts a transaction by a flat amount per unit Requires currency_code.
     | "percentage"; // Discounts a transaction by a percentage of the total, e.g. 10%. Maximum 100%.
+
+  /// Pricing preview
+
+  /**
+   * Pricing preview.
+   */
+  export interface PricingPreview<
+    PriceData extends CustomData,
+    ProductData extends CustomData
+  > {
+    /** Paddle ID of the customer that this preview is for, prefixed with
+     * ctm_. */
+    customer_id?: CustomerId | null;
+    /** Paddle ID of the address that this preview is for, prefixed with add_.
+     * Send one of address_id, customer_ip_address, or the address object when
+     * previewing. */
+    address_id?: AddressId | null;
+    /** Paddle ID of the business that this preview is for, prefixed with
+     * biz_. */
+    business_id?: BusinessId | null;
+    /** Supported three-letter ISO 4217 currency code. */
+    currency_code: CurrencyCode;
+    /** Paddle ID of the discount applied to this preview, prefixed with
+     * dsc_. */
+    discount_id?: DiscountId | null;
+    /** Address for this preview. Send one of address_id, customer_ip_address,
+     * or the address object when previewing. */
+    address?: PricingPreviewAddress | null;
+    /** IP address for this transaction preview. Send one of address_id,
+     * customer_ip_address, or the address object when previewing. */
+    customer_ip_address?: string | null;
+    /** Calculated totals for a price preview, including discounts, tax,
+     * and currency conversion. */
+    details: PricingPreviewDetails<PriceData, ProductData>;
+  }
+
+  /**
+   * Pricing preview address.
+   */
+  export interface PricingPreviewAddress {
+    /** ZIP or postal code. */
+    postal_code?: string | null;
+    /** Supported two-letter ISO 3166-1 alpha-2 country code. */
+    country_code: CountryCode;
+  }
+
+  /**
+   * Pricing previews details.
+   */
+  export interface PricingPreviewDetails<
+    PriceData extends CustomData,
+    ProductData extends CustomData
+  > {
+    /** Information about line items for this preview. Includes totals
+     * calculated by  Considered the source of truth for line
+     * item totals. */
+    line_items: PricingPreviewLineItem<PriceData, ProductData>[];
+  }
+
+  /**
+   * Pricing previews line item.
+   */
+  export interface PricingPreviewLineItem<
+    PriceData extends CustomData,
+    ProductData extends CustomData
+  > {
+    /** Related price entity for this preview line item. */
+    price: Price<TimeInterval | null, PriceData>;
+    /** Quantity of this preview line item. */
+    quantity: number;
+    /** Rate used to calculate tax for this preview line item. */
+    tax_rate: string;
+    /** Breakdown of the charge for one unit in the lowest denomination
+     * of a currency. */
+    unit_totals: TotalsWithDiscount;
+    /** Breakdown of the charge for one unit in the format of a given
+     * currency. */
+    formatted_unit_totals: TotalsWithDiscount;
+    /** The financial breakdown of a charge in the lowest denomination of
+     * a currency. */
+    totals: TotalsWithDiscount;
+    /** The financial breakdown of a charge in the format of a given
+     * currency. */
+    formatted_totals: TotalsWithDiscount;
+    /** Related product entity for this preview line item price. */
+    product: Product<ProductData>;
+    /** List of discounts applied to this preview line item. Empty if no
+     * discounts applied. */
+    discounts: PricingPreviewDiscount[];
+  }
+
+  /**
+   * Preview prices discounts.
+   */
+  export interface PricingPreviewDiscount {
+    /** Related discount entity for this preview line item. */
+    discount: Discount;
+    /** Total amount discounted as a result of this discount. */
+    total: string;
+    /** Total amount discounted as a result of this discount in the format of
+     * a given currency. */
+    formatted_total: string;
+  }
+
+  /// Event types
+
+  /**
+   * Event types are actions that Paddle creates events for.
+   * When something notable occurs, Paddle creates an event entity with information about what happened.
+   */
+  export interface EventType {
+    /** Type of event sent by Paddle, in the format entity.event_type. */
+    name: EventTypeName;
+    /** Short description of this event type. */
+    description: string;
+    /** Group for this event type. Typically the entity that this event
+     * relates to. */
+    group: string;
+    /** List of API versions that this event type supports. */
+    available_versions: number[];
+  }
+
+  /**
+   * Event type name.
+   */
+  export type EventTypeName = `${string}.${string}`;
+
+  /// Events
+
+  /**
+   * Event alias. Lists all possible events.
+   */
+  export type Event =
+    | EventSubscription
+    | EventTransaction
+    | EventProduct
+    | EventPrice
+    | EventAddress
+    | EventAdjustment
+    | EventBusiness
+    | EventCustomer;
+
+  /**
+   * Base event interface.
+   */
+  export interface EventBase<Type extends string, Data> {
+    /** Unique Paddle ID for this event, prefixed with evt_. */
+    event_id: EventId;
+    /** Type of event sent by Paddle, in the format entity.event_type. */
+    event_type: Type;
+    /** RFC 3339 datetime string of when this event occurred. */
+    occurred_at: string;
+    /** Unique Paddle ID for this notification, prefixed with ntf_. **/
+    notification_id: NotificationId;
+    /** The associated data. */
+    data: Data;
+  }
+
+  /**
+   * Event ID.
+   */
+  export type EventId = `evt_${string}`;
+
+  /**
+   * Notification ID.
+   */
+  export type NotificationId = `ntf_${string}`;
+
+  /**
+   * Subscription event alias.
+   */
+  export type EventSubscription =
+    | EventSubscriptionActivated
+    | EventSubscriptionUpdated
+    | EventSubscriptionCanceled
+    | EventSubscriptionPastDue
+    | EventSubscriptionPaused
+    | EventSubscriptionResumed
+    | EventSubscriptionTrialing
+    | EventSubscriptionCreated;
+
+  /**
+   * Occurs when a subscription becomes active. Its status field changes
+   * to active.
+   *
+   * This means any trial period has elapsed and Paddle has successfully billed
+   * the customer.
+   */
+  export type EventSubscriptionActivated<
+    PriceData extends CustomData = CustomData,
+    SubscriptionItemData extends CustomData = CustomData,
+    SubscriptionData extends CustomData = CustomData
+  > = EventBase<
+    "subscription.activated",
+    Subscription<
+      CollectionMode,
+      TimeInterval | null,
+      PriceData,
+      SubscriptionItemData,
+      SubscriptionData
+    >
+  >;
+
+  /**
+   * Occurs when a subscription is canceled. Its status field changes
+   * to canceled.
+   *
+   * When you request to cancel a subscription, Paddle creates a scheduled
+   * change to say the subscription should be canceled on the next billing date.
+   * subscription.updated occurs at this point.
+   *
+   * On the next billing date, the subscription status changes to canceled and
+   * subscription.canceled occurs.
+   */
+  export type EventSubscriptionCanceled<
+    PriceData extends CustomData = CustomData,
+    SubscriptionItemData extends CustomData = CustomData,
+    SubscriptionData extends CustomData = CustomData
+  > = EventBase<
+    "subscription.canceled",
+    Subscription<
+      CollectionMode,
+      TimeInterval | null,
+      PriceData,
+      SubscriptionItemData,
+      SubscriptionData
+    >
+  >;
+
+  /**
+   * Occurs when a subscription is created.
+   *
+   * subscription.trialing or subscription.activated typically follow.
+   */
+  export type EventSubscriptionCreated<
+    PriceData extends CustomData = CustomData,
+    SubscriptionItemData extends CustomData = CustomData,
+    SubscriptionData extends CustomData = CustomData
+  > = EventBase<
+    "subscription.created",
+    Subscription<
+      CollectionMode,
+      TimeInterval | null,
+      PriceData,
+      SubscriptionItemData,
+      SubscriptionData
+    >
+  >;
+
+  /**
+   * Occurs when a subscription has an unpaid transaction. Its status changes
+   * to past_due.
+   */
+  export type EventSubscriptionPastDue<
+    PriceData extends CustomData = CustomData,
+    SubscriptionItemData extends CustomData = CustomData,
+    SubscriptionData extends CustomData = CustomData
+  > = EventBase<
+    "subscription.past_due",
+    Subscription<
+      CollectionMode,
+      TimeInterval | null,
+      PriceData,
+      SubscriptionItemData,
+      SubscriptionData
+    >
+  >;
+
+  /**
+   * Occurs when a subscription is paused. Its status field changes to paused.
+   *
+   * When you request to pause a subscription, Paddle creates a scheduled change
+   * to say the subscription should be paused on the next billing date.
+   * subscription.updated occurs at this point.
+   *
+   * On the next billing date, the subscription status changes to paused and
+   * subscription.paused occurs.
+   */
+  export type EventSubscriptionPaused<
+    PriceData extends CustomData = CustomData,
+    SubscriptionItemData extends CustomData = CustomData,
+    SubscriptionData extends CustomData = CustomData
+  > = EventBase<
+    "subscription.paused",
+    Subscription<
+      CollectionMode,
+      TimeInterval | null,
+      PriceData,
+      SubscriptionItemData,
+      SubscriptionData
+    >
+  >;
+
+  /**
+   * Occurs when a subscription is resumed after being paused. Its status field
+   * changes to active.
+   *
+   * When resumed, Paddle bills for the subscription immediately.
+   * transaction.created and other transaction events occur, depending on
+   * the collection mode.
+   */
+  export type EventSubscriptionResumed<
+    PriceData extends CustomData = CustomData,
+    SubscriptionItemData extends CustomData = CustomData,
+    SubscriptionData extends CustomData = CustomData
+  > = EventBase<
+    "subscription.resumed",
+    Subscription<
+      CollectionMode,
+      TimeInterval | null,
+      PriceData,
+      SubscriptionItemData,
+      SubscriptionData
+    >
+  >;
+
+  /**
+   * Occurs when a subscription enters trial period.
+   */
+  export type EventSubscriptionTrialing<
+    PriceData extends CustomData = CustomData,
+    SubscriptionItemData extends CustomData = CustomData,
+    SubscriptionData extends CustomData = CustomData
+  > = EventBase<
+    "subscription.trialing",
+    Subscription<
+      CollectionMode,
+      TimeInterval | null,
+      PriceData,
+      SubscriptionItemData,
+      SubscriptionData
+    >
+  >;
+
+  /**
+   * Transaction event alias.
+   */
+  export type EventTransaction =
+    | EventTransactionBilled
+    | EventTransactionCanceled
+    | EventTransactionCompleted
+    | EventTransactionCreated
+    | EventTransactionPastDue
+    | EventTransactionPaymentFailed
+    | EventTransactionReady
+    | EventTransactionUpdated;
+
+  /**
+   * Occurs when a subscription is updated.
+   */
+  export type EventSubscriptionUpdated<
+    PriceData extends CustomData = CustomData,
+    SubscriptionItemData extends CustomData = CustomData,
+    SubscriptionData extends CustomData = CustomData
+  > = EventBase<
+    "subscription.updated",
+    Subscription<
+      CollectionMode,
+      TimeInterval | null,
+      PriceData,
+      SubscriptionItemData,
+      SubscriptionData
+    >
+  >;
+
+  /**
+   * Occurs when a transaction is billed. Its status field changes to billed
+   * and billed_at is populated.
+   *
+   * Marking a transaction as billed is typically used when working with
+   * manually-collected transactions to issue an invoice. It's not typically
+   * part of checkout workflows, where collection mode is automatic.
+   */
+  export type EventTransactionBilled<
+    PriceData extends CustomData = CustomData,
+    TransactionData extends CustomData = CustomData
+  > = EventBase<
+    "transaction.billed",
+    Transaction<TimeInterval | null, PriceData, TransactionData>
+  >;
+
+  /**
+   * Occurs when a transaction is canceled. Its status field changes
+   * to canceled.
+   *
+   * Marking a transaction as canceled is typically used when working with
+   * manually-collected transactions to say that an invoice was created
+   * in error. It's not typically part of checkout workflows, where collection
+   * mode is automatic.
+   */
+  export type EventTransactionCanceled<
+    PriceData extends CustomData = CustomData,
+    TransactionData extends CustomData = CustomData
+  > = EventBase<
+    "transaction.canceled",
+    Transaction<TimeInterval | null, PriceData, TransactionData>
+  >;
+
+  /**
+   * Occurs when a transaction is completed. Its status field changes
+   * to completed.
+   */
+  export type EventTransactionCompleted<
+    PriceData extends CustomData = CustomData,
+    TransactionData extends CustomData = CustomData
+  > = EventBase<
+    "transaction.completed",
+    Transaction<TimeInterval | null, PriceData, TransactionData>
+  >;
+
+  /**
+   * Occurs when a transaction is created.
+   */
+  export type EventTransactionCreated<
+    PriceData extends CustomData = CustomData,
+    TransactionData extends CustomData = CustomData
+  > = EventBase<
+    "transaction.created",
+    Transaction<TimeInterval | null, PriceData, TransactionData>
+  >;
+
+  /**
+   * Occurs when a transaction becomes past due. Its status field changes
+   * to past_due.
+   */
+  export type EventTransactionPastDue<
+    PriceData extends CustomData = CustomData,
+    TransactionData extends CustomData = CustomData
+  > = EventBase<
+    "transaction.past_due",
+    Transaction<TimeInterval | null, PriceData, TransactionData>
+  >;
+
+  /**
+   * Occurs when a payment fails for a transaction. The payments array is
+   * updated with details of the payment attempt.
+   *
+   * Typically happens for automatically-collected transactions, but may occur
+   * for manually-collected transactions (invoices) where a customer pays using
+   * Paddle Checkout and their payment is declined.
+   */
+  export type EventTransactionPaymentFailed<
+    PriceData extends CustomData = CustomData,
+    TransactionData extends CustomData = CustomData
+  > = EventBase<
+    "transaction.payment_failed",
+    Transaction<TimeInterval | null, PriceData, TransactionData>
+  >;
+
+  /**
+   * Occurs when a transaction is ready to be billed. Its status field changes
+   * to ready.
+   *
+   * Transactions are ready when they have all the required fields against them
+   * to be transitioned to billed or completed. This includes items,
+   * customer_id, and address_id. Paddle automatically marks transactions
+   * as ready when these fields are present.
+   *
+   * When working with manually-collected transactions (invoices),
+   * transaction.updated may occur immediately after to add invoice_id
+   * and adjusted_totals.
+   */
+  export type EventTransactionReady<
+    PriceData extends CustomData = CustomData,
+    TransactionData extends CustomData = CustomData
+  > = EventBase<
+    "transaction.ready",
+    Transaction<TimeInterval | null, PriceData, TransactionData>
+  >;
+
+  /**
+   * Occurs when a transaction is updated.
+   *
+   * Specific events occur for status changes. transaction.updated may also
+   * occur after a status change events to add additional fields to
+   * the transaction after Paddle has completed internal processing for
+   * a transaction.
+   *
+   * For example, transaction.billed occurs when a transaction status changes
+   * to billed. transaction.updated occurs immediately after to add
+   * an invoice_number.
+   */
+  export type EventTransactionUpdated<
+    PriceData extends CustomData = CustomData,
+    TransactionData extends CustomData = CustomData
+  > = EventBase<
+    "transaction.updated",
+    Transaction<TimeInterval | null, PriceData, TransactionData>
+  >;
+
+  /**
+   * Product event alias.
+   */
+  export type EventProduct = EventProductCreated | EventProductUpdated;
+
+  /**
+   * Occurs when a product is created.
+   */
+  export type EventProductCreated<ProductData extends CustomData = CustomData> =
+    EventBase<"product.created", Product<ProductData>>;
+
+  /**
+   * Occurs when a product is updated.
+   */
+  export type EventProductUpdated<ProductData extends CustomData = CustomData> =
+    EventBase<"product.updated", Product<ProductData>>;
+
+  /**
+   * Price event alias.
+   */
+  export type EventPrice = EventPriceCreated | EventPriceUpdated;
+
+  /**
+   * Occurs when a price is created.
+   */
+  export type EventPriceCreated<PriceData extends CustomData = CustomData> =
+    EventBase<"price.created", Price<TimeInterval | null, PriceData>>;
+
+  /**
+   * Occurs when a price is updated.
+   */
+  export type EventPriceUpdated<PriceData extends CustomData = CustomData> =
+    EventBase<"price.updated", Price<TimeInterval | null, PriceData>>;
+
+  /**
+   * Address event alias.
+   */
+  export type EventAddress = EventAddressCreated | EventAddressUpdated;
+
+  /**
+   * Occurs when an address is created.
+   */
+  export type EventAddressCreated = EventBase<"address.created", Address>;
+
+  /**'
+   * Occurs when an address is updated.
+   */
+  export type EventAddressUpdated = EventBase<"address.updated", Address>;
+
+  /**
+   * Adjustments event alias.
+   */
+  export type EventAdjustment = EventAdjustmentCreated | EventAdjustmentUpdated;
+
+  /**
+   * Occurs when an adjustment is created.
+   */
+  export type EventAdjustmentCreated = EventBase<
+    "adjustment.created",
+    Adjustment
+  >;
+
+  /**
+   * Occurs when an adjustment is updated.
+   */
+  export type EventAdjustmentUpdated = EventBase<
+    "adjustment.updated",
+    Adjustment
+  >;
+
+  /**
+   * Businesses event alias.
+   */
+  export type EventBusiness = EventBusinessCreated | EventBusinessUpdated;
+
+  /**
+   * Occurs when a business is created.
+   */
+  export type EventBusinessCreated = EventBase<"business.created", Business>;
+
+  /**
+   * Occurs when a business is updated.
+   */
+  export type EventBusinessUpdated = EventBase<"business.updated", Business>;
+
+  /**
+   * Customer event alias.
+   */
+  export type EventCustomer = EventCustomerCreated | EventCustomerUpdated;
+
+  /**
+   * Occurs when a customer is created.
+   */
+  export type EventCustomerCreated = EventBase<"customer.created", Customer>;
+
+  /**
+   * Occurs when a customer is updated.
+   */
+  export type EventCustomerUpdated = EventBase<"customer.updated", Customer>;
 }

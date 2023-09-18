@@ -1217,6 +1217,8 @@ export function previewPrices<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/// Event types
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {
