@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  cancelSubscription,
   client,
   createAddress,
   createBusiness,
@@ -27,9 +28,11 @@ import {
   listSubscriptions,
   listTransactions,
   paddleFetch,
+  pauseSubscription,
   previewCharge,
   previewTransaction,
   previewUpdateSubscription,
+  resumeSubscription,
   updateAddress,
   updateBusiness,
   updateCustomer,
@@ -1153,6 +1156,79 @@ describe("subscriptions", () => {
 
       expect(result.error).toBeUndefined();
       expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+
+  describe("pauseSubscription", () => {
+    mockFetch();
+
+    it("sends a POST request", async () => {
+      const body = {
+        effective_from: "next_billing_period" as const,
+        resume_at: "2022-12-31T23:59:59Z",
+      };
+
+      await pauseSubscription(testClient, "sub_123", body);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/subscriptions/sub_123/pause",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+    });
+  });
+
+  describe("resumeSubscription", () => {
+    mockFetch();
+
+    it("sends a POST request", async () => {
+      const body = {
+        effective_from: "next_billing_period" as const,
+      };
+
+      await resumeSubscription(testClient, "sub_123", body);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/subscriptions/sub_123/resume",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+    });
+  });
+
+  describe("cancelSubscription", () => {
+    mockFetch();
+
+    it("sends a POST request for canceling active subscription", async () => {
+      const body = {
+        effective_from: "immediately" as const,
+      };
+
+      await cancelSubscription(testClient, "sub_123", body);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/subscriptions/sub_123/cancel",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(body),
+        }
+      );
     });
   });
 });

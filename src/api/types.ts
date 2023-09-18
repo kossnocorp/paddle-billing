@@ -1590,6 +1590,13 @@ export namespace PaddleAPI {
   /// Subscriptions
 
   /**
+   * When the charge takes effect.
+   */
+  export type SubscriptionChargeEffectiveFrom =
+    | "next_billing_period" // Bill for one-time charges on the next billing period. Paddle adds the charges to the transaction created when the subscription next renews.
+    | "immediately"; // Bill for one-time charges on the next billing period. Paddle adds the charges to the transaction created when the subscription next renews.
+
+  /**
    * Preview of a transaction.
    */
   export interface SubscriptionDataTransaction<
@@ -2001,14 +2008,54 @@ export namespace PaddleAPI {
       MetaBasic
     > {}
 
-  /// One-time charges
+  //// Pause subscription
 
   /**
-   * When the charge takes effect.
+   * The pause subscription body.
    */
-  export type ChargeEffective =
-    | "next_billing_period" // Bill for one-time charges on the next billing period. Paddle adds the charges to the transaction created when the subscription next renews.
-    | "immediately"; // Bill for one-time charges on the next billing period. Paddle adds the charges to the transaction created when the subscription next renews.
+  export interface SubscriptionPauseBody {
+    /** When this scheduled change should take effect from. immediately is
+     * only allowed when canceling or resuming a paused subscription. */
+    effective_from?: SubscriptionChargeEffectiveFrom | null;
+    /** RFC 3339 datetime string of when the paused subscription should resume.
+     * Omit to pause indefinitely until resumed. */
+    resume_at?: string | null;
+  }
+
+  //// Resume subscription
+
+  /**
+   * The resume subscription body.
+   */
+  export interface SubscriptionResumeBody {
+    /** When this scheduled change should take effect from.
+     *
+     * You can pass:
+     * - A timestamp following the RFC 3339 standard of when the subscription
+     *   should resume. Valid where subscriptions are active with a scheduled
+     *   change to pause, or where they have the status of paused.
+     * - "next_billing_period" to resume on the next billing period. Valid where
+     *   subscriptions are active with a scheduled change to pause.
+     * - "immediately" to resume immediately. Valid where subscriptions have
+     *   the status of paused.
+     *
+     * If a subscription has the status paused, you may omit to resume
+     * immediately. */
+    effective_from: SubscriptionChargeEffectiveFrom | (string & {}) | null;
+  }
+
+  //// Cancel subscription
+
+  /**
+   * Cancel subscription body.
+   */
+  export interface CancelSubscriptionRequestBody {
+    /** When this scheduled change should take effect from. immediately is only
+     * allowed when canceling or resuming a paused subscription. */
+    effective_from?: SubscriptionChargeEffectiveFrom | null;
+  }
+
+  /// One-time charges
 
   /**
    * The item to add for billing.
@@ -2027,7 +2074,7 @@ export namespace PaddleAPI {
    */
   export interface ChargeCreateBody {
     /** When one-time charges should be billed. */
-    effective_from: ChargeEffective;
+    effective_from: SubscriptionChargeEffectiveFrom;
     /** The items to charge according to their quantity. Corresponds to
      * non-recurring price entities (i.e., items where the billing_cycle
      * is null). */

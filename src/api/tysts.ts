@@ -1,4 +1,5 @@
 import {
+  cancelSubscription,
   client,
   createAddress,
   createBusiness,
@@ -25,8 +26,10 @@ import {
   listProducts,
   listSubscriptions,
   listTransactions,
+  pauseSubscription,
   previewCharge,
   previewUpdateSubscription,
+  resumeSubscription,
   updateAddress,
   updateBusiness,
   updateCustomer,
@@ -990,6 +993,138 @@ updatePaymentMethodTransaction(apiCustomData, "sub_123").then((transaction) => {
 
   const item = transaction.data.items[0];
   if (!item) return;
+
+  item.price.custom_data.foo.at(0);
+  // @ts-expect-error: custom_data is specified
+  item.price.custom_data.random;
+});
+
+//// Pause subscription
+
+pauseSubscription(api, "sub_123", {
+  effective_from: "next_billing_period",
+}).then((subscription) => {
+  if (subscription.error) return;
+
+  // @ts-expect-error: custom_data can be null
+  subscription.data.custom_data.random;
+  subscription.data.custom_data?.random;
+
+  const item = subscription.data.items[0];
+  if (!item) return;
+
+  // @ts-expect-error: custom_data can be null
+  item.custom_data.random;
+  item.custom_data?.random;
+
+  // @ts-expect-error: custom_data can be null
+  item.price.custom_data.random;
+  item.price.custom_data?.random;
+});
+
+pauseSubscription(apiCustomData, "sub_123", {
+  effective_from: "next_billing_period",
+}).then((subscription) => {
+  if (subscription.error) return;
+
+  subscription.data.custom_data.sub;
+  // @ts-expect-error: custom_data is specified
+  subscription.data.custom_data.random;
+
+  const item = subscription.data.items[0];
+  if (!item) return;
+
+  item.custom_data.item.toFixed(2);
+  // @ts-expect-error: custom_data is specified
+  item.custom_data.random;
+
+  item.price.custom_data.foo.at(0);
+  // @ts-expect-error: custom_data is specified
+  item.price.custom_data.random;
+});
+
+//// Resume subscription
+
+resumeSubscription(api, "sub_123", {
+  effective_from: "next_billing_period",
+}).then((subscription) => {
+  if (subscription.error) return;
+
+  // @ts-expect-error: custom_data can be null
+  subscription.data.custom_data.random;
+  subscription.data.custom_data?.random;
+
+  const item = subscription.data.items[0];
+  if (!item) return;
+
+  // @ts-expect-error: custom_data can be null
+  item.custom_data.random;
+  item.custom_data?.random;
+
+  // @ts-expect-error: custom_data can be null
+  item.price.custom_data.random;
+  item.price.custom_data?.random;
+});
+
+resumeSubscription(apiCustomData, "sub_123", {
+  effective_from: "next_billing_period",
+}).then((subscription) => {
+  if (subscription.error) return;
+
+  subscription.data.custom_data.sub;
+  // @ts-expect-error: custom_data is specified
+  subscription.data.custom_data.random;
+
+  const item = subscription.data.items[0];
+  if (!item) return;
+
+  item.custom_data.item.toFixed(2);
+  // @ts-expect-error: custom_data is specified
+  item.custom_data.random;
+
+  item.price.custom_data.foo.at(0);
+  // @ts-expect-error: custom_data is specified
+  item.price.custom_data.random;
+});
+
+//// Cancel subscription
+
+cancelSubscription(api, "sub_123", {
+  effective_from: "next_billing_period",
+}).then((subscription) => {
+  if (subscription.error) return;
+
+  // @ts-expect-error: custom_data can be null
+  subscription.data.custom_data.random;
+  subscription.data.custom_data?.random;
+
+  const item = subscription.data.items[0];
+  if (!item) return;
+
+  // @ts-expect-error: custom_data can be null
+  item.custom_data.random;
+  item.custom_data?.random;
+
+  // @ts-expect-error: custom_data can be null
+  item.price.custom_data.random;
+  item.price.custom_data?.random;
+});
+
+cancelSubscription(apiCustomData, "sub_123", {
+  effective_from: "next_billing_period",
+}).then((subscription) => {
+  if (subscription.error) return;
+
+  subscription.data.custom_data.sub;
+  // @ts-expect-error: custom_data is specified
+  subscription.data.custom_data.random;
+
+  const item = subscription.data.items[0];
+  if (!item) return;
+
+  item.custom_data.item.toFixed(2);
+  // @ts-expect-error: custom_data is specified
+  item.custom_data.random;
 
   item.price.custom_data.foo.at(0);
   // @ts-expect-error: custom_data is specified

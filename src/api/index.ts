@@ -29,7 +29,7 @@ export interface PaddleFetchProps {
   /** The request query */
   query?: Object | undefined;
   /** The request body */
-  body?: Object;
+  body?: Object | undefined;
 }
 
 /**
@@ -964,6 +964,104 @@ export function updatePaymentMethodTransaction<
     method: "GET",
     path:
       "subscriptions/" + subscriptionId + "/update-payment-method-transaction",
+  });
+}
+
+/**
+ * Pauses a subscription using its ID.
+ *
+ * To create an open-ended pause, send an empty request body. The subscription
+ * remains paused until you send a resume request.
+ *
+ * To set a resume date, include the resume_at field in your request.
+ * The subscription remains paused until the resume date, or until you send
+ * a resume request.
+ *
+ * Pauses take place at the end of a subscription billing period.
+ * If successful, your response includes a copy of the updated subscription
+ * entity with a schedule_change to say that the subscription should pause
+ * at the end of the billing period. Its status remains the same until after
+ * the effective date of the scheduled change, at which point it changes
+ * to paused.
+ *
+ * @param client - the Paddle API client
+ * @param subscriptionId - Paddle ID of the subscription entity to work with
+ * @param body - the request body containing the pause subscription details
+ *
+ * @returns a promise that resolves with the updated subscription
+ */
+export function pauseSubscription<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  subscriptionId: Paddle.SubscriptionId,
+  body?: PaddleAPI.SubscriptionPauseBody
+): Promise<PaddleAPI.SubscriptionUpdateResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: `subscriptions/${subscriptionId}/pause`,
+    body,
+  });
+}
+
+/**
+ * Resumes a paused subscription using its ID. Only paused subscriptions can
+ * be resumed. You cannot resume a canceled subscription.
+ *
+ * On resume, Paddle bills for a subscription immediately. Subscription billing
+ * dates are recalculated based on the resume date.
+ *
+ * If successful, Paddle returns a copy of the updated subscription entity.
+ * The subscription status is active, and billing dates are updated to reflect
+ * the resume date.
+ *
+ * @param client - the Paddle API client
+ * @param subscriptionId - Paddle ID of the subscription entity to work with
+ * @param body - the request body containing when the subscription should resume
+ *
+ * @returns the updated subscription entity
+ */
+export function resumeSubscription<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  subscriptionId: Paddle.SubscriptionId,
+  body: PaddleAPI.SubscriptionResumeBody
+): Promise<PaddleAPI.SubscriptionUpdateResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "subscriptions/" + subscriptionId + "/resume",
+    body,
+  });
+}
+
+/**
+ * Cancels a subscription using its ID.
+ *
+ * For active subscriptions, cancellation takes place at the end of
+ * a subscription billing period. If successful, your response includes a copy
+ * of the updated subscription entity with a schedule_change to say that
+ * the subscription should cancel at the end of the billing period. Its status
+ * remains the same until after the effective date of the scheduled change,
+ * at which point it changes to canceled.
+ *
+ * For paused subscriptions, cancellation takes place immediately. If
+ * successful, your response includes a copy of the updated subscription
+ * entity with the status of canceled.
+ *
+ * You cannot reactivate a canceled subscription.
+ *
+ * @param client - the Paddle API client
+ * @param subscriptionId - Paddle ID of the subscription entity to work with
+ * @param body - the request body
+ *
+ * @returns updated subscription entity
+ */
+export function cancelSubscription<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  subscriptionId: Paddle.SubscriptionId,
+  body: PaddleAPI.CancelSubscriptionRequestBody
+): Promise<PaddleAPI.SubscriptionUpdateResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "subscriptions/" + subscriptionId + "/cancel",
+    body,
   });
 }
 
