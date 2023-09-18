@@ -24,6 +24,8 @@ import {
   listBusinesses,
   listCustomers,
   listDiscounts,
+  listEventTypes,
+  listEvents,
   listPrices,
   listProducts,
   listSubscriptions,
@@ -160,6 +162,7 @@ getProduct(api, "pro_123", { include: "prices" }).then((product) => {
 
 getProduct(apiCustomData, "pro_123").then((product) => {
   if (product.error) return;
+
   product.data.custom_data.hello;
   // @ts-expect-error: custom_data is defined
   product.data.custom_data.nope;
@@ -582,6 +585,13 @@ createTransaction(api, {
   transaction.data.custom_data.world;
   transaction.data.custom_data?.hello;
   transaction.data.custom_data?.world;
+
+  const item = transaction.data.items[0];
+  if (!item) return;
+
+  // @ts-expect-error: custom_data can be null
+  item.price.custom_data.random;
+  item.price.custom_data?.random;
 });
 
 createTransaction(apiCustomData, {
@@ -602,6 +612,13 @@ createTransaction(apiCustomData, {
   transaction.data.custom_data.qwe;
   // @ts-expect-error: world is not a valid custom_data key
   transaction.data.custom_data.world;
+
+  const item = transaction.data.items[0];
+  if (!item) return;
+
+  item.price.custom_data.foo.at(0);
+  // @ts-expect-error: custom_data is specified
+  item.price.custom_data.random;
 });
 
 createTransaction(
@@ -1286,4 +1303,182 @@ previewPrices(apiCustomData, { items: [] }).then((result) => {
   item.product.custom_data.hello;
   // @ts-expect-error: world is not a valid custom_data key
   item.product.custom_data.world;
+});
+
+/// Event types
+
+listEventTypes(api).then((eventTypes) => {
+  if (eventTypes.error) return;
+  eventTypes.data[0]?.name;
+});
+
+/// Events
+
+listEvents(api, { per_page: 5 }).then((events) => {
+  if (events.error) return;
+
+  const event = events.data[0];
+  if (!event) return;
+
+  switch (event.event_type) {
+    case "subscription.activated":
+    case "subscription.created":
+    case "subscription.canceled":
+    case "subscription.past_due":
+    case "subscription.paused":
+    case "subscription.resumed":
+    case "subscription.trialing":
+    case "subscription.updated": {
+      const sub = event.data;
+
+      // @ts-expect-error: custom_data can be null
+      sub.custom_data.random;
+      sub.custom_data?.random;
+
+      const item = sub.items[0];
+      if (!item) return;
+
+      // @ts-expect-error: custom_data can be null
+      item.custom_data.random;
+      item.custom_data?.random;
+
+      // @ts-expect-error: custom_data can be null
+      item.price.custom_data.random;
+      item.price.custom_data?.random;
+
+      return;
+    }
+
+    case "transaction.billed":
+    case "transaction.created":
+    case "transaction.canceled":
+    case "transaction.completed":
+    case "transaction.past_due":
+    case "transaction.payment_failed":
+    case "transaction.ready":
+    case "transaction.updated": {
+      const transaction = event.data;
+
+      // @ts-expect-error: custom_data can be null
+      transaction.custom_data.hello;
+      // @ts-expect-error: custom_data can be null
+      transaction.custom_data.world;
+      transaction.custom_data?.hello;
+      transaction.custom_data?.world;
+
+      const item = transaction.items[0];
+      if (!item) return;
+
+      // @ts-expect-error: custom_data can be null
+      item.price.custom_data.random;
+      item.price.custom_data?.random;
+
+      return;
+    }
+
+    case "product.created":
+    case "product.updated": {
+      const product = event.data;
+
+      // @ts-expect-error: custom_data can be null
+      product.custom_data.hello;
+      product.custom_data?.hello;
+      product.custom_data?.nope;
+
+      return;
+    }
+
+    case "price.created":
+    case "price.updated": {
+      const price = event.data;
+
+      // @ts-expect-error: custom_data can be null
+      price.custom_data.random;
+      price.custom_data?.random;
+
+      return;
+    }
+  }
+});
+
+listEvents(apiCustomData).then((events) => {
+  if (events.error) return;
+
+  const event = events.data[0];
+  if (!event) return;
+
+  switch (event.event_type) {
+    case "subscription.activated":
+    case "subscription.created":
+    case "subscription.canceled":
+    case "subscription.past_due":
+    case "subscription.paused":
+    case "subscription.resumed":
+    case "subscription.trialing":
+    case "subscription.updated": {
+      const sub = event.data;
+
+      sub.custom_data.sub;
+      // @ts-expect-error: custom_data is specified
+      sub.custom_data.random;
+
+      const item = sub.items[0];
+      if (!item) return;
+
+      item.custom_data.item.toFixed(2);
+      // @ts-expect-error: custom_data is specified
+      item.custom_data.random;
+
+      item.price.custom_data.foo.at(0);
+      // @ts-expect-error: custom_data is specified
+      item.price.custom_data.random;
+
+      return;
+    }
+
+    case "transaction.billed":
+    case "transaction.created":
+    case "transaction.canceled":
+    case "transaction.completed":
+    case "transaction.past_due":
+    case "transaction.payment_failed":
+    case "transaction.ready":
+    case "transaction.updated": {
+      const transaction = event.data;
+
+      transaction.custom_data.qwe;
+      // @ts-expect-error: world is not a valid custom_data key
+      transaction.custom_data.world;
+
+      const item = transaction.items[0];
+      if (!item) return;
+
+      item.price.custom_data.foo.at(0);
+      // @ts-expect-error: custom_data is specified
+      item.price.custom_data.random;
+
+      return;
+    }
+
+    case "product.created":
+    case "product.updated": {
+      const product = event.data;
+
+      product.custom_data.hello;
+      // @ts-expect-error: custom_data is defined
+      product.custom_data.nope;
+      return;
+    }
+
+    case "price.created":
+    case "price.updated": {
+      const price = event.data;
+
+      price.custom_data.foo.at(0);
+      // @ts-expect-error: custom_data is specified
+      price.custom_data.random;
+
+      return;
+    }
+  }
 });

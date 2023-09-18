@@ -25,6 +25,8 @@ import {
   listBusinesses,
   listCustomers,
   listDiscounts,
+  listEventTypes,
+  listEvents,
   listPrices,
   listProducts,
   listSubscriptions,
@@ -1380,6 +1382,51 @@ describe("pricing preview", () => {
 
       expect(result.error).toBeUndefined();
       expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+});
+
+/// Event types
+
+describe("event types", () => {
+  describe("listEventTypes", () => {
+    mockFetch();
+
+    it("sends a GET request", async () => {
+      await listEventTypes(testClient);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/event-types",
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
+    });
+  });
+});
+
+/// Events
+
+describe("events", () => {
+  describe("listEvents", () => {
+    mockFetch();
+    it("sends a GET request", async () => {
+      await listEvents(testClient, {
+        after: "evt_123",
+        order_by: "occurred_at[DESC]",
+        per_page: 20,
+      });
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/events?after=evt_123&order_by=occurred_at%5BDESC%5D&per_page=20",
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
     });
   });
 });

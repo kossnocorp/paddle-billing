@@ -1511,11 +1511,17 @@ export namespace Paddle {
   /**
    * Event alias. Lists all possible events.
    */
-  export type Event =
-    | EventSubscription
-    | EventTransaction
-    | EventProduct
-    | EventPrice
+  export type Event<
+    PriceData extends CustomData = CustomData,
+    ProductData extends CustomData = CustomData,
+    SubscriptionItemData extends CustomData = CustomData,
+    SubscriptionData extends CustomData = CustomData,
+    TransactionData extends CustomData = CustomData
+  > =
+    | EventSubscription<PriceData, SubscriptionItemData, SubscriptionData>
+    | EventTransaction<PriceData, TransactionData>
+    | EventProduct<ProductData>
+    | EventPrice<PriceData>
     | EventAddress
     | EventAdjustment
     | EventBusiness
@@ -1550,15 +1556,47 @@ export namespace Paddle {
   /**
    * Subscription event alias.
    */
-  export type EventSubscription =
-    | EventSubscriptionActivated
-    | EventSubscriptionUpdated
-    | EventSubscriptionCanceled
-    | EventSubscriptionPastDue
-    | EventSubscriptionPaused
-    | EventSubscriptionResumed
-    | EventSubscriptionTrialing
-    | EventSubscriptionCreated;
+  export type EventSubscription<
+    PriceData extends CustomData = CustomData,
+    SubscriptionItemData extends CustomData = CustomData,
+    SubscriptionData extends CustomData = CustomData
+  > =
+    | EventSubscriptionActivated<
+        PriceData,
+        SubscriptionItemData,
+        SubscriptionData
+      >
+    | EventSubscriptionUpdated<
+        PriceData,
+        SubscriptionItemData,
+        SubscriptionData
+      >
+    | EventSubscriptionCanceled<
+        PriceData,
+        SubscriptionItemData,
+        SubscriptionData
+      >
+    | EventSubscriptionPastDue<
+        PriceData,
+        SubscriptionItemData,
+        SubscriptionData
+      >
+    | EventSubscriptionPaused<PriceData, SubscriptionItemData, SubscriptionData>
+    | EventSubscriptionResumed<
+        PriceData,
+        SubscriptionItemData,
+        SubscriptionData
+      >
+    | EventSubscriptionTrialing<
+        PriceData,
+        SubscriptionItemData,
+        SubscriptionData
+      >
+    | EventSubscriptionCreated<
+        PriceData,
+        SubscriptionItemData,
+        SubscriptionData
+      >;
 
   /**
    * Occurs when a subscription becomes active. Its status field changes
@@ -1573,6 +1611,24 @@ export namespace Paddle {
     SubscriptionData extends CustomData = CustomData
   > = EventBase<
     "subscription.activated",
+    Subscription<
+      CollectionMode,
+      TimeInterval | null,
+      PriceData,
+      SubscriptionItemData,
+      SubscriptionData
+    >
+  >;
+
+  /**
+   * Occurs when a subscription is updated.
+   */
+  export type EventSubscriptionUpdated<
+    PriceData extends CustomData = CustomData,
+    SubscriptionItemData extends CustomData = CustomData,
+    SubscriptionData extends CustomData = CustomData
+  > = EventBase<
+    "subscription.updated",
     Subscription<
       CollectionMode,
       TimeInterval | null,
@@ -1716,33 +1772,18 @@ export namespace Paddle {
   /**
    * Transaction event alias.
    */
-  export type EventTransaction =
-    | EventTransactionBilled
-    | EventTransactionCanceled
-    | EventTransactionCompleted
-    | EventTransactionCreated
-    | EventTransactionPastDue
-    | EventTransactionPaymentFailed
-    | EventTransactionReady
-    | EventTransactionUpdated;
-
-  /**
-   * Occurs when a subscription is updated.
-   */
-  export type EventSubscriptionUpdated<
+  export type EventTransaction<
     PriceData extends CustomData = CustomData,
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
-  > = EventBase<
-    "subscription.updated",
-    Subscription<
-      CollectionMode,
-      TimeInterval | null,
-      PriceData,
-      SubscriptionItemData,
-      SubscriptionData
-    >
-  >;
+    TransactionData extends CustomData = CustomData
+  > =
+    | EventTransactionBilled<PriceData, TransactionData>
+    | EventTransactionCanceled<PriceData, TransactionData>
+    | EventTransactionCompleted<PriceData, TransactionData>
+    | EventTransactionCreated<PriceData, TransactionData>
+    | EventTransactionPastDue<PriceData, TransactionData>
+    | EventTransactionPaymentFailed<PriceData, TransactionData>
+    | EventTransactionReady<PriceData, TransactionData>
+    | EventTransactionUpdated<PriceData, TransactionData>;
 
   /**
    * Occurs when a transaction is billed. Its status field changes to billed
@@ -1872,7 +1913,9 @@ export namespace Paddle {
   /**
    * Product event alias.
    */
-  export type EventProduct = EventProductCreated | EventProductUpdated;
+  export type EventProduct<ProductData extends CustomData = CustomData> =
+    | EventProductCreated<ProductData>
+    | EventProductUpdated<ProductData>;
 
   /**
    * Occurs when a product is created.
@@ -1889,7 +1932,9 @@ export namespace Paddle {
   /**
    * Price event alias.
    */
-  export type EventPrice = EventPriceCreated | EventPriceUpdated;
+  export type EventPrice<PriceData extends CustomData = CustomData> =
+    | EventPriceCreated<PriceData>
+    | EventPriceUpdated<PriceData>;
 
   /**
    * Occurs when a price is created.

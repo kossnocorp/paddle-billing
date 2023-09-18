@@ -1219,6 +1219,49 @@ export function previewPrices<DataDef extends PaddleAPI.CustomDataDef>(
 
 /// Event types
 
+/**
+ * Returns a list of event types.
+ *
+ * The response is not paginated.
+ *
+ * @param client - the Paddle API client
+ *
+ * @returns a list of event types
+ */
+export function listEventTypes<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>
+): Promise<PaddleAPI.EventTypesListResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "event-types",
+  });
+}
+
+/// Events
+
+/**
+ * Returns a paginated list of events that have occurred. Use the query
+ * parameters to page through results.
+ *
+ * This is sometimes referred to as "the event stream."
+ *
+ * @param client - the Paddle API client
+ * @param query - the query parameters to filter and page through the list
+ * of events
+ *
+ * @returns list of events
+ */
+export function listEvents<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  query?: PaddleAPI.EventsListQuery
+): Promise<PaddleAPI.EventsListResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "events",
+    query,
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {

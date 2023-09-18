@@ -2242,6 +2242,69 @@ export namespace PaddleAPI {
 
   //// List event types
 
+  /**
+   * The list event types response.
+   */
+  export type EventTypesListResponse =
+    | EventTypesListResponseError
+    | EventTypesListResponseSuccess;
+
+  /**
+   * The errored list event types response.
+   */
+  export interface EventTypesListResponseError
+    extends ErrorResponse<ErrorCodeSubscriptions> {}
+
+  /**
+   * The successful list event types response.
+   */
+  export interface EventTypesListResponseSuccess
+    extends ResponseBase<Paddle.EventType[], MetaBasic> {}
+
+  /// Events
+
+  //// List events
+
+  /**
+   * The event list query.
+   */
+  export interface EventsListQuery {
+    /** Return entities after the specified cursor. Used for working through paginated results. */
+    after?: string;
+    /** Order returned entities by the specified field and direction ([ASC] or [DESC]). */
+    order_by?: string;
+    /** Set how many entities are returned per page. */
+    per_page?: number;
+  }
+
+  /**
+   * The list events response.
+   */
+  export type EventsListResponse<DataDef extends CustomDataDef> =
+    | EventsListResponseError
+    | EventsListResponseSuccess<DataDef>;
+
+  /**
+   * The errored list events response.
+   */
+  export interface EventsListResponseError
+    extends ErrorResponse<ErrorCodeSubscriptions> {}
+
+  /**
+   * The successful list events response.
+   */
+  export interface EventsListResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Event<
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Product"]>,
+        CustomData<DataDef["SubscriptionItem"]>,
+        CustomData<DataDef["Subscription"]>,
+        CustomData<DataDef["Transaction"]>
+      >[],
+      MetaPaginated
+    > {}
+
   ///
 
   /**
