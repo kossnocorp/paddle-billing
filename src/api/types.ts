@@ -1589,6 +1589,87 @@ export namespace PaddleAPI {
 
   /// Subscriptions
 
+  /**
+   * Preview of a transaction.
+   */
+  export interface SubscriptionDataTransaction<
+    ProductData extends Paddle.CustomData
+  > {
+    /** Billing period for the next transaction. */
+    billing_period: Paddle.TimePeriod;
+    /** Calculated totals for a transaction preview, including discounts, tax,
+     * and currency conversion. Considered the source of truth for totals on
+     * a transaction preview. */
+    details: SubscriptionDataTransactionDetails<ProductData>;
+    /** Not documented. TODO: Request documentation from Paddle. */
+    adjustments: unknown[];
+  }
+
+  /**
+   * Transaction preview details.
+   */
+  export interface SubscriptionDataTransactionDetails<
+    ProductData extends Paddle.CustomData
+  > {
+    /** List of tax rates applied to this transaction preview. */
+    tax_rates_used: Paddle.TaxRate[];
+    /** Breakdown of the total for a transaction preview. fee and earnings
+     * always return null for transaction previews. */
+    totals: SubscriptionDataTransactionTotals;
+    /** Information about line items for this transaction preview. Different
+     * from transaction preview items as they include totals calculated
+     * by Paddle. Considered the source of truth for line item totals. */
+    line_items: SubscriptionDataTransactionLineItem<ProductData>[];
+  }
+
+  /**
+   * Breakdown of the total for a transaction.
+   */
+  export interface SubscriptionDataTransactionTotals extends Paddle.TotalsBase {
+    /** Total discount as a result of any discounts applied. Except
+     * for percentage discounts, Paddle applies tax to discounts based on
+     * the line item price.tax_mode. If price.tax_mode for a line item
+     * is internal, Paddle removes tax from the discount applied. */
+    discount: string;
+    /** Total credit applied to this transaction. This includes credits applied
+     * using a customer's credit balance and adjustments to a billed
+     * transaction. */
+    credit: string;
+    /** Total due on a transaction after credits and any payments. */
+    balance: string;
+    /** Total due on a transaction after credits but before any payments. */
+    grand_total: string;
+    /** Total fee taken by Paddle for this transaction. null until
+     * the transaction is completed and the fee is processed. */
+    fee: string | null;
+    /** Total earnings for this transaction. This is the total minus
+     * the Paddle fee. null until the transaction is completed and the fee
+     * is processed. */
+    earnings: string | null;
+  }
+
+  /**
+   * Information about line items for this transaction preview.
+   */
+  export interface SubscriptionDataTransactionLineItem<
+    ProductData extends Paddle.CustomData
+  > {
+    /** Paddle ID for the price related to this transaction line item */
+    price_id: Paddle.PriceId;
+    /** Quantity of this transaction line item */
+    quantity: number;
+    /** Rate used to calculate tax for this transaction line item */
+    tax_rate: string;
+    /** Breakdown of the charge for one unit in the lowest denomination of
+     * a curreny (e.g. cents for USD) */
+    unit_totals: Paddle.TotalsWithDiscount;
+    /** Breakdown of a charge in the lowest unit of a currency
+     * (e.g. cents for USD) */
+    totals: Paddle.TotalsWithDiscount;
+    /** Related product entity for this trasaction line item price */
+    product: Paddle.Product<ProductData>;
+  }
+
   //// List subscriptions
 
   /**
@@ -1712,7 +1793,7 @@ export namespace PaddleAPI {
     next_transaction: ResponseIncludedField<
       Include,
       "next_transaction",
-      SubscriptionGetDataNextTransaction<CustomData<DataDef["Product"]>>
+      SubscriptionDataTransaction<CustomData<DataDef["Product"]>>
     >;
     /** Preview of the recurring transaction for this subscription. This is what
      * the customer can expect to be billed when there are no prorated or
@@ -1721,90 +1802,8 @@ export namespace PaddleAPI {
     recurring_transaction_details: ResponseIncludedField<
       Include,
       "recurring_transaction_details",
-      SubscriptionGetDataTransactionDetails<CustomData<DataDef["Product"]>>
+      SubscriptionDataTransactionDetails<CustomData<DataDef["Product"]>>
     >;
-  }
-
-  /**
-   * Preview of a transaction.
-   */
-  export interface SubscriptionGetDataNextTransaction<
-    ProductData extends Paddle.CustomData
-  > {
-    /** Billing period for the next transaction. */
-    billing_period: Paddle.TimePeriod;
-    /** Calculated totals for a transaction preview, including discounts, tax,
-     * and currency conversion. Considered the source of truth for totals on
-     * a transaction preview. */
-    details: SubscriptionGetDataTransactionDetails<ProductData>;
-    /** Not documented. TODO: Request documentation from Paddle. */
-    adjustments: unknown[];
-  }
-
-  /**
-   * Transaction preview details.
-   */
-  export interface SubscriptionGetDataTransactionDetails<
-    ProductData extends Paddle.CustomData
-  > {
-    /** List of tax rates applied to this transaction preview. */
-    tax_rates_used: Paddle.TaxRate[];
-    /** Breakdown of the total for a transaction preview. fee and earnings
-     * always return null for transaction previews. */
-    totals: SubscriptionGetDataTransactionTotals;
-    /** Information about line items for this transaction preview. Different
-     * from transaction preview items as they include totals calculated
-     * by Paddle. Considered the source of truth for line item totals. */
-    line_items: SubscriptionGetDataTransactionLineItem<ProductData>[];
-  }
-
-  /**
-   * Breakdown of the total for a transaction.
-   */
-  export interface SubscriptionGetDataTransactionTotals
-    extends Paddle.TotalsBase {
-    /** Total discount as a result of any discounts applied. Except
-     * for percentage discounts, Paddle applies tax to discounts based on
-     * the line item price.tax_mode. If price.tax_mode for a line item
-     * is internal, Paddle removes tax from the discount applied. */
-    discount: string;
-    /** Total credit applied to this transaction. This includes credits applied
-     * using a customer's credit balance and adjustments to a billed
-     * transaction. */
-    credit: string;
-    /** Total due on a transaction after credits and any payments. */
-    balance: string;
-    /** Total due on a transaction after credits but before any payments. */
-    grand_total: string;
-    /** Total fee taken by Paddle for this transaction. null until
-     * the transaction is completed and the fee is processed. */
-    fee: string | null;
-    /** Total earnings for this transaction. This is the total minus
-     * the Paddle fee. null until the transaction is completed and the fee
-     * is processed. */
-    earnings: string | null;
-  }
-
-  /**
-   * Information about line items for this transaction preview.
-   */
-  export interface SubscriptionGetDataTransactionLineItem<
-    ProductData extends Paddle.CustomData
-  > {
-    /** Paddle ID for the price related to this transaction line item */
-    price_id: Paddle.PriceId;
-    /** Quantity of this transaction line item */
-    quantity: number;
-    /** Rate used to calculate tax for this transaction line item */
-    tax_rate: string;
-    /** Breakdown of the charge for one unit in the lowest denomination of
-     * a curreny (e.g. cents for USD) */
-    unit_totals: Paddle.TotalsWithDiscount;
-    /** Breakdown of a charge in the lowest unit of a currency
-     * (e.g. cents for USD) */
-    totals: Paddle.TotalsWithDiscount;
-    /** Related product entity for this trasaction line item price */
-    product: Paddle.Product<ProductData>;
   }
 
   //// Update subscription
@@ -1869,6 +1868,107 @@ export namespace PaddleAPI {
       >,
       MetaBasic
     > {}
+
+  //// Preview update transaction
+
+  /**
+   * The preview update subscription response.
+   */
+  export type SubscriptionPreviewUpdateResponse<DataDef extends CustomDataDef> =
+
+      | SubscriptionUpdateResponseError
+      | SubscriptionUpdateResponseSuccess<DataDef>;
+
+  /**
+   * The errored subscription preview update response.
+   */
+  export interface SubscriptionPreviewUpdateResponseError
+    extends ErrorResponse<ErrorCodeSubscriptions> {}
+
+  /**
+   * The successful subscription preview update response.
+   */
+  export interface SubscriptionPreviewUpdateResponseSuccess<
+    DataDef extends CustomDataDef
+  > extends ResponseBase<
+      SubscriptionPreviewUpdateResponseData<DataDef>,
+      MetaBasic
+    > {}
+
+  /**
+   * The preview update subscription data.
+   */
+  export interface SubscriptionPreviewUpdateResponseData<
+    DataDef extends CustomDataDef
+  > extends Omit<
+      Paddle.Subscription<
+        Paddle.CollectionMode,
+        Paddle.TimeInterval | null,
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["SubscriptionItem"]>,
+        CustomData<DataDef["Subscription"]>
+      >,
+      "id"
+    > {
+    /** Preview of the immediate transaction created as a result of changes
+     * to the subscription. Returns a complete object where
+     * proration_billing_mode is prorated_immediately or full_immediately;
+     * null otherwise. */
+    immediate_transaction: SubscriptionDataTransaction<
+      CustomData<DataDef["Product"]>
+    > | null;
+    /** Preview of the next transaction for this subscription. Includes charges
+     * created where proration_billing_mode is prorated_next_billing_period or
+     * full_next_billing_period, as well as one-time charges. null if
+     * the subscription is scheduled to cancel or pause. */
+    next_transaction: SubscriptionDataTransaction<
+      CustomData<DataDef["Product"]>
+    > | null;
+    /** Preview of the recurring transaction for this subscription. This is what
+     * the customer can expect to be billed when there are no prorated or
+     * one-time charges. */
+    recurring_transaction_details: SubscriptionDataTransactionDetails<
+      CustomData<DataDef["Product"]>
+    >;
+    /** Impact of this subscription change. Includes whether the change results
+     * in a charge or credit, and totals for prorated amounts. */
+    update_summary: SubscriptionPreviewUpdateDataSummary | null;
+  }
+
+  /**
+   * Impact of this subscription change.
+   */
+  export interface SubscriptionPreviewUpdateDataSummary {
+    /** Details of any credit adjustments. Paddle creates adjustments against
+     * existing transactions when prorating. */
+    credit: Paddle.UnitPrice;
+    /** Details of the transaction to be created for this update. Paddle
+     * creates a transaction to bill for new charges. */
+    charge: Paddle.UnitPrice;
+    /** Details of the result of credits and charges. Where the total of any
+     * credit adjustments is greater than the total charge, the result is
+     * a prorated credit; otherwise, the result is a prorated charge. */
+    result: SubscriptionPreviewUpdateDataResult;
+  }
+
+  /**
+   * Result of a subscription preview update.
+   */
+  export interface SubscriptionPreviewUpdateDataResult {
+    /** Whether the subscription change results in a prorated credit or
+     * a charge. */
+    action: SubscriptionPreviewUpdateDataResultAction;
+    /** Three-letter ISO 4217 currency code for the transaction or
+     * adjustment. */
+    currency_code: Paddle.CurrencyCode;
+  }
+
+  /**
+   * Result actuib of a subscription preview update.
+   */
+  export type SubscriptionPreviewUpdateDataResultAction =
+    | "credit" // Changes to the subscription results in a prorated credit.
+    | "charge"; // Changes to the subscription results in a prorated charge.
 
   ///
 

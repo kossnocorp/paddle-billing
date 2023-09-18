@@ -24,6 +24,7 @@ import {
   listProducts,
   listSubscriptions,
   listTransactions,
+  previewUpdateSubscription,
   updateAddress,
   updateBusiness,
   updateCustomer,
@@ -854,6 +855,23 @@ updateSubscription(api, "sub_123", {
     nope: "okay",
     what: "ever",
   },
+}).then((subscription) => {
+  if (subscription.error) return;
+
+  // @ts-expect-error: custom_data can be null
+  subscription.data.custom_data.random;
+  subscription.data.custom_data?.random;
+
+  const item = subscription.data.items[0];
+  if (!item) return;
+
+  // @ts-expect-error: custom_data can be null
+  item.custom_data.random;
+  item.custom_data?.random;
+
+  // @ts-expect-error: custom_data can be null
+  item.price.custom_data.random;
+  item.price.custom_data?.random;
 });
 
 updateSubscription(apiCustomData, "sub_123", {
@@ -864,4 +882,76 @@ updateSubscription(apiCustomData, "sub_123", {
     // @ts-expect-error: nope is not a valid custom_data key
     nope: "okay",
   },
+}).then((subscription) => {
+  if (subscription.error) return;
+
+  subscription.data.custom_data.sub;
+  // @ts-expect-error: custom_data is specified
+  subscription.data.custom_data.random;
+
+  const item = subscription.data.items[0];
+  if (!item) return;
+
+  item.custom_data.item.toFixed(2);
+  // @ts-expect-error: custom_data is specified
+  item.custom_data.random;
+
+  item.price.custom_data.foo.at(0);
+  // @ts-expect-error: custom_data is specified
+  item.price.custom_data.random;
+});
+
+//// Preview create subscription
+
+previewUpdateSubscription(api, "sub_123", {
+  scheduled_change: null,
+  items: [],
+  custom_data: {
+    nope: "okay",
+    what: "ever",
+  },
+}).then((subscription) => {
+  if (subscription.error) return;
+
+  // @ts-expect-error: custom_data can be null
+  subscription.data.custom_data.random;
+  subscription.data.custom_data?.random;
+
+  const item = subscription.data.items[0];
+  if (!item) return;
+
+  // @ts-expect-error: custom_data can be null
+  item.custom_data.random;
+  item.custom_data?.random;
+
+  // @ts-expect-error: custom_data can be null
+  item.price.custom_data.random;
+  item.price.custom_data?.random;
+});
+
+previewUpdateSubscription(apiCustomData, "sub_123", {
+  scheduled_change: null,
+  items: [],
+  custom_data: {
+    sub: "scription",
+    // @ts-expect-error: nope is not a valid custom_data key
+    nope: "okay",
+  },
+}).then((subscription) => {
+  if (subscription.error) return;
+
+  subscription.data.custom_data.sub;
+  // @ts-expect-error: custom_data is specified
+  subscription.data.custom_data.random;
+
+  const item = subscription.data.items[0];
+  if (!item) return;
+
+  item.custom_data.item.toFixed(2);
+  // @ts-expect-error: custom_data is specified
+  item.custom_data.random;
+
+  item.price.custom_data.foo.at(0);
+  // @ts-expect-error: custom_data is specified
+  item.price.custom_data.random;
 });

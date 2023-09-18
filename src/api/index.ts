@@ -867,6 +867,36 @@ export function getSubscription<
 }
 
 /**
+ * Previews an update for a subscription without applying those changes.
+ * Typically used for previewing proration before making changes to
+ * a subscription.
+ *
+ * If successful, your response includes immediate_transaction,
+ * next_transaction, and recurring_transaction_details so you can see expected
+ * transactions for the changes.
+ *
+ * The update_summary object contains details of prorated credits and charges
+ * created, along with the overall result of the update.
+ *
+ * @param client - the Paddle API client
+ * @param subscriptionId - Paddle ID of the subscription entity to work with
+ * @param body - the request body containing the subscription update details
+ *
+ * @returns the updated subscription
+ */
+export function updateSubscription<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  subscriptionId: Paddle.SubscriptionId,
+  body: PaddleAPI.SubscriptionUpdateBody<DataDef>
+): Promise<PaddleAPI.SubscriptionUpdateResponse<DataDef>> {
+  return paddleFetch(client, {
+    method: "PATCH",
+    path: "subscriptions/" + subscriptionId,
+    body,
+  });
+}
+
+/**
  * Updates a subscription using its ID.
  *
  * When making changes to items on a subscription, you must include
@@ -890,14 +920,16 @@ export function getSubscription<
  *
  * @returns the updated subscription
  */
-export function updateSubscription<DataDef extends PaddleAPI.CustomDataDef>(
+export function previewUpdateSubscription<
+  DataDef extends PaddleAPI.CustomDataDef
+>(
   client: PaddleAPI.Client<DataDef>,
   subscriptionId: Paddle.SubscriptionId,
   body: PaddleAPI.SubscriptionUpdateBody<DataDef>
-): Promise<PaddleAPI.SubscriptionUpdateResponse<DataDef>> {
+): Promise<PaddleAPI.SubscriptionPreviewUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
-    path: "subscriptions/" + subscriptionId,
+    path: "subscriptions/" + subscriptionId + "/preview",
     body,
   });
 }
