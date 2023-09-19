@@ -55,6 +55,31 @@ const paddle = client("PADDLE_SECRET", true);
 cancelSubscription(paddle, "SUBCRIPTION_ID");
 ```
 
+#### Typing `custom_data`
+
+To add types to `custom_data` fields to `Price`, `Product`, `SubscriptionItem`, `Subscription`, and `Transaction`, add the generic argument to `client`:
+
+```ts
+const paddle = client<{
+  Product: CustomDataProduct;
+  Price: CustomDataPrice;
+  Transaction: CustomDataTransaction;
+  Subscription: CustomDataSubscription;
+  SubscriptionItem: CustomDataSubscriptionItem;
+}>("PADDLE_SECRET");
+```
+
+From now on, all corresponding entities will have `custom_data` typed.
+
+All custom data fields are optional so that you can type only selected entities:
+
+```ts
+const paddle = client<{
+  Product: CustomDataProduct;
+  Price: CustomDataPrice;
+}>("PADDLE_SECRET");
+```
+
 #### Methods List
 
 - [**Products**](https://developer.paddle.com/api-reference/products/overview)

@@ -1,6 +1,6 @@
 {
   "name": "paddle-billing",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Paddle Billing API and Webhooks wrapper with detailed TypeScript types",
   "main": "./index.js",
   "module": "./index.mjs",
