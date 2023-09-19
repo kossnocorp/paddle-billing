@@ -17,6 +17,7 @@ import {
   getCustomer,
   getDiscount,
   getInvoice,
+  getNotificationSetting,
   getPrice,
   getProduct,
   getSubscription,
@@ -1481,6 +1482,25 @@ describe("notification settings", () => {
 
       expect(result.error).toBeUndefined();
       expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+
+  describe("getNotificationSetting", () => {
+    mockFetch();
+
+    it("sends a GET request", async () => {
+      const notificationSettingId = "ntfset_123";
+
+      await getNotificationSetting(testClient, notificationSettingId);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        `https://api.paddle.com/notification-settings/${notificationSettingId}`,
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
     });
   });
 });

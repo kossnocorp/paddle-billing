@@ -2363,6 +2363,27 @@ export namespace PaddleAPI {
   export interface NotificationSettingCreateResponseSuccess
     extends ResponseBase<Paddle.NotificationSetting, MetaBasic> {}
 
+  //// Get notification setting
+
+  /**
+   * The get notification setting response.
+   */
+  export type NotificationSettingGetResponse =
+    | NotificationSettingGetResponseError
+    | NotificationSettingGetResponseSuccess;
+
+  /**
+   * The errored notification setting get response.
+   */
+  export interface NotificationSettingGetResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful notification setting get response.
+   */
+  export interface NotificationSettingGetResponseSuccess
+    extends ResponseBase<Paddle.NotificationSetting, MetaBasic> {}
+
   ///
 
   /**

@@ -1314,6 +1314,26 @@ export function createNotificationSetting<
   });
 }
 
+/**
+ * Returns a notification setting (notification destination) using its ID.
+ *
+ * @param client - The Paddle API client
+ * @param notificationSettingId - Paddle ID of the notification setting entity to work with
+ *
+ * @returns a notification destination
+ */
+export async function getNotificationSetting<
+  DataDef extends PaddleAPI.CustomDataDef
+>(
+  client: PaddleAPI.Client<DataDef>,
+  notificationSettingId: Paddle.NotificationSettingId
+): Promise<PaddleAPI.NotificationSettingGetResponse> {
+  return await paddleFetch(client, {
+    method: "GET",
+    path: `notification-settings/${notificationSettingId}`,
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {

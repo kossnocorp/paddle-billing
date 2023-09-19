@@ -16,6 +16,7 @@ import {
   getCustomer,
   getDiscount,
   getInvoice,
+  getNotificationSetting,
   getPrice,
   getProduct,
   getSubscription,
@@ -1505,6 +1506,13 @@ createNotificationSetting(api, {
   api_version: 2,
   include_sensitive_fields: true,
 }).then((setting) => {
+  if (setting.error) return;
+  setting.data.destination;
+});
+
+//// Get notification setting
+
+getNotificationSetting(api, "ntfset_123").then((setting) => {
   if (setting.error) return;
   setting.data.destination;
 });
