@@ -12,6 +12,8 @@ To install the package run:
 npm install paddle-billing
 ```
 
+The minimum required Node.js version is v18, as it uses Fetch API. It's possible to use older versions with `global.fetch` polyfill, but not recommended.
+
 ## Usage
 
 - [API](#api)

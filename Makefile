@@ -8,3 +8,6 @@ prepare-build:
 	@mkdir -p lib
 	@cp package.json lib
 	@cp *.md lib
+
+publish: build
+	@cd lib && npm publish --access public
