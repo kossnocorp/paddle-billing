@@ -31,6 +31,7 @@ import {
   listEventTypes,
   listEvents,
   listNotificationSettings,
+  listNotifications,
   listPrices,
   listProducts,
   listSubscriptions,
@@ -1559,6 +1560,35 @@ describe("notification settings", () => {
 
       expect(result.error).toBeUndefined();
       expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+});
+
+describe("notifications", () => {
+  describe("listNotifications", () => {
+    mockFetch();
+
+    it("sends a GET request with correct query parameters", async () => {
+      await listNotifications(testClient, {
+        after: "abc",
+        notification_setting_id: "ntfset_123",
+        order_by: "created_at[DESC]",
+        per_page: 5,
+        search: "email/notification",
+        status: "delivered",
+        filter: "sub_123",
+        to: "2022-12-31T11:59:59Z",
+        from: "2022-01-01T00:00:00Z",
+      });
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/notifications?after=abc&notification_setting_id=ntfset_123&order_by=created_at%5BDESC%5D&per_page=5&search=email%2Fnotification&status=delivered&filter=sub_123&to=2022-12-31T11%3A59%3A59Z&from=2022-01-01T00%3A00%3A00Z",
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
     });
   });
 });

@@ -743,7 +743,8 @@ export namespace Paddle {
     earnings: string;
     /** Breakdown of the total adjustments by adjustment action. */
     breakdown: AdjustmentsTotalsBreakdown;
-    /** Three-letter ISO 4217 currency code used for adjustments for this transaction. */
+    /** Three-letter ISO 4217 currency code used for adjustments for
+     * this transaction. */
     currency_code: CurrencyCode;
   }
 
@@ -868,9 +869,9 @@ export namespace Paddle {
     /** Whether this entity can be used in Paddle */
     status: EntityStatus;
     /** RFC 3339 datetime string of when this entity was created */
-    created_at: string; // could be more specific with a "date-time" type or a Date type
+    created_at: string;
     /** RFC 3339 datetime string of when this entity was updated */
-    updated_at: string; // could be more specific with a "date-time" type or a Date type
+    updated_at: string;
   }
 
   /**
@@ -1487,7 +1488,8 @@ export namespace Paddle {
 
   /**
    * Event types are actions that Paddle creates events for.
-   * When something notable occurs, Paddle creates an event entity with information about what happened.
+   * When something notable occurs, Paddle creates an event entity with
+   * information about what happened.
    */
   export interface EventType {
     /** Type of event sent by Paddle, in the format entity.event_type. */
@@ -1547,11 +1549,6 @@ export namespace Paddle {
    * Event ID.
    */
   export type EventId = `evt_${string}`;
-
-  /**
-   * Notification ID.
-   */
-  export type NotificationId = `ntf_${string}`;
 
   /**
    * Subscription event alias.
@@ -2017,6 +2014,11 @@ export namespace Paddle {
   /// Notification settings
 
   /**
+   * Notification setting id.
+   */
+  export type NotificationSettingId = `ntfset_${string}`;
+
+  /**
    * Notification settings entities describe subscriptions to events.
    * They are also called notification destinations.
    *
@@ -2073,8 +2075,58 @@ export namespace Paddle {
     available_versions: number[];
   }
 
+  /// Notifications
+
   /**
-   * Notification setting id.
+   * Notification ID.
    */
-  export type NotificationSettingId = `ntfset_${string}`;
+  export type NotificationId = `ntf_${string}`;
+
+  /**
+   * Describes a notification for an event that occured in your Paddle system.
+   */
+  export interface Notification {
+    /** Unique Paddle ID for this notification, prefixed with ntf_. */
+    id: NotificationId;
+    /** Type of event sent by Paddle, in the format entity.event_type. */
+    type: EventTypeName;
+    /** Status of this notification. */
+    status: NotificationStatus;
+    /** Notification payload. Includes the new or changed event. */
+    payload: Event;
+    /** RFC 3339 datetime string of when this notification occurred. */
+    occurred_at: string;
+    /** RFC 3339 datetime string of when this notification was delivered. */
+    delivered_at: string | null;
+    /** RFC 3339 datetime string of when this notification was replayed. */
+    replayed_at: string | null;
+    /** Describes how this notification was created. */
+    origin: NotificationOrigin;
+    /** RFC 3339 datetime string of when this notification was last attempted */
+    last_attempt_at: string | null;
+    /** RFC 3339 datetime string of when this notification is scheduled to
+     * be retried. */
+    retry_at: string | null;
+    /** How many times delivery of this notification has been attempted.
+     * Automatically incremented by Paddle after an attempt. */
+    times_attempted: number;
+    /** Unique Paddle ID for this notification setting, prefixed with ntfset_. */
+    notification_setting_id: NotificationSettingId;
+  }
+
+  /**
+   * Notification status.
+   */
+  export type NotificationStatus =
+    | "not_attempted" // Paddle hasn't yet tried to deliver this notification.
+    | "needs_retry" // Paddle tried to deliver this notification, but it failed. It's scheduled to be retried.
+    | "delivered" // Paddle delivered this notification successfully.
+    | "failed"; // Paddle tried to deliver this notification, but all attempts failed. It's not scheduled to be retried.
+
+  /**
+   * Notification origin.
+   */
+  export type NotificationOrigin =
+    | "event" // Notification created when a subscribed event occured.
+    | "replay"; // Notification created when a notification with the origin event was replayed
 }

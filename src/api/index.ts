@@ -1395,6 +1395,28 @@ export function deleteNotificationSetting<
   });
 }
 
+/// Notifications
+
+/**
+ * Returns a paginated list of notifications. Use the query parameters to page
+ * through results.
+ *
+ * @param client - the Paddle API client
+ * @param query - the query parameters to filter the list of notifications
+ *
+ * @returns list of notifications
+ */
+export function listNotifications<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  query?: PaddleAPI.NotificationsListQuery
+): Promise<PaddleAPI.NotificationsListResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "notifications",
+    query,
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {

@@ -2270,11 +2270,11 @@ export namespace PaddleAPI {
    */
   export interface EventsListQuery {
     /** Return entities after the specified cursor. Used for working through paginated results. */
-    after?: string;
+    after?: string | undefined;
     /** Order returned entities by the specified field and direction ([ASC] or [DESC]). */
-    order_by?: string;
+    order_by?: string | undefined;
     /** Set how many entities are returned per page. */
-    per_page?: number;
+    per_page?: number | undefined;
   }
 
   /**
@@ -2435,6 +2435,63 @@ export namespace PaddleAPI {
   export type NotificationSettingDeleteResponse =
     | NotificationSettingDeleteResponseSuccess
     | NotificationSettingDeleteResponseError;
+
+  /// Notifications
+
+  //// List notifications
+
+  /**
+   * The list notifications query.
+   */
+  export interface NotificationsListQuery {
+    /** Return entities after the specified cursor */
+    after?: string | undefined;
+    /** Return entities related to the specified notification destination */
+    notification_setting_id?:
+      | Paddle.NotificationSettingId
+      | Paddle.NotificationSettingId[]
+      | undefined;
+    /** Order returned entities by the specified field and direction */
+    order_by?: string | undefined;
+    /** Set how many entities are returned per page */
+    per_page?: number | undefined;
+    /** Return entities that match a search query */
+    search?: string | undefined;
+    /** Return entities that match the specified status */
+    status?:
+      | Paddle.NotificationStatus
+      | Paddle.NotificationStatus[]
+      | undefined;
+    /** Return entities that contain the Paddle ID specified */
+    filter?:
+      | Paddle.TransactionId
+      | Paddle.CustomerId
+      | Paddle.SubscriptionId
+      | undefined;
+    /** Return entities up to a specific time */
+    to?: string | undefined;
+    /** Return entities from a specific time */
+    from?: string | undefined;
+  }
+
+  /**
+   * The list notifications response.
+   */
+  export type NotificationsListResponse =
+    | NotificationsListResponseError
+    | NotificationsListResponseSuccess;
+
+  /**
+   * The errored list notifications response.
+   */
+  export interface NotificationsListResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful list notifications response.
+   */
+  export interface NotificationsListResponseSuccess
+    extends ResponseBase<Paddle.Notification[], MetaPaginated> {}
 
   ///
 

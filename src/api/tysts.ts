@@ -30,6 +30,7 @@ import {
   listEventTypes,
   listEvents,
   listNotificationSettings,
+  listNotifications,
   listPrices,
   listProducts,
   listSubscriptions,
@@ -1533,4 +1534,13 @@ updateNotificationSetting(api, "ntfset_123", {
 deleteNotificationSetting(api, "ntfset_123").then((setting) => {
   if (setting.error) return;
   Object.keys(setting.data);
+});
+
+/// Notifications
+
+//// List notifications
+
+listNotifications(api).then((notifications) => {
+  if (notifications.error) return;
+  notifications.data[0]?.notification_setting_id;
 });
