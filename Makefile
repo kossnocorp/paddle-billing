@@ -7,4 +7,4 @@ prepare-build:
 	@rm -rf lib/*
 	@mkdir -p lib
 	@cp package.json lib
-	@cp README.md lib
+	@cp *.md lib

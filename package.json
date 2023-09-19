@@ -1,7 +1,7 @@
 {
-  "name": "@chargekit/paddle",
+  "name": "paddle-billing",
   "version": "0.1.0",
-  "description": "Paddle Billing API wrapper with detailed TypeScript types",
+  "description": "Paddle Billing API and Webhooks wrapper with detailed TypeScript types",
   "main": "./index.js",
   "module": "./index.mjs",
   "exports": {
@@ -23,18 +23,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chargekit/paddle.git"
+    "url": "git+https://github.com/kossnocorp/paddle-billing.git"
   },
   "keywords": [
     "Paddle",
-    "Paddle Billing"
+    "Paddle Billing",
+    "Paddle Webhooks"
   ],
   "author": "Sasha Koss <koss@nocorp.me>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/chargekit/paddle/issues"
+    "url": "https://github.com/kossnocorp/paddle-billing/issues"
   },
-  "homepage": "https://github.com/chargekit/paddle#readme",
+  "homepage": "https://github.com/kossnocorp/paddle-billing#readme",
   "devDependencies": {
     "@babel/cli": "^7.22.15",
     "@babel/core": "^7.22.20",
