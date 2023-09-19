@@ -2307,6 +2307,13 @@ export namespace PaddleAPI {
 
   /// Notification settings
 
+  /**
+   * The notification setting auto-assign fields.
+   */
+  export type NotificationSettingAutoAssignFields =
+    | "id"
+    | "endpoint_secret_key";
+
   //// List notification settings
 
   /**
@@ -2326,7 +2333,35 @@ export namespace PaddleAPI {
    * The successful list notification settings response.
    */
   export interface NotificationSettingsListResponseSuccess
-    extends ResponseBase<Paddle.EventType[], MetaBasic> {}
+    extends ResponseBase<Paddle.NotificationSetting[], MetaBasic> {}
+
+  //// Create notification setting
+
+  /**
+   * The create notification setting body.
+   */
+  export type NotificationSettingCreateBody = MakeNullableFieldsOptional<
+    Omit<Paddle.NotificationSetting, NotificationSettingAutoAssignFields>
+  >;
+
+  /**
+   * The create notification setting response.
+   */
+  export type NotificationSettingCreateResponse =
+    | NotificationSettingCreateResponseError
+    | NotificationSettingCreateResponseSuccess;
+
+  /**
+   * The errored notification setting create response.
+   */
+  export interface NotificationSettingCreateResponseError
+    extends ErrorResponse<ErrorCodeTransactions> {}
+
+  /**
+   * The successful notification setting create response.
+   */
+  export interface NotificationSettingCreateResponseSuccess
+    extends ResponseBase<Paddle.NotificationSetting, MetaBasic> {}
 
   ///
 

@@ -8,6 +8,7 @@ import {
   createCharge,
   createCustomer,
   createDiscount,
+  createNotificationSetting,
   createPrice,
   createProduct,
   createTransaction,
@@ -1447,6 +1448,39 @@ describe("notification settings", () => {
           body: null,
         }
       );
+    });
+  });
+
+  describe("createNotificationSetting", () => {
+    mockFetch();
+
+    it("sends a POST request", async () => {
+      const body = {
+        description: "Notification Description",
+        destination: "https://example.com/webhook",
+        subscribed_events: [],
+        type: "url" as const,
+        active: true,
+        api_version: 2,
+        include_sensitive_fields: true,
+      };
+
+      const result = await createNotificationSetting(testClient, body);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/notification-settings",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
     });
   });
 });

@@ -7,6 +7,7 @@ import {
   createCharge,
   createCustomer,
   createDiscount,
+  createNotificationSetting,
   createPrice,
   createProduct,
   createTransaction,
@@ -1490,5 +1491,20 @@ listEvents(apiCustomData).then((events) => {
 
 listNotificationSettings(api).then((settings) => {
   if (settings.error) return;
-  settings.data[0]?.available_versions.join(", ");
+  settings.data[0]?.destination;
+});
+
+//// Create notification setting
+
+createNotificationSetting(api, {
+  description: "Notification Description",
+  destination: "https://example.com/webhook",
+  subscribed_events: [],
+  type: "url" as const,
+  active: true,
+  api_version: 2,
+  include_sensitive_fields: true,
+}).then((setting) => {
+  if (setting.error) return;
+  setting.data.destination;
 });

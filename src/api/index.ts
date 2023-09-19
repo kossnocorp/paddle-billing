@@ -1284,6 +1284,36 @@ export function listNotificationSettings<
   });
 }
 
+/**
+ * Create a new notification setting (notification destination).
+ *
+ * Pass an array of event type names to subscribed_events to say which events
+ * you'd like to subscribe to. Paddle responds with the full event type object
+ * for each event type.
+ *
+ * If successful, your response includes a copy of the new notification setting
+ * entity. Use the returned endpoint_secret_key for webhook
+ * signature verification.
+ *
+ * @param client - the Paddle API client
+ * @param body - the body of the request containing the details for
+ * the notification setting creation
+ *
+ * @returns the notification setting entity and request information
+ */
+export function createNotificationSetting<
+  DataDef extends PaddleAPI.CustomDataDef
+>(
+  client: PaddleAPI.Client<DataDef>,
+  body: PaddleAPI.NotificationSettingCreateBody
+): Promise<PaddleAPI.NotificationSettingCreateResponse> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "notification-settings",
+    body,
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {
