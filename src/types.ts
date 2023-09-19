@@ -2129,4 +2129,27 @@ export namespace Paddle {
   export type NotificationOrigin =
     | "event" // Notification created when a subscribed event occured.
     | "replay"; // Notification created when a notification with the origin event was replayed
+
+  /// Notification logs
+
+  /**
+   * Unique Paddle ID for this notification log, prefixed with ntflog_
+   */
+  export type NotificationLogId = `ntflog_${string}`;
+
+  /**
+   * NotificationLog entities describe the log information about a notification.
+   */
+  export interface NotificationLog {
+    /** Unique Paddle ID for this notification log, prefixed with ntflog_ */
+    id: NotificationLogId;
+    /** HTTP code sent by the responding server. */
+    response_code: number;
+    /** Content-Type sent by the responding server. */
+    response_content_type: string | null;
+    /** Response body sent by the responding server. Typically empty for success responses. */
+    response_body: string;
+    /** RFC 3339 datetime string of when Paddle attempted to deliver the related notification. */
+    attempted_at: string;
+  }
 }

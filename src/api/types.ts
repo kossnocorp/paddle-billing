@@ -2529,6 +2529,38 @@ export namespace PaddleAPI {
     notification_id: Paddle.NotificationId;
   }
 
+  /// Notification logs
+
+  /**
+   * The notification logs list query.
+   */
+  export interface NotificationLogsListQuery {
+    /** Return entities after the specified cursor. Used for working through
+     * paginated results. */
+    after?: string | undefined;
+    /** Set how many entities are returned per page. */
+    per_page?: number | undefined;
+  }
+
+  /**
+   * The notification logs list response.
+   */
+  export type NotificationLogsListResponse =
+    | NotificationLogsListResponseError
+    | NotificationLogsListResponseSuccess;
+
+  /**
+   * The errored notification logs list response.
+   */
+  export interface NotificationLogsListResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful notification logs list response.
+   */
+  export interface NotificationLogsListResponseSuccess
+    extends ResponseBase<Paddle.NotificationLog[], MetaPaginated> {}
+
   ///
 
   /**

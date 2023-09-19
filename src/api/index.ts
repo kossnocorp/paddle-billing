@@ -1457,6 +1457,30 @@ export function replayNotification<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/// Notification logs
+
+/**
+ * Returns a paginated list of notification logs for a notification. A log
+ * includes information about delivery attempts, including failures.
+ *
+ * @param client - the Paddle API client
+ * @param notificationId - Paddle ID of the notification entity to work with
+ * @param query - the query parameters to filter the list of notification logs
+ *
+ * @returns list of notification logs
+ */
+export function listNotificationLogs<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  notificationId: Paddle.NotificationId,
+  query?: PaddleAPI.NotificationLogsListQuery
+): Promise<PaddleAPI.NotificationLogsListResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "notifications/" + notificationId + "/logs",
+    query,
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {

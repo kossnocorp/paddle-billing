@@ -30,6 +30,7 @@ import {
   listDiscounts,
   listEventTypes,
   listEvents,
+  listNotificationLogs,
   listNotificationSettings,
   listNotifications,
   listPrices,
@@ -1556,4 +1557,13 @@ getNotification(api, "ntf_123").then((notification) => {
 replayNotification(api, "ntf_123").then((notification) => {
   if (notification.error) return;
   notification.data.notification_id;
+});
+
+/// Notification logs
+
+//// List notification logs
+
+listNotificationLogs(api, "ntf_123").then((logs) => {
+  if (logs.error) return;
+  logs.data[0]?.attempted_at;
 });

@@ -31,6 +31,7 @@ import {
   listDiscounts,
   listEventTypes,
   listEvents,
+  listNotificationLogs,
   listNotificationSettings,
   listNotifications,
   listPrices,
@@ -1629,6 +1630,28 @@ describe("notifications", () => {
 
       expect(result.error).toBeUndefined();
       expect(!result.error && result.data).toBeInstanceOf(Object);
+    });
+  });
+});
+
+describe("notification logs", () => {
+  describe("listNotificationLogs", () => {
+    mockFetch();
+
+    it("sends a GET request", async () => {
+      await listNotificationLogs(testClient, "ntf_123", {
+        after: "abc",
+        per_page: 20,
+      });
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/notifications/ntf_123/logs?after=abc&per_page=20",
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
     });
   });
 });
