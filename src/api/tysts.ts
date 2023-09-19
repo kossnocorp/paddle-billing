@@ -40,6 +40,7 @@ import {
   previewCharge,
   previewPrices,
   previewUpdateSubscription,
+  replayNotification,
   resumeSubscription,
   updateAddress,
   updateBusiness,
@@ -1548,4 +1549,11 @@ listNotifications(api).then((notifications) => {
 getNotification(api, "ntf_123").then((notification) => {
   if (notification.error) return;
   notification.data.notification_setting_id;
+});
+
+//// Replay notification
+
+replayNotification(api, "ntf_123").then((notification) => {
+  if (notification.error) return;
+  notification.data.notification_id;
 });

@@ -2500,6 +2500,35 @@ export namespace PaddleAPI {
   export interface NotificationGetResponseSuccess
     extends ResponseBase<Paddle.Notification, MetaBasic> {}
 
+  //// Reply a notification
+
+  /**
+   * The replay notification response.
+   */
+  export type NotificationReplayResponse =
+    | NotificationReplayResponseError
+    | NotificationReplayResponseSuccess;
+
+  /**
+   * The successful replay notification response.
+   */
+  export interface NotificationReplayResponseSuccess
+    extends ResponseBase<NotificationReplayData, MetaBasic> {}
+
+  /**
+   * The errored replay notification response.
+   */
+  export interface NotificationReplayResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * Replay notification data.
+   */
+  export interface NotificationReplayData {
+    /** Unique Paddle ID for this new notification */
+    notification_id: Paddle.NotificationId;
+  }
+
   ///
 
   /**

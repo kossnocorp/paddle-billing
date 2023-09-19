@@ -43,6 +43,7 @@ import {
   previewPrices,
   previewTransaction,
   previewUpdateSubscription,
+  replayNotification,
   resumeSubscription,
   updateAddress,
   updateBusiness,
@@ -1606,6 +1607,28 @@ describe("notifications", () => {
           body: null,
         }
       );
+    });
+  });
+
+  describe("replayNotification", () => {
+    mockFetch();
+
+    it("sends a POST request", async () => {
+      const notificationId = "ntf_123";
+
+      const result = await replayNotification(testClient, notificationId);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        `https://api.paddle.com/notifications/${notificationId}/replay`,
+        {
+          method: "POST",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
     });
   });
 });

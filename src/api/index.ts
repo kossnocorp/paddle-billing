@@ -1435,6 +1435,28 @@ export function getNotification<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Attempts to resend a delivered or failed notification using its ID.
+ *
+ * Paddle creates a new notification entity for the replay, related to
+ * the same event_id. The new notification replay is sent to the destination
+ * against the notification_setting_id.
+ *
+ * @param client - the Paddle API client
+ * @param notificationId - Paddle ID of the notification entity to work with
+ *
+ * @returns object with replayed notification id
+ */
+export function replayNotification<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  notificationId: string
+): Promise<PaddleAPI.NotificationReplayResponse> {
+  return paddleFetch(client, {
+    method: "POST",
+    path: "notifications/" + notificationId + "/replay",
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {
