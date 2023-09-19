@@ -2355,7 +2355,7 @@ export namespace PaddleAPI {
    * The errored notification setting create response.
    */
   export interface NotificationSettingCreateResponseError
-    extends ErrorResponse<ErrorCodeTransactions> {}
+    extends ErrorResponse<ErrorCodeNotifications> {}
 
   /**
    * The successful notification setting create response.
@@ -2383,6 +2383,58 @@ export namespace PaddleAPI {
    */
   export interface NotificationSettingGetResponseSuccess
     extends ResponseBase<Paddle.NotificationSetting, MetaBasic> {}
+
+  //// Update notification setting
+
+  /**
+   * Body for updating a notification setting.
+   */
+  export type NotificationSettingUpdateBody = Optional<
+    Omit<
+      Paddle.NotificationSetting,
+      NotificationSettingAutoAssignFields | "type"
+    >
+  >;
+
+  /**
+   * Response of successful update of notification setting.
+   */
+  export interface NotificationSettingUpdateResponseSuccess
+    extends ResponseBase<Paddle.NotificationSetting, MetaBasic> {}
+
+  /**
+   * The errored update notification setting response.
+   */
+  export interface NotificationSettingUpdateResponseError
+    extends ErrorResponse<ErrorCodeNotifications> {}
+
+  /**
+   * Type of update notification response.
+   */
+  export type NotificationSettingUpdateResponse =
+    | NotificationSettingUpdateResponseError
+    | NotificationSettingUpdateResponseSuccess;
+
+  //// Delete notification setting
+
+  /**
+   * The response type for the successful deletion of a notification setting.
+   */
+  export interface NotificationSettingDeleteResponseSuccess
+    extends ResponseBase<{}, MetaBasic> {}
+
+  /**
+   * The response type for a failed deletion of a notification setting.
+   */
+  export interface NotificationSettingDeleteResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The response type for deleting a notification setting.
+   */
+  export type NotificationSettingDeleteResponse =
+    | NotificationSettingDeleteResponseSuccess
+    | NotificationSettingDeleteResponseError;
 
   ///
 

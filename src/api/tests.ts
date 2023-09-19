@@ -12,6 +12,7 @@ import {
   createPrice,
   createProduct,
   createTransaction,
+  deleteNotificationSetting,
   getAddress,
   getBusiness,
   getCustomer,
@@ -45,6 +46,7 @@ import {
   updateBusiness,
   updateCustomer,
   updateDiscount,
+  updateNotificationSetting,
   updatePaymentMethodTransaction,
   updatePrice,
   updateProduct,
@@ -1501,6 +1503,62 @@ describe("notification settings", () => {
           body: null,
         }
       );
+    });
+  });
+
+  describe("updateNotificationSetting", () => {
+    mockFetch();
+
+    it("sends a PATCH request", async () => {
+      const body = {
+        description: "Updated Description",
+        destination: "https://example.com/hooks",
+        active: true,
+        api_version: 2,
+        include_sensitive_fields: true,
+        subscribed_events: [],
+      };
+
+      await updateNotificationSetting(testClient, "ntfset_123", body);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        "https://api.paddle.com/notification-settings/ntfset_123",
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer test",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+    });
+  });
+
+  describe("deleteNotificationSetting", () => {
+    mockFetch();
+
+    it("sends a DELETE request", async () => {
+      const notifSettingId = "ntfset_123";
+
+      const result = await deleteNotificationSetting(
+        testClient,
+        notifSettingId
+      );
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        `https://api.paddle.com/notification-settings/${notifSettingId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: "Bearer test",
+          },
+          body: null,
+        }
+      );
+
+      expect(result.error).toBeUndefined();
+      expect(!result.error && result.data).toBeInstanceOf(Object);
     });
   });
 });

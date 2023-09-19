@@ -11,6 +11,7 @@ import {
   createPrice,
   createProduct,
   createTransaction,
+  deleteNotificationSetting,
   getAddress,
   getBusiness,
   getCustomer,
@@ -42,6 +43,7 @@ import {
   updateBusiness,
   updateCustomer,
   updateDiscount,
+  updateNotificationSetting,
   updatePaymentMethodTransaction,
   updatePrice,
   updateProduct,
@@ -1515,4 +1517,20 @@ createNotificationSetting(api, {
 getNotificationSetting(api, "ntfset_123").then((setting) => {
   if (setting.error) return;
   setting.data.destination;
+});
+
+//// Update notification setting
+
+updateNotificationSetting(api, "ntfset_123", {
+  destination: "https://example.com/webhook",
+}).then((setting) => {
+  if (setting.error) return;
+  setting.data.destination;
+});
+
+//// Delete notification setting
+
+deleteNotificationSetting(api, "ntfset_123").then((setting) => {
+  if (setting.error) return;
+  Object.keys(setting.data);
 });

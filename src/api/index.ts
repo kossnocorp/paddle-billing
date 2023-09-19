@@ -1334,6 +1334,67 @@ export async function getNotificationSetting<
   });
 }
 
+/**
+ * Update a notification setting (notification destination) using its ID.
+ *
+ * When updating subscribed events, send the complete list of event types that
+ * you'd like to subscribe to. Include existing event types as omission would
+ * lead to their removal from the notification setting. Only the event type name
+ * needs to be passed, and Paddle responds with the full event type object for
+ * each event type.
+ *
+ * If successful, your response includes a copy of the updated notification
+ * setting entity.
+ *
+ * @param client - The Paddle API client
+ * @param notificationSettingId - Paddle ID of the notification setting entity to work with
+ * @param body - The request body containing the update details
+ *
+ * @returns The updated notification setting entity
+ */
+export function updateNotificationSetting<
+  DataDef extends PaddleAPI.CustomDataDef
+>(
+  client: PaddleAPI.Client<DataDef>,
+  notificationSettingId: Paddle.NotificationSettingId,
+  body: PaddleAPI.NotificationSettingUpdateBody
+): Promise<PaddleAPI.NotificationSettingUpdateResponse> {
+  return paddleFetch(client, {
+    method: "PATCH",
+    path: "notification-settings/" + notificationSettingId,
+    body,
+  });
+}
+
+/**
+ * Deletes a notification setting using its ID.
+ *
+ * When you delete a notification setting, it's permanently removed from your
+ * account. Paddle stops sending events to your destination, and you'll lose
+ * access to all the logs for this notification setting.
+ *
+ * There's no way to recover a deleted notification setting. Deactivate
+ * a notification setting using the update notification setting operation if
+ * you'll need access to the logs or want to reactivate later on.
+ *
+ * @param client - Instance of the Paddle API client
+ * @param pathParams - Contains the ID of the notification setting to be deleted
+ *
+ * @returns A promise that resolves to a response object, containing either
+ * a success or error response
+ */
+export function deleteNotificationSetting<
+  DataDef extends PaddleAPI.CustomDataDef
+>(
+  client: PaddleAPI.Client<DataDef>,
+  notificationSettingId: Paddle.NotificationSettingId
+): Promise<PaddleAPI.NotificationSettingDeleteResponse> {
+  return paddleFetch(client, {
+    method: "DELETE",
+    path: "notification-settings/" + notificationSettingId,
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {
