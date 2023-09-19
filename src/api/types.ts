@@ -2418,23 +2418,9 @@ export namespace PaddleAPI {
   //// Delete notification setting
 
   /**
-   * The response type for the successful deletion of a notification setting.
-   */
-  export interface NotificationSettingDeleteResponseSuccess
-    extends ResponseBase<{}, MetaBasic> {}
-
-  /**
-   * The response type for a failed deletion of a notification setting.
-   */
-  export interface NotificationSettingDeleteResponseError
-    extends ErrorResponse<ErrorCodeShared> {}
-
-  /**
    * The response type for deleting a notification setting.
    */
-  export type NotificationSettingDeleteResponse =
-    | NotificationSettingDeleteResponseSuccess
-    | NotificationSettingDeleteResponseError;
+  export type NotificationSettingDeleteResponse = {};
 
   /// Notifications
 
@@ -2492,6 +2478,27 @@ export namespace PaddleAPI {
    */
   export interface NotificationsListResponseSuccess
     extends ResponseBase<Paddle.Notification[], MetaPaginated> {}
+
+  //// Get notification
+
+  /**
+   * The get notification response.
+   */
+  export type NotificationGetResponse =
+    | NotificationGetResponseError
+    | NotificationGetResponseSuccess;
+
+  /**
+   * The errored get notification response.
+   */
+  export interface NotificationGetResponseError
+    extends ErrorResponse<ErrorCodeShared> {}
+
+  /**
+   * The successful get notification response.
+   */
+  export interface NotificationGetResponseSuccess
+    extends ResponseBase<Paddle.Notification, MetaBasic> {}
 
   ///
 

@@ -17,6 +17,7 @@ import {
   getCustomer,
   getDiscount,
   getInvoice,
+  getNotification,
   getNotificationSetting,
   getPrice,
   getProduct,
@@ -1531,10 +1532,7 @@ updateNotificationSetting(api, "ntfset_123", {
 
 //// Delete notification setting
 
-deleteNotificationSetting(api, "ntfset_123").then((setting) => {
-  if (setting.error) return;
-  Object.keys(setting.data);
-});
+deleteNotificationSetting(api, "ntfset_123");
 
 /// Notifications
 
@@ -1543,4 +1541,11 @@ deleteNotificationSetting(api, "ntfset_123").then((setting) => {
 listNotifications(api).then((notifications) => {
   if (notifications.error) return;
   notifications.data[0]?.notification_setting_id;
+});
+
+//// Get notification
+
+getNotification(api, "ntf_123").then((notification) => {
+  if (notification.error) return;
+  notification.data.notification_setting_id;
 });

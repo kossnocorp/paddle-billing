@@ -18,6 +18,7 @@ import {
   getCustomer,
   getDiscount,
   getInvoice,
+  getNotification,
   getNotificationSetting,
   getPrice,
   getProduct,
@@ -1557,9 +1558,6 @@ describe("notification settings", () => {
           body: null,
         }
       );
-
-      expect(result.error).toBeUndefined();
-      expect(!result.error && result.data).toBeInstanceOf(Object);
     });
   });
 });
@@ -1583,6 +1581,25 @@ describe("notifications", () => {
 
       expect(global.fetch).toHaveBeenCalledWith(
         "https://api.paddle.com/notifications?after=abc&notification_setting_id=ntfset_123&order_by=created_at%5BDESC%5D&per_page=5&search=email%2Fnotification&status=delivered&filter=sub_123&to=2022-12-31T11%3A59%3A59Z&from=2022-01-01T00%3A00%3A00Z",
+        {
+          method: "GET",
+          headers: { Authorization: "Bearer test" },
+          body: null,
+        }
+      );
+    });
+  });
+
+  describe("getNotification", () => {
+    mockFetch();
+
+    it("sends a GET request to get a notification", async () => {
+      const notificationId = "ntf_123";
+
+      await getNotification(testClient, notificationId);
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        `https://api.paddle.com/notifications/${notificationId}`,
         {
           method: "GET",
           headers: { Authorization: "Bearer test" },

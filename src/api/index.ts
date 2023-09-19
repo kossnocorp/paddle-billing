@@ -1417,6 +1417,24 @@ export function listNotifications<DataDef extends PaddleAPI.CustomDataDef>(
   });
 }
 
+/**
+ * Returns a notification using its ID.
+ *
+ * @param client - the Paddle API client
+ * @param notificationId - Paddle ID of the notification entity to work with
+ *
+ * @returns the notification
+ */
+export function getNotification<DataDef extends PaddleAPI.CustomDataDef>(
+  client: PaddleAPI.Client<DataDef>,
+  notificationId: Paddle.NotificationId
+): Promise<PaddleAPI.NotificationGetResponse> {
+  return paddleFetch(client, {
+    method: "GET",
+    path: "notifications/" + notificationId,
+  });
+}
+
 /// Private
 
 function prepareQuery(query: Object | undefined): string {
