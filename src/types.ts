@@ -271,7 +271,7 @@ export namespace Paddle {
     discount: SubscriptionDiscount | null;
     /** Current billing period for this subscription. Set automatically
      * by Paddle based on the billing cycle. */
-    current_billing_period: TimeInterval | null;
+    current_billing_period: TimePeriod | null;
     /** How often this subscription renews. */
     billing_cycle: TimeInterval;
     /** Change that's scheduled to be applied to a subscription. */

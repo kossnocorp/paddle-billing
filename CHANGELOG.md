@@ -8,6 +8,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## v0.2.1 - 2023-10-12
+
+### Fixed
+
+- Fixed `current_billing_period` field in `Subscription`. Now it's `TimePeriod`.
+
 ## v0.2.0 - 2023-09-19
 
 Initial release
