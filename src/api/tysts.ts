@@ -63,6 +63,7 @@ const apiCustomData = client<{
   Transaction: CustomDataTransaction;
   Subscription: CustomDataSubscription;
   SubscriptionItem: CustomDataSubscriptionItem;
+  Customer: CustomDataCustomer;
 }>("test");
 
 interface CustomDataProduct {
@@ -83,6 +84,10 @@ interface CustomDataSubscription {
 
 interface CustomDataSubscriptionItem {
   item: number;
+}
+
+interface CustomDataCustomer {
+  name: string;
 }
 
 /// Products
@@ -420,7 +425,24 @@ updateDiscount(api, "dsc_123", {
 
 listCustomers(api, {
   order_by: "created_at[ASC]",
+}).then((customers) => {
+  if (customers.error) return;
+  // @ts-expect-error: custom_data can be null
+  customers.data[0]?.custom_data.nope;
+  // @ts-expect-error: custom_data can be null
+  customers.data[0]?.custom_data.hello;
+  customers.data[0]?.custom_data?.nope;
+  customers.data[0]?.custom_data?.hello;
 });
+
+listCustomers(apiCustomData, { order_by: "created_at[ASC]" }).then(
+  (customers) => {
+    if (customers.error) return;
+    // @ts-expect-error: custom_data is specified
+    customers.data[0]?.custom_data.nope;
+    customers.data[0]?.custom_data.name;
+  }
+);
 
 //// Create customer
 
@@ -434,12 +456,44 @@ createCustomer(api, {
   locale: undefined,
 });
 
+createCustomer(api, {
+  email: "hello@example.com",
+  custom_data: {
+    hello: "world",
+    foo: "bar",
+  },
+});
+
+createCustomer(apiCustomData, {
+  email: "hello@example.com",
+  custom_data: {
+    // @ts-expect-error: hello is not a valid custom_data key
+    hello: "world",
+    name: "Sasha",
+  },
+});
+
 //// Get customer
 
 getCustomer(api, "ctm_123").then((customer) => {
   if (customer.error) return;
   // Locale must be defined
   customer.data.locale.toString();
+
+  // @ts-expect-error: custom_data can be null
+  customer.data.custom_data.nope;
+  // @ts-expect-error: custom_data can be null
+  customer.data.custom_data.hello;
+  customer.data.custom_data?.nope;
+  customer.data.custom_data?.hello;
+});
+
+getCustomer(apiCustomData, "ctm_123").then((customer) => {
+  if (customer.error) return;
+
+  // @ts-expect-error: custom_data is specified
+  customer.data.custom_data.nope;
+  customer.data.custom_data.name;
 });
 
 //// Update customer
@@ -447,6 +501,21 @@ getCustomer(api, "ctm_123").then((customer) => {
 updateCustomer(api, "ctm_123", {
   email: "hello@example.com",
   status: "archived",
+});
+
+updateCustomer(api, "ctm_123", {
+  custom_data: {
+    hello: "world",
+    foo: "bar",
+  },
+});
+
+updateCustomer(apiCustomData, "ctm_123", {
+  custom_data: {
+    // @ts-expect-error: hello is not a valid custom_data key
+    hello: "world",
+    name: "Sasha",
+  },
 });
 
 /// Addresses

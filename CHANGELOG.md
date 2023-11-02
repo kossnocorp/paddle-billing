@@ -8,6 +8,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## v0.3.0 - 2023-11-??
+
+### Added
+
+- Added `custom_data` field to `Customer`.
+
 ## v0.2.1 - 2023-10-12
 
 ### Fixed

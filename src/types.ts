@@ -1292,7 +1292,7 @@ export namespace Paddle {
   /**
    * Represents a customer entity.
    */
-  export interface Customer {
+  export interface Customer<Data extends CustomData> {
     /** Unique Paddle ID for this customer entity, prefixed with ctm_. */
     id: CustomerId;
     /** Full name of this customer. Required when creating transactions where
@@ -1306,6 +1306,8 @@ export namespace Paddle {
     marketing_consent: boolean;
     /** Whether this entity can be used in  */
     status: EntityStatus;
+    /** Your own structured key-value data. */
+    custom_data: Data;
     /** Valid IETF BCP 47 short form locale tag. If omitted, defaults to en. */
     locale: string;
     /** RFC 3339 datetime string of when this entity was created.
@@ -1518,7 +1520,8 @@ export namespace Paddle {
     ProductData extends CustomData = CustomData,
     SubscriptionItemData extends CustomData = CustomData,
     SubscriptionData extends CustomData = CustomData,
-    TransactionData extends CustomData = CustomData
+    TransactionData extends CustomData = CustomData,
+    CustomerData extends CustomData = CustomData
   > =
     | EventSubscription<PriceData, SubscriptionItemData, SubscriptionData>
     | EventTransaction<PriceData, TransactionData>
@@ -1527,7 +1530,7 @@ export namespace Paddle {
     | EventAddress
     | EventAdjustment
     | EventBusiness
-    | EventCustomer;
+    | EventCustomer<CustomerData>;
 
   /**
    * Base event interface.
@@ -1999,17 +2002,25 @@ export namespace Paddle {
   /**
    * Customer event alias.
    */
-  export type EventCustomer = EventCustomerCreated | EventCustomerUpdated;
+  export type EventCustomer<CustomerData extends CustomData> =
+    | EventCustomerCreated<CustomerData>
+    | EventCustomerUpdated<CustomerData>;
 
   /**
    * Occurs when a customer is created.
    */
-  export type EventCustomerCreated = EventBase<"customer.created", Customer>;
+  export type EventCustomerCreated<CustomerData extends CustomData> = EventBase<
+    "customer.created",
+    Customer<CustomerData>
+  >;
 
   /**
    * Occurs when a customer is updated.
    */
-  export type EventCustomerUpdated = EventBase<"customer.updated", Customer>;
+  export type EventCustomerUpdated<CustomerData extends CustomData> = EventBase<
+    "customer.updated",
+    Customer<CustomerData>
+  >;
 
   /// Notification settings
 

@@ -14,6 +14,7 @@ export namespace PaddleAPI {
     SubscriptionItem?: Paddle.CustomData;
     Subscription?: Paddle.CustomData;
     Transaction?: Paddle.CustomData;
+    Customer?: Paddle.CustomData;
   }
 
   export type CustomData<Data extends Paddle.CustomData | undefined> =
@@ -816,7 +817,7 @@ export namespace PaddleAPI {
   /**
    * The customers list query.
    */
-  export interface CustomersListQuery {
+  export interface CustomersListQuery<DataDef extends CustomDataDef> {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
     after?: string | undefined;
@@ -824,7 +825,9 @@ export namespace PaddleAPI {
     id?: Paddle.CustomerId | Paddle.CustomerId[] | undefined;
     /** Order returned entities by the specified field and direction
      * [ASC] or [DESC]). */
-    order_by?: OrderQuery<Paddle.Customer> | undefined;
+    order_by?:
+      | OrderQuery<Paddle.Customer<CustomData<DataDef["Customer"]>>>
+      | undefined;
     /** Set how many entities are returned per page. */
     per_page?: number | undefined;
     /** Return entities that match a search query. Searches id, name, and email fields. */
@@ -836,9 +839,9 @@ export namespace PaddleAPI {
   /**
    * The customers list response.
    */
-  export type CustomersListResponse =
+  export type CustomersListResponse<DataDef extends CustomDataDef> =
     | CustomersListResponseError
-    | CustomersListResponseSuccess;
+    | CustomersListResponseSuccess<DataDef>;
 
   /**
    * The errored customers list response.
@@ -849,27 +852,34 @@ export namespace PaddleAPI {
   /**
    * The successful customers list response.
    */
-  export interface CustomersListResponseSuccess
-    extends ResponseBase<Paddle.Customer[], MetaPaginated> {}
+  export interface CustomersListResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Customer<CustomData<DataDef["Customer"]>>[],
+      MetaPaginated
+    > {}
 
   //// Create a customer
 
   /**
    * The create customer body.
    */
-  export type CustomerCreateBody = MakeNullableFieldsOptional<
-    MakeFieldsOptional<
-      Omit<Paddle.Customer, CustomerAutoAssignFields | "status">,
-      "locale"
-    >
-  >;
+  export type CustomerCreateBody<DataDef extends CustomDataDef> =
+    MakeNullableFieldsOptional<
+      MakeFieldsOptional<
+        Omit<
+          Paddle.Customer<CustomData<DataDef["Customer"]>>,
+          CustomerAutoAssignFields | "status"
+        >,
+        "locale"
+      >
+    >;
 
   /**
    * The create customer response.
    */
-  export type CustomerCreateResponse =
+  export type CustomerCreateResponse<DataDef extends CustomDataDef> =
     | CustomerCreateResponseError
-    | CustomerCreateResponseSuccess;
+    | CustomerCreateResponseSuccess<DataDef>;
 
   /**
    * The errored customer create response.
@@ -880,17 +890,20 @@ export namespace PaddleAPI {
   /**
    * The successful customer create response.
    */
-  export interface CustomerCreateResponseSuccess
-    extends ResponseBase<Paddle.Customer, MetaBasic> {}
+  export interface CustomerCreateResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Customer<CustomData<DataDef["Customer"]>>,
+      MetaBasic
+    > {}
 
   //// Get a customer
 
   /**
    * The get customer response.
    */
-  export type CustomerGetResponse =
+  export type CustomerGetResponse<DataDef extends CustomDataDef> =
     | CustomerGetResponseError
-    | CustomerGetResponseSuccess;
+    | CustomerGetResponseSuccess<DataDef>;
 
   /**
    * The error response of getCustomer function.
@@ -901,24 +914,30 @@ export namespace PaddleAPI {
   /**
    * The successful customer get response.
    */
-  export interface CustomerGetResponseSuccess
-    extends ResponseBase<Paddle.Customer, MetaBasic> {}
+  export interface CustomerGetResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Customer<CustomData<DataDef["Customer"]>>,
+      MetaBasic
+    > {}
 
   //// Update a customer
 
   /**
    * The update customer body.
    */
-  export type CustomerUpdateBody = Optional<
-    Omit<Paddle.Customer, CustomerAutoAssignFields>
+  export type CustomerUpdateBody<DataDef extends CustomDataDef> = Optional<
+    Omit<
+      Paddle.Customer<CustomData<DataDef["Customer"]>>,
+      CustomerAutoAssignFields
+    >
   >;
 
   /**
    * The update customer response.
    */
-  export type CustomerUpdateResponse =
+  export type CustomerUpdateResponse<DataDef extends CustomDataDef> =
     | CustomerUpdateResponseError
-    | CustomerUpdateResponseSuccess;
+    | CustomerUpdateResponseSuccess<DataDef>;
 
   /**
    * The errored customer update response.
@@ -929,8 +948,11 @@ export namespace PaddleAPI {
   /**
    * The successful customer update response.
    */
-  export interface CustomerUpdateResponseSuccess
-    extends ResponseBase<Paddle.Customer, MetaBasic> {}
+  export interface CustomerUpdateResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Customer<CustomData<DataDef["Customer"]>>,
+      MetaBasic
+    > {}
 
   /// Addresses
 
@@ -1229,11 +1251,14 @@ export namespace PaddleAPI {
    * Represents a transaction response entity with included entities.
    */
   export interface TransactionWithIncluded<
+    DataDef extends CustomDataDef,
     BillingCycle extends Paddle.TimeInterval | null,
-    PriceData extends Paddle.CustomData,
-    TransactionData extends Paddle.CustomData,
     Include extends TransactionResponseInclude | undefined
-  > extends Paddle.Transaction<BillingCycle, PriceData, TransactionData> {
+  > extends Paddle.Transaction<
+      BillingCycle,
+      CustomData<DataDef["Price"]>,
+      CustomData<DataDef["Transaction"]>
+    > {
     /** The address object related to the transaction */
     address: ResponseIncludedField<Include, "address", Paddle.Address>;
     /** The array of adjustments related to the transaction */
@@ -1251,7 +1276,11 @@ export namespace PaddleAPI {
     /** The business object related to the transaction */
     business: ResponseIncludedField<Include, "business", Paddle.Business>;
     /** The customer object related to the transaction */
-    customer: ResponseIncludedField<Include, "customer", Paddle.Customer>;
+    customer: ResponseIncludedField<
+      Include,
+      "customer",
+      Paddle.Customer<CustomData<DataDef["Customer"]>>
+    >;
     /** The discount object related to the transaction */
     discount: ResponseIncludedField<Include, "discount", Paddle.Discount>;
   }
@@ -1326,12 +1355,7 @@ export namespace PaddleAPI {
     DataDef extends CustomDataDef,
     Include extends TransactionResponseInclude | undefined
   > extends ResponseBase<
-      TransactionWithIncluded<
-        Paddle.TimeInterval | null,
-        CustomData<DataDef["Price"]>,
-        CustomData<DataDef["Transaction"]>,
-        Include
-      >[],
+      TransactionWithIncluded<DataDef, Paddle.TimeInterval | null, Include>[],
       MetaPaginated
     > {}
 
@@ -1387,12 +1411,7 @@ export namespace PaddleAPI {
     DataDef extends CustomDataDef,
     Include extends PaddleAPI.TransactionResponseInclude | undefined
   > extends ResponseBase<
-      TransactionWithIncluded<
-        Paddle.TimeInterval | null,
-        CustomData<DataDef["Price"]>,
-        CustomData<DataDef["Transaction"]>,
-        Include
-      >,
+      TransactionWithIncluded<DataDef, Paddle.TimeInterval | null, Include>,
       MetaBasic
     > {}
 
@@ -1431,12 +1450,7 @@ export namespace PaddleAPI {
     DataDef extends CustomDataDef,
     Include extends TransactionResponseInclude | undefined
   > extends ResponseBase<
-      TransactionWithIncluded<
-        Paddle.TimeInterval | null,
-        CustomData<DataDef["Price"]>,
-        CustomData<DataDef["Transaction"]>,
-        Include
-      >,
+      TransactionWithIncluded<DataDef, Paddle.TimeInterval | null, Include>,
       MetaBasic
     > {}
 
@@ -2300,7 +2314,8 @@ export namespace PaddleAPI {
         CustomData<DataDef["Product"]>,
         CustomData<DataDef["SubscriptionItem"]>,
         CustomData<DataDef["Subscription"]>,
-        CustomData<DataDef["Transaction"]>
+        CustomData<DataDef["Transaction"]>,
+        CustomData<DataDef["Customer"]>
       >[],
       MetaPaginated
     > {}

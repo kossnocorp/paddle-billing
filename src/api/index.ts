@@ -368,8 +368,8 @@ export function updateDiscount<DataDef extends PaddleAPI.CustomDataDef>(
  */
 export function listCustomers<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
-  query?: PaddleAPI.CustomersListQuery
-): Promise<PaddleAPI.CustomersListResponse> {
+  query?: PaddleAPI.CustomersListQuery<DataDef>
+): Promise<PaddleAPI.CustomersListResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "customers",
@@ -389,8 +389,8 @@ export function listCustomers<DataDef extends PaddleAPI.CustomDataDef>(
  */
 export function createCustomer<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
-  body: PaddleAPI.CustomerCreateBody
-): Promise<PaddleAPI.CustomerCreateResponse> {
+  body: PaddleAPI.CustomerCreateBody<DataDef>
+): Promise<PaddleAPI.CustomerCreateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "customers",
@@ -409,7 +409,7 @@ export function createCustomer<DataDef extends PaddleAPI.CustomDataDef>(
 export function getCustomer<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   customerId: Paddle.CustomerId
-): Promise<PaddleAPI.CustomerGetResponse> {
+): Promise<PaddleAPI.CustomerGetResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "customers/" + customerId,
@@ -430,8 +430,8 @@ export function getCustomer<DataDef extends PaddleAPI.CustomDataDef>(
 export function updateCustomer<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   customerId: Paddle.CustomerId,
-  body: PaddleAPI.CustomerUpdateBody
-): Promise<PaddleAPI.CustomerUpdateResponse> {
+  body: PaddleAPI.CustomerUpdateBody<DataDef>
+): Promise<PaddleAPI.CustomerUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
     path: "customers/" + customerId,
