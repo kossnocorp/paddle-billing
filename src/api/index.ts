@@ -554,8 +554,8 @@ export function updateAddress<DataDef extends PaddleAPI.CustomDataDef>(
 export function listBusinesses<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   customerId: Paddle.CustomerId,
-  query?: PaddleAPI.BusinessesListQuery
-): Promise<PaddleAPI.BusinessesListResponse> {
+  query?: PaddleAPI.BusinessesListQuery<DataDef>
+): Promise<PaddleAPI.BusinessesListResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "customers/" + customerId + "/businesses",
@@ -577,8 +577,8 @@ export function listBusinesses<DataDef extends PaddleAPI.CustomDataDef>(
 export function createBusiness<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   customerId: Paddle.CustomerId,
-  body: PaddleAPI.BusinessCreateBody
-): Promise<PaddleAPI.BusinessCreateResponse> {
+  body: PaddleAPI.BusinessCreateBody<DataDef>
+): Promise<PaddleAPI.BusinessCreateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "customers/" + customerId + "/businesses",
@@ -599,7 +599,7 @@ export function getBusiness<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   customerId: Paddle.CustomerId,
   businessId: Paddle.BusinessId
-): Promise<PaddleAPI.BusinessGetResponse> {
+): Promise<PaddleAPI.BusinessGetResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "customers/" + customerId + "/businesses/" + businessId,
@@ -622,8 +622,8 @@ export function updateBusiness<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   customerId: Paddle.CustomerId,
   businessId: string,
-  body: PaddleAPI.BusinessUpdateBody
-): Promise<PaddleAPI.BusinessUpdateResponse> {
+  body: PaddleAPI.BusinessUpdateBody<DataDef>
+): Promise<PaddleAPI.BusinessUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
     path: `customers/${customerId}/businesses/${businessId}`,

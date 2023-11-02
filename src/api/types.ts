@@ -16,6 +16,7 @@ export namespace PaddleAPI {
     Transaction?: Paddle.CustomData;
     Customer?: Paddle.CustomData;
     Address?: Paddle.CustomData;
+    Business?: Paddle.CustomData;
   }
 
   export type CustomData<Data extends Paddle.CustomData | undefined> =
@@ -1116,7 +1117,7 @@ export namespace PaddleAPI {
   /**
    * The businesses list query.
    */
-  export interface BusinessesListQuery {
+  export interface BusinessesListQuery<DataDef extends CustomDataDef> {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
     after?: string | undefined;
@@ -1125,8 +1126,8 @@ export namespace PaddleAPI {
     /** Order returned entities by the specified field and direction
      * [ASC] or [DESC]). */
     order_by?:
-      | OrderQuery<Paddle.Business>
-      | OrderQuery<Paddle.Business>[]
+      | OrderQuery<Paddle.Business<CustomData<DataDef["Business"]>>>
+      | OrderQuery<Paddle.Business<CustomData<DataDef["Business"]>>>[]
       | undefined;
     /** Set how many entities are returned per page. */
     per_page?: number | undefined;
@@ -1140,9 +1141,9 @@ export namespace PaddleAPI {
   /**
    * The businesses list response.
    */
-  export type BusinessesListResponse =
+  export type BusinessesListResponse<DataDef extends CustomDataDef> =
     | BusinessesListResponseError
-    | BusinessesListResponseSuccess;
+    | BusinessesListResponseSuccess<DataDef>;
 
   /**
    * The errored businesses list response.
@@ -1153,25 +1154,31 @@ export namespace PaddleAPI {
   /**
    * The successful businesses list response.
    */
-  export interface BusinessesListResponseSuccess
-    extends ResponseBase<Paddle.Business[], MetaPaginated> {}
+  export interface BusinessesListResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Business<CustomData<DataDef["Business"]>>[],
+      MetaPaginated
+    > {}
 
   //// Create Business
 
   /**
    * The create business request body.
    */
-  export type BusinessCreateBody = Omit<
-    Paddle.Business,
-    BusinessAutoAssignFields | "status"
-  >;
+  export type BusinessCreateBody<DataDef extends CustomDataDef> =
+    MakeNullableFieldsOptional<
+      Omit<
+        Paddle.Business<CustomData<DataDef["Business"]>>,
+        BusinessAutoAssignFields | "status"
+      >
+    >;
 
   /**
    * The create business response.
    */
-  export type BusinessCreateResponse =
+  export type BusinessCreateResponse<DataDef extends CustomDataDef> =
     | BusinessCreateResponseError
-    | BusinessCreateResponseSuccess;
+    | BusinessCreateResponseSuccess<DataDef>;
 
   /**
    * The errored create business response.
@@ -1182,17 +1189,20 @@ export namespace PaddleAPI {
   /**
    * The successful create business response.
    */
-  export interface BusinessCreateResponseSuccess
-    extends ResponseBase<Paddle.Business, MetaBasic> {}
+  export interface BusinessCreateResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Business<CustomData<DataDef["Business"]>>,
+      MetaBasic
+    > {}
 
   //// Get a business
 
   /**
    * The response for getBusiness function.
    */
-  export type BusinessGetResponse =
+  export type BusinessGetResponse<DataDef extends CustomDataDef> =
     | BusinessGetResponseError
-    | BusinessGetResponseSuccess;
+    | BusinessGetResponseSuccess<DataDef>;
 
   /**
    * The error response for getBusiness function.
@@ -1203,24 +1213,30 @@ export namespace PaddleAPI {
   /**
    * The successful response for getBusiness function.
    */
-  export interface BusinessGetResponseSuccess
-    extends ResponseBase<Paddle.Business, MetaBasic> {}
+  export interface BusinessGetResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Business<CustomData<DataDef["Business"]>>,
+      MetaBasic
+    > {}
 
   //// Update a business
 
   /**
    * The update business body.
    */
-  export type BusinessUpdateBody = Optional<
-    Omit<Paddle.Business, BusinessAutoAssignFields>
+  export type BusinessUpdateBody<DataDef extends CustomDataDef> = Optional<
+    Omit<
+      Paddle.Business<CustomData<DataDef["Business"]>>,
+      BusinessAutoAssignFields
+    >
   >;
 
   /**
    * The update business response.
    */
-  export type BusinessUpdateResponse =
+  export type BusinessUpdateResponse<DataDef extends CustomDataDef> =
     | BusinessUpdateResponseError
-    | BusinessUpdateResponseSuccess;
+    | BusinessUpdateResponseSuccess<DataDef>;
 
   /**
    * The errored business update response.
@@ -1231,8 +1247,11 @@ export namespace PaddleAPI {
   /**
    * The successful business update response.
    */
-  export interface BusinessUpdateResponseSuccess
-    extends ResponseBase<Paddle.Business, MetaBasic> {}
+  export interface BusinessUpdateResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Business<CustomData<DataDef["Business"]>>,
+      MetaBasic
+    > {}
 
   /// Transactions
 
@@ -1298,7 +1317,11 @@ export namespace PaddleAPI {
       Paddle.AdjustmentsTotals
     >;
     /** The business object related to the transaction */
-    business: ResponseIncludedField<Include, "business", Paddle.Business>;
+    business: ResponseIncludedField<
+      Include,
+      "business",
+      Paddle.Business<CustomData<DataDef["Business"]>>
+    >;
     /** The customer object related to the transaction */
     customer: ResponseIncludedField<
       Include,
@@ -2340,7 +2363,8 @@ export namespace PaddleAPI {
         CustomData<DataDef["Subscription"]>,
         CustomData<DataDef["Transaction"]>,
         CustomData<DataDef["Customer"]>,
-        CustomData<DataDef["Address"]>
+        CustomData<DataDef["Address"]>,
+        CustomData<DataDef["Business"]>
       >[],
       MetaPaginated
     > {}

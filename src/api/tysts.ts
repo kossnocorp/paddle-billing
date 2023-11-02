@@ -65,6 +65,7 @@ const apiCustomData = client<{
   SubscriptionItem: CustomDataSubscriptionItem;
   Customer: CustomDataCustomer;
   Address: CustomDataAddress;
+  Business: CustomDataBusiness;
 }>("test");
 
 interface CustomDataProduct {
@@ -93,6 +94,10 @@ interface CustomDataCustomer {
 
 interface CustomDataAddress {
   city: string;
+}
+
+interface CustomDataBusiness {
+  type: "b2b" | "b2c";
 }
 
 /// Products
@@ -432,6 +437,7 @@ listCustomers(api, {
   order_by: "created_at[ASC]",
 }).then((customers) => {
   if (customers.error) return;
+
   // @ts-expect-error: custom_data can be null
   customers.data[0]?.custom_data.nope;
   // @ts-expect-error: custom_data can be null
@@ -443,6 +449,7 @@ listCustomers(api, {
 listCustomers(apiCustomData, { order_by: "created_at[ASC]" }).then(
   (customers) => {
     if (customers.error) return;
+
     // @ts-expect-error: custom_data is specified
     customers.data[0]?.custom_data.nope;
     customers.data[0]?.custom_data.name;
@@ -626,6 +633,25 @@ updateAddress(apiCustomData, "ctm_123", "add_456", {
 
 listBusinesses(api, "ctm_123", {
   order_by: "name[ASC]",
+}).then((businesses) => {
+  if (businesses.error) return;
+
+  // @ts-expect-error: custom_data can be null
+  businesses.data[0]?.custom_data.nope;
+  // @ts-expect-error: custom_data can be null
+  businesses.data[0]?.custom_data.hello;
+  businesses.data[0]?.custom_data?.nope;
+  businesses.data[0]?.custom_data?.hello;
+});
+
+listBusinesses(apiCustomData, "ctm_123", {
+  order_by: "name[ASC]",
+}).then((businesses) => {
+  if (businesses.error) return;
+
+  // @ts-expect-error: custom_data is specified
+  businesses.data[0]?.custom_data.nope;
+  businesses.data[0]?.custom_data.type;
 });
 
 //// Create business
@@ -642,17 +668,67 @@ createBusiness(api, "ctm_123", {
   ],
 });
 
+createBusiness(api, "ctm_123", {
+  name: "Business Name",
+  contacts: [],
+  custom_data: {
+    hello: "world",
+    foo: "bar",
+  },
+});
+
+createBusiness(apiCustomData, "ctm_123", {
+  name: "Business Name",
+  contacts: [],
+  custom_data: {
+    type: "b2b",
+    // @ts-expect-error: hello is not a valid custom_data key
+    hello: "world",
+  },
+});
+
 //// Get business
 
 getBusiness(api, "ctm_123", "biz_123").then((business) => {
   if (business.error) return;
+
   business.data.name.toString();
+
+  // @ts-expect-error: custom_data can be null
+  business.data.custom_data.nope;
+  // @ts-expect-error: custom_data can be null
+  business.data.custom_data.hello;
+  business.data.custom_data?.nope;
+  business.data.custom_data?.hello;
+});
+
+getBusiness(apiCustomData, "ctm_123", "biz_123").then((business) => {
+  if (business.error) return;
+
+  // @ts-expect-error: custom_data is specified
+  business.data.custom_data.nope;
+  business.data.custom_data.type;
 });
 
 //// Update businesses
 
 updateBusiness(api, "ctm_123", "biz_123", {
   name: "ACME Inc.",
+});
+
+updateBusiness(api, "ctm_123", "biz_123", {
+  custom_data: {
+    hello: "world",
+    foo: "bar",
+  },
+});
+
+updateBusiness(apiCustomData, "ctm_123", "biz_123", {
+  custom_data: {
+    type: "b2b",
+    // @ts-expect-error: hello is not a valid custom_data key
+    hello: "world",
+  },
 });
 
 /// Transactions

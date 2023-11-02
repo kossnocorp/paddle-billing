@@ -1259,7 +1259,7 @@ export namespace Paddle {
   /**
    * Represents a business entity.
    */
-  export interface Business {
+  export interface Business<Data extends CustomData> {
     /** Unique Paddle ID for this business entity, prefixed with biz_. */
     id: BusinessId;
     /** Name of this business */
@@ -1279,6 +1279,8 @@ export namespace Paddle {
     /** RFC 3339 datetime string of when this entity was updated.
      * Set automatically by Paddle */
     updated_at: string;
+    /** Your own structured key-value data. */
+    custom_data: Data;
   }
 
   /**
@@ -1524,7 +1526,8 @@ export namespace Paddle {
     SubscriptionData extends CustomData = CustomData,
     TransactionData extends CustomData = CustomData,
     CustomerData extends CustomData = CustomData,
-    AddressData extends CustomData = CustomData
+    AddressData extends CustomData = CustomData,
+    BusinessData extends CustomData = CustomData
   > =
     | EventSubscription<PriceData, SubscriptionItemData, SubscriptionData>
     | EventTransaction<PriceData, TransactionData>
@@ -1532,7 +1535,7 @@ export namespace Paddle {
     | EventPrice<PriceData>
     | EventAddress<AddressData>
     | EventAdjustment
-    | EventBusiness
+    | EventBusiness<BusinessData>
     | EventCustomer<CustomerData>;
 
   /**
@@ -1998,17 +2001,25 @@ export namespace Paddle {
   /**
    * Businesses event alias.
    */
-  export type EventBusiness = EventBusinessCreated | EventBusinessUpdated;
+  export type EventBusiness<BusinessData extends CustomData> =
+    | EventBusinessCreated<BusinessData>
+    | EventBusinessUpdated<BusinessData>;
 
   /**
    * Occurs when a business is created.
    */
-  export type EventBusinessCreated = EventBase<"business.created", Business>;
+  export type EventBusinessCreated<BusinessData extends CustomData> = EventBase<
+    "business.created",
+    Business<BusinessData>
+  >;
 
   /**
    * Occurs when a business is updated.
    */
-  export type EventBusinessUpdated = EventBase<"business.updated", Business>;
+  export type EventBusinessUpdated<BusinessData extends CustomData> = EventBase<
+    "business.updated",
+    Business<BusinessData>
+  >;
 
   /**
    * Customer event alias.
