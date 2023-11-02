@@ -57,7 +57,7 @@ cancelSubscription(paddle, "SUBCRIPTION_ID");
 
 #### Typing `custom_data`
 
-To add types to `custom_data` fields to `Price`, `Product`, `SubscriptionItem`, `Subscription`, and `Transaction`, add the generic argument to `client`:
+To add types to `custom_data` fields to `Price`, `Product`, `SubscriptionItem`, `Subscription`, `Transaction`, `Customer`, `Address` and `Business` add the generic argument to `client`:
 
 ```ts
 const paddle = client<{
@@ -66,6 +66,9 @@ const paddle = client<{
   Transaction: CustomDataTransaction;
   Subscription: CustomDataSubscription;
   SubscriptionItem: CustomDataSubscriptionItem;
+  Customer: CustomDataCustomer;
+  Address: CustomDataAddress;
+  Business: CustomDataBusiness;
 }>("PADDLE_SECRET");
 ```
 
@@ -205,6 +208,7 @@ app.get("/paddle-webhook", (request, response) => {
 
   // Parse the webhook
   const webhook = parseWebhookBody(
+    null,
     secret,
     signature,
     // ⚠️ the body must be raw string to parse!
@@ -219,6 +223,30 @@ app.get("/paddle-webhook", (request, response) => {
 
   response.send("OK");
 });
+```
+
+If you have custom data types defined, pass the `client` as the first argument so that the custom data is correctly inferred:
+
+```ts
+const paddle = client<{
+  Product: CustomDataProduct;
+  Price: CustomDataPrice;
+  Transaction: CustomDataTransaction;
+  Subscription: CustomDataSubscription;
+  SubscriptionItem: CustomDataSubscriptionItem;
+  Customer: CustomDataCustomer;
+  Address: CustomDataAddress;
+  Business: CustomDataBusiness;
+}>("PADDLE_SECRET");
+
+// ...later:
+
+const webhook = parseWebhookBody(
+  paddle,
+  secret,
+  signature,
+  request.body.toString()
+);
 ```
 
 ## License

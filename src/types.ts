@@ -1520,14 +1520,14 @@ export namespace Paddle {
    * Event alias. Lists all possible events.
    */
   export type Event<
-    PriceData extends CustomData = CustomData,
-    ProductData extends CustomData = CustomData,
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData,
-    TransactionData extends CustomData = CustomData,
-    CustomerData extends CustomData = CustomData,
-    AddressData extends CustomData = CustomData,
-    BusinessData extends CustomData = CustomData
+    PriceData extends CustomData,
+    ProductData extends CustomData,
+    SubscriptionItemData extends CustomData,
+    SubscriptionData extends CustomData,
+    TransactionData extends CustomData,
+    CustomerData extends CustomData,
+    AddressData extends CustomData,
+    BusinessData extends CustomData
   > =
     | EventSubscription<PriceData, SubscriptionItemData, SubscriptionData>
     | EventTransaction<PriceData, TransactionData>
@@ -2118,7 +2118,16 @@ export namespace Paddle {
   /**
    * Describes a notification for an event that occured in your Paddle system.
    */
-  export interface Notification {
+  export interface Notification<
+    PriceData extends CustomData,
+    ProductData extends CustomData,
+    SubscriptionItemData extends CustomData,
+    SubscriptionData extends CustomData,
+    TransactionData extends CustomData,
+    CustomerData extends CustomData,
+    AddressData extends CustomData,
+    BusinessData extends CustomData
+  > {
     /** Unique Paddle ID for this notification, prefixed with ntf_. */
     id: NotificationId;
     /** Type of event sent by Paddle, in the format entity.event_type. */
@@ -2126,7 +2135,16 @@ export namespace Paddle {
     /** Status of this notification. */
     status: NotificationStatus;
     /** Notification payload. Includes the new or changed event. */
-    payload: Event;
+    payload: Event<
+      PriceData,
+      ProductData,
+      SubscriptionItemData,
+      SubscriptionData,
+      TransactionData,
+      CustomerData,
+      AddressData,
+      BusinessData
+    >;
     /** RFC 3339 datetime string of when this notification occurred. */
     occurred_at: string;
     /** RFC 3339 datetime string of when this notification was delivered. */

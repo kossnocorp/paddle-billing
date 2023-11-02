@@ -1409,7 +1409,7 @@ export function deleteNotificationSetting<
 export function listNotifications<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   query?: PaddleAPI.NotificationsListQuery
-): Promise<PaddleAPI.NotificationsListResponse> {
+): Promise<PaddleAPI.NotificationsListResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "notifications",
@@ -1428,7 +1428,7 @@ export function listNotifications<DataDef extends PaddleAPI.CustomDataDef>(
 export function getNotification<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   notificationId: Paddle.NotificationId
-): Promise<PaddleAPI.NotificationGetResponse> {
+): Promise<PaddleAPI.NotificationGetResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "notifications/" + notificationId,

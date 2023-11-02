@@ -2527,9 +2527,9 @@ export namespace PaddleAPI {
   /**
    * The list notifications response.
    */
-  export type NotificationsListResponse =
+  export type NotificationsListResponse<DataDef extends CustomDataDef> =
     | NotificationsListResponseError
-    | NotificationsListResponseSuccess;
+    | NotificationsListResponseSuccess<DataDef>;
 
   /**
    * The errored list notifications response.
@@ -2540,17 +2540,30 @@ export namespace PaddleAPI {
   /**
    * The successful list notifications response.
    */
-  export interface NotificationsListResponseSuccess
-    extends ResponseBase<Paddle.Notification[], MetaPaginated> {}
+  export interface NotificationsListResponseSuccess<
+    DataDef extends CustomDataDef
+  > extends ResponseBase<
+      Paddle.Notification<
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Product"]>,
+        CustomData<DataDef["SubscriptionItem"]>,
+        CustomData<DataDef["Subscription"]>,
+        CustomData<DataDef["Transaction"]>,
+        CustomData<DataDef["Customer"]>,
+        CustomData<DataDef["Address"]>,
+        CustomData<DataDef["Business"]>
+      >[],
+      MetaPaginated
+    > {}
 
   //// Get notification
 
   /**
    * The get notification response.
    */
-  export type NotificationGetResponse =
+  export type NotificationGetResponse<DataDef extends CustomDataDef> =
     | NotificationGetResponseError
-    | NotificationGetResponseSuccess;
+    | NotificationGetResponseSuccess<DataDef>;
 
   /**
    * The errored get notification response.
@@ -2561,8 +2574,20 @@ export namespace PaddleAPI {
   /**
    * The successful get notification response.
    */
-  export interface NotificationGetResponseSuccess
-    extends ResponseBase<Paddle.Notification, MetaBasic> {}
+  export interface NotificationGetResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Notification<
+        CustomData<DataDef["Price"]>,
+        CustomData<DataDef["Product"]>,
+        CustomData<DataDef["SubscriptionItem"]>,
+        CustomData<DataDef["Subscription"]>,
+        CustomData<DataDef["Transaction"]>,
+        CustomData<DataDef["Customer"]>,
+        CustomData<DataDef["Address"]>,
+        CustomData<DataDef["Business"]>
+      >,
+      MetaBasic
+    > {}
 
   //// Reply a notification
 
