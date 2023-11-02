@@ -64,6 +64,7 @@ const apiCustomData = client<{
   Subscription: CustomDataSubscription;
   SubscriptionItem: CustomDataSubscriptionItem;
   Customer: CustomDataCustomer;
+  Address: CustomDataAddress;
 }>("test");
 
 interface CustomDataProduct {
@@ -88,6 +89,10 @@ interface CustomDataSubscriptionItem {
 
 interface CustomDataCustomer {
   name: string;
+}
+
+interface CustomDataAddress {
+  city: string;
 }
 
 /// Products
@@ -283,9 +288,9 @@ createPrice(apiCustomData, {
   unit_price_overrides: [],
   quantity: { minimum: 1, maximum: 100 },
   custom_data: {
+    foo: "bar",
     // @ts-expect-error: hello is not a valid custom_data key
     hello: "world",
-    foo: "bar",
   },
 }).then((price) => {
   if (price.error) return;
@@ -467,9 +472,9 @@ createCustomer(api, {
 createCustomer(apiCustomData, {
   email: "hello@example.com",
   custom_data: {
+    name: "Sasha",
     // @ts-expect-error: hello is not a valid custom_data key
     hello: "world",
-    name: "Sasha",
   },
 });
 
@@ -512,9 +517,9 @@ updateCustomer(api, "ctm_123", {
 
 updateCustomer(apiCustomData, "ctm_123", {
   custom_data: {
+    name: "Sasha",
     // @ts-expect-error: hello is not a valid custom_data key
     hello: "world",
-    name: "Sasha",
   },
 });
 
@@ -524,6 +529,23 @@ updateCustomer(apiCustomData, "ctm_123", {
 
 listAddresses(api, "ctm_123", {
   order_by: "city[ASC]",
+}).then((addresses) => {
+  if (addresses.error) return;
+  // @ts-expect-error: custom_data can be null
+  addresses.data[0]?.custom_data.nope;
+  // @ts-expect-error: custom_data can be null
+  addresses.data[0]?.custom_data.hello;
+  addresses.data[0]?.custom_data?.nope;
+  addresses.data[0]?.custom_data?.hello;
+});
+
+listAddresses(apiCustomData, "ctm_123", {
+  order_by: "city[ASC]",
+}).then((addresses) => {
+  if (addresses.error) return;
+  // @ts-expect-error: custom_data is specified
+  addresses.data[0]?.custom_data.nope;
+  addresses.data[0]?.custom_data.city;
 });
 
 //// Create address
@@ -538,17 +560,64 @@ createAddress(api, "ctm_123", {
   region: "California",
 });
 
+createAddress(api, "ctm_123", {
+  country_code: "US",
+  custom_data: {
+    hello: "world",
+    foo: "bar",
+  },
+});
+
+createAddress(apiCustomData, "ctm_123", {
+  country_code: "US",
+  custom_data: {
+    city: "Singapore",
+    // @ts-expect-error: hello is not a valid custom_data key
+    hello: "world",
+  },
+});
+
 //// Get address
 
 getAddress(api, "ctm_123", "add_123").then((address) => {
   if (address.error) return;
   address.data.city?.toString();
+
+  // @ts-expect-error: custom_data can be null
+  address.data.custom_data.nope;
+  // @ts-expect-error: custom_data can be null
+  address.data.custom_data.hello;
+  address.data.custom_data?.nope;
+  address.data.custom_data?.hello;
+});
+
+getAddress(apiCustomData, "ctm_123", "add_123").then((address) => {
+  if (address.error) return;
+
+  // @ts-expect-error: custom_data is specified
+  address.data.custom_data.nope;
+  address.data.custom_data.city;
 });
 
 //// Update address
 
 updateAddress(api, "ctm_123", "add_456", {
   city: "Singapore",
+});
+
+updateAddress(api, "ctm_123", "add_456", {
+  custom_data: {
+    hello: "world",
+    foo: "bar",
+  },
+});
+
+updateAddress(apiCustomData, "ctm_123", "add_456", {
+  custom_data: {
+    city: "Singapore",
+    // @ts-expect-error: hello is not a valid custom_data key
+    hello: "world",
+  },
 });
 
 /// Bussinesses

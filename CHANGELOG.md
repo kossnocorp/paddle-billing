@@ -12,7 +12,7 @@ This change log follows the format documented in [Keep a CHANGELOG].
 
 ### Added
 
-- Added `custom_data` field to `Customer`.
+- Added `custom_data` field to `Customer`, `Address`.
 
 ## v0.2.1 - 2023-10-12
 

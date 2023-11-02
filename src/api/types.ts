@@ -15,6 +15,7 @@ export namespace PaddleAPI {
     Subscription?: Paddle.CustomData;
     Transaction?: Paddle.CustomData;
     Customer?: Paddle.CustomData;
+    Address?: Paddle.CustomData;
   }
 
   export type CustomData<Data extends Paddle.CustomData | undefined> =
@@ -966,7 +967,7 @@ export namespace PaddleAPI {
   /**
    * The customer's list addresses query.
    */
-  export interface AddressListQuery {
+  export interface AddressListQuery<DataDef extends CustomDataDef> {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
     after?: string | undefined;
@@ -975,8 +976,8 @@ export namespace PaddleAPI {
     /** Order returned entities by the specified field and direction
      * [ASC] or [DESC]. */
     order_by?:
-      | OrderQuery<Paddle.Address>
-      | OrderQuery<Paddle.Address>[]
+      | OrderQuery<Paddle.Address<CustomData<DataDef["Address"]>>>
+      | OrderQuery<Paddle.Address<CustomData<DataDef["Address"]>>>[]
       | undefined;
     /** Set how many entities are returned per page. */
     per_page?: number | undefined;
@@ -991,9 +992,9 @@ export namespace PaddleAPI {
   /**
    * The list addresses response.
    */
-  export type AddressListResponse =
+  export type AddressListResponse<DataDef extends CustomDataDef> =
     | AddressListResponseError
-    | AddressListResponseSuccess;
+    | AddressListResponseSuccess<DataDef>;
 
   /**
    * The error response of list addresses function.
@@ -1004,24 +1005,31 @@ export namespace PaddleAPI {
   /**
    * The successful list addresses response.
    */
-  export interface AddressListResponseSuccess
-    extends ResponseBase<Paddle.Address[], MetaPaginated> {}
+  export interface AddressListResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Address<CustomData<DataDef["Address"]>>[],
+      MetaPaginated
+    > {}
 
   //// Create an address
 
   /**
    * The create address body.
    */
-  export type AddressCreateBody = MakeNullableFieldsOptional<
-    Omit<Paddle.Address, AddressAutoAssignFields | "status">
-  >;
+  export type AddressCreateBody<DataDef extends CustomDataDef> =
+    MakeNullableFieldsOptional<
+      Omit<
+        Paddle.Address<CustomData<DataDef["Address"]>>,
+        AddressAutoAssignFields | "status"
+      >
+    >;
 
   /**
    * The create address response.
    */
-  export type AddressCreateResponse =
+  export type AddressCreateResponse<DataDef extends CustomDataDef> =
     | AddressCreateResponseError
-    | AddressCreateResponseSuccess;
+    | AddressCreateResponseSuccess<DataDef>;
 
   /**
    * The errored address create response.
@@ -1032,17 +1040,20 @@ export namespace PaddleAPI {
   /**
    * The successful address create response.
    */
-  export interface AddressCreateResponseSuccess
-    extends ResponseBase<Paddle.Address, MetaBasic> {}
+  export interface AddressCreateResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Address<CustomData<DataDef["Address"]>>,
+      MetaBasic
+    > {}
 
   //// Get an address
 
   /**
    * The get address response.
    */
-  export type AddressGetResponse =
+  export type AddressGetResponse<DataDef extends CustomDataDef> =
     | AddressGetResponseError
-    | AddressGetResponseSuccess;
+    | AddressGetResponseSuccess<DataDef>;
 
   /**
    * The error response of getAddress function.
@@ -1053,24 +1064,30 @@ export namespace PaddleAPI {
   /**
    * The successful address get response.
    */
-  export interface AddressGetResponseSuccess
-    extends ResponseBase<Paddle.Address, MetaBasic> {}
+  export interface AddressGetResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Address<CustomData<DataDef["Address"]>>,
+      MetaBasic
+    > {}
 
   //// Update an address
 
   /**
    * Address update body.
    */
-  export type AddressUpdateBody = Optional<
-    Omit<Paddle.Address, AddressAutoAssignFields>
+  export type AddressUpdateBody<DataDef extends CustomDataDef> = Optional<
+    Omit<
+      Paddle.Address<CustomData<DataDef["Address"]>>,
+      AddressAutoAssignFields
+    >
   >;
 
   /**
    * The update address response.
    */
-  export type AddressUpdateResponse =
+  export type AddressUpdateResponse<DataDef extends CustomDataDef> =
     | AddressUpdateResponseError
-    | AddressUpdateResponseSuccess;
+    | AddressUpdateResponseSuccess<DataDef>;
 
   /**
    * The error response of the updateAddress function.
@@ -1081,8 +1098,11 @@ export namespace PaddleAPI {
   /**
    * The successful address update response.
    */
-  export interface AddressUpdateResponseSuccess
-    extends ResponseBase<Paddle.Address, MetaBasic> {}
+  export interface AddressUpdateResponseSuccess<DataDef extends CustomDataDef>
+    extends ResponseBase<
+      Paddle.Address<CustomData<DataDef["Address"]>>,
+      MetaBasic
+    > {}
 
   /// Businesses
 
@@ -1260,7 +1280,11 @@ export namespace PaddleAPI {
       CustomData<DataDef["Transaction"]>
     > {
     /** The address object related to the transaction */
-    address: ResponseIncludedField<Include, "address", Paddle.Address>;
+    address: ResponseIncludedField<
+      Include,
+      "address",
+      Paddle.Address<CustomData<DataDef["Address"]>>
+    >;
     /** The array of adjustments related to the transaction */
     adjustment: ResponseIncludedField<
       Include,
@@ -2315,7 +2339,8 @@ export namespace PaddleAPI {
         CustomData<DataDef["SubscriptionItem"]>,
         CustomData<DataDef["Subscription"]>,
         CustomData<DataDef["Transaction"]>,
-        CustomData<DataDef["Customer"]>
+        CustomData<DataDef["Customer"]>,
+        CustomData<DataDef["Address"]>
       >[],
       MetaPaginated
     > {}

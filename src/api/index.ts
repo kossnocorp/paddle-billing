@@ -457,8 +457,8 @@ export function updateCustomer<DataDef extends PaddleAPI.CustomDataDef>(
 export function listAddresses<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   customerId: Paddle.CustomerId,
-  query?: PaddleAPI.AddressListQuery
-): Promise<PaddleAPI.AddressListResponse> {
+  query?: PaddleAPI.AddressListQuery<DataDef>
+): Promise<PaddleAPI.AddressListResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "customers/" + customerId + "/addresses",
@@ -484,8 +484,8 @@ export function listAddresses<DataDef extends PaddleAPI.CustomDataDef>(
 export function createAddress<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   customerId: Paddle.CustomerId,
-  body: PaddleAPI.AddressCreateBody
-): Promise<PaddleAPI.AddressCreateResponse> {
+  body: PaddleAPI.AddressCreateBody<DataDef>
+): Promise<PaddleAPI.AddressCreateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "customers/" + customerId + "/addresses",
@@ -506,7 +506,7 @@ export function getAddress<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   customerId: Paddle.CustomerId,
   addressId: Paddle.AddressId
-): Promise<PaddleAPI.AddressGetResponse> {
+): Promise<PaddleAPI.AddressGetResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "customers/" + customerId + "/addresses/" + addressId,
@@ -529,8 +529,8 @@ export function updateAddress<DataDef extends PaddleAPI.CustomDataDef>(
   client: PaddleAPI.Client<DataDef>,
   customerId: Paddle.CustomerId,
   addressId: Paddle.AddressId,
-  body: PaddleAPI.AddressUpdateBody
-): Promise<PaddleAPI.AddressUpdateResponse> {
+  body: PaddleAPI.AddressUpdateBody<DataDef>
+): Promise<PaddleAPI.AddressUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
     path: "customers/" + customerId + "/addresses/" + addressId,

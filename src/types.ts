@@ -849,7 +849,7 @@ export namespace Paddle {
   /**
    * Address attributes.
    */
-  export interface Address {
+  export interface Address<Data extends CustomData> {
     /** Unique Paddle ID for this address entity */
     id: AddressId;
     /** Memorable description for this address */
@@ -866,6 +866,8 @@ export namespace Paddle {
     region: string | null;
     /** Supported two-letter ISO 3166-1 alpha-2 country code for this address */
     country_code: CountryCode;
+    /** Your own structured key-value data. */
+    custom_data: Data;
     /** Whether this entity can be used in Paddle */
     status: EntityStatus;
     /** RFC 3339 datetime string of when this entity was created */
@@ -1521,13 +1523,14 @@ export namespace Paddle {
     SubscriptionItemData extends CustomData = CustomData,
     SubscriptionData extends CustomData = CustomData,
     TransactionData extends CustomData = CustomData,
-    CustomerData extends CustomData = CustomData
+    CustomerData extends CustomData = CustomData,
+    AddressData extends CustomData = CustomData
   > =
     | EventSubscription<PriceData, SubscriptionItemData, SubscriptionData>
     | EventTransaction<PriceData, TransactionData>
     | EventProduct<ProductData>
     | EventPrice<PriceData>
-    | EventAddress
+    | EventAddress<AddressData>
     | EventAdjustment
     | EventBusiness
     | EventCustomer<CustomerData>;
@@ -1951,17 +1954,25 @@ export namespace Paddle {
   /**
    * Address event alias.
    */
-  export type EventAddress = EventAddressCreated | EventAddressUpdated;
+  export type EventAddress<AddressData extends CustomData> =
+    | EventAddressCreated<AddressData>
+    | EventAddressUpdated<AddressData>;
 
   /**
    * Occurs when an address is created.
    */
-  export type EventAddressCreated = EventBase<"address.created", Address>;
+  export type EventAddressCreated<AddressData extends CustomData> = EventBase<
+    "address.created",
+    Address<AddressData>
+  >;
 
   /**'
    * Occurs when an address is updated.
    */
-  export type EventAddressUpdated = EventBase<"address.updated", Address>;
+  export type EventAddressUpdated<AddressData extends CustomData> = EventBase<
+    "address.updated",
+    Address<AddressData>
+  >;
 
   /**
    * Adjustments event alias.
