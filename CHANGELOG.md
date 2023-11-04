@@ -18,6 +18,8 @@ This change log follows the format documented in [Keep a CHANGELOG].
 
 - Reorganized custom data types to share between API and web modules. If you used `PaddleAPI` and see a missing type, use the `Paddle` namespace instead.
 
+- `Transaction` and `Subscription` custom data should now overlap. Fields that do not overlap should be optional. It's dictated by the web's custom data-assigning to relevant transaction and subscription simultaneously. Creating an API or web client with incompatible custom data definitions will result in the client function returning `never`.
+
 ### Added
 
 - Added web portion of Paddle Billing platform that allows working with Paddle from the browser, i.e., open checkout. See README for more information.

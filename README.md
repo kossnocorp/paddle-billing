@@ -74,6 +74,8 @@ const paddle = client<{
 
 From now on, all corresponding entities will have `custom_data` typed.
 
+> ⚠️ When specifing `Subscription` and `Transaction`, you should make sure they overlap. Fields that do not overlap should be optional. It's dictated by the web's custom data-assigning to relevant transaction and subscription simultaneously. Creating an API or web client with incompatible custom data definitions will result in the client function returning `never`.
+
 All custom data fields are optional so that you can type only selected entities:
 
 ```ts

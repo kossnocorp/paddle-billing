@@ -6,6 +6,13 @@ import type { PaddleAPI as API } from "./types";
 /**
  * Creates a Paddle API client.
  *
+ * When specifying the custom data definition, you should bear in mind that
+ * Subscription and Transaction should overlap and the fields that don not
+ * overlap should be optional. It's dictated by the web's custom data-assigning
+ * to relevant transaction and subscription  simultaneously. Creating an API
+ * or web client with incompatible custom data definitions will result in
+ * the client function returning never.
+ *
  * @param key - the Paddle key
  * @param sandbox - if to use the sandbox API
  *
