@@ -1,8 +1,94 @@
+import { PaddleUtils as Utils } from "./utils";
+
 /**
  * The core Paddle types namespace. Contains all the core types used by
  * the Paddle Billing.
  */
 export namespace Paddle {
+  /**
+   * The Paddle environment.
+   */
+  export type Environment =
+    | "sandbox" // Sandbox environment. Used for testing.
+    | "production"; // Live environment. Used in production.
+
+  /**
+   * Custom data definition for all possible entities.
+   */
+  export interface CustomDataDef {
+    Price?: CustomData;
+    Product?: CustomData;
+    SubscriptionItem?: CustomData;
+    Subscription?: CustomData;
+    Transaction?: CustomData;
+    Customer?: CustomData;
+    Address?: CustomData;
+    Business?: CustomData;
+  }
+
+  /**
+   * Validates the custom data definition.
+   */
+  export type WithValidatedDataDef<
+    Def extends CustomDataDef,
+    Bypass
+  > = CustomDataDefLacksTransactionSubscription<Def> extends true
+    ? Bypass
+    : Utils.EqualKeys<
+        Utils.RequiredKeys<Def["Transaction"]>,
+        Utils.RequiredKeys<Def["Subscription"]>
+      > extends true
+    ? Bypass
+    : never;
+
+  /**
+   * Infers true if Transaction, Subscription or both aren't specified
+   * in the custom data definition.
+   */
+  export type CustomDataDefLacksTransactionSubscription<
+    Def extends CustomDataDef
+  > = CustomData extends Def["Transaction"]
+    ? true
+    : CustomData extends Def["Subscription"]
+    ? true
+    : false;
+
+  /**
+   * Extracts shared Transaction and Subscription custom data.
+   */
+  export type SharedTransactionSubscriptionCustomData<
+    Def extends CustomDataDef
+  > = CustomDataDefLacksBothTransactionSubscription<Def> extends true
+    ? CustomData
+    : CustomData extends Def["Transaction"]
+    ? {
+        [Key in Utils.RequiredKeys<
+          Def["Subscription"]
+        >]: Def["Subscription"][Key];
+      }
+    : {
+        [Key in Utils.RequiredKeys<
+          Def["Transaction"]
+        >]: Def["Transaction"][Key];
+      };
+
+  /**
+   * Infers true if Transaction and Subscription both aren't specified
+   * in the custom data definition.
+   */
+  export type CustomDataDefLacksBothTransactionSubscription<
+    Def extends CustomDataDef
+  > = CustomData extends Def["Transaction"]
+    ? CustomData extends Def["Subscription"]
+      ? true
+      : false
+    : false;
+
+  /**
+   * Your own structured key-value data.
+   */
+  export type CustomData = Record<string, any> | null;
+
   /**
    * Price entities describe how much and how often you charge for your
    * products. They hold charging information.
@@ -180,11 +266,6 @@ export namespace Paddle {
   export type EntityStatus =
     | "active" // Entity is active and can be used.
     | "archived"; // Entity is archived, so can't be used.
-
-  /**
-   * Your own structured key-value data.
-   */
-  export type CustomData = Record<string, any> | null;
 
   /**
    * Tax category for the product. Used for charging the correct rate of tax.
@@ -845,6 +926,11 @@ export namespace Paddle {
     /** Paddle Checkout URL for this transaction. */
     url: string;
   }
+
+  /**
+   * Checkout ID.
+   */
+  export type CheckoutId = `che_${string}`;
 
   /**
    * Address attributes.

@@ -1,5 +1,5 @@
-import { Paddle } from "../types";
-import type { PaddleAPI } from "./types";
+import type { Paddle as Core } from "../types";
+import type { PaddleAPI as API } from "./types";
 
 /// Generic
 
@@ -11,10 +11,12 @@ import type { PaddleAPI } from "./types";
  *
  * @returns the Paddle API client
  */
-export function client<DataDef extends PaddleAPI.CustomDataDef>(
+export function client<DataDef extends Core.CustomDataDef>(
   key: string,
   sandbox?: boolean
-): PaddleAPI.Client<DataDef> {
+): Core.WithValidatedDataDef<DataDef, API.Client<DataDef>> {
+  // @ts-expect-error: Because of WithValidatedDataDef, TS will complain but
+  // this is ok!
   return { key, sandbox };
 }
 
@@ -41,7 +43,7 @@ export interface PaddleFetchProps {
  * @returns promise to the response
  */
 export async function paddleFetch(
-  client: PaddleAPI.Client<PaddleAPI.CustomDataDef>,
+  client: API.Client<Core.CustomDataDef>,
   props: PaddleFetchProps
 ) {
   const headers: Record<string, string> = {
@@ -78,12 +80,12 @@ export async function paddleFetch(
  * @returns list of products
  */
 export function listProducts<
-  DataDef extends PaddleAPI.CustomDataDef,
-  Include extends PaddleAPI.ProductResponseInclude | undefined
+  DataDef extends Core.CustomDataDef,
+  Include extends API.ProductResponseInclude | undefined
 >(
-  client: PaddleAPI.Client<DataDef>,
-  query?: PaddleAPI.ProductsListQuery<Include>
-): Promise<PaddleAPI.ProductsListResponse<DataDef, Include>> {
+  client: API.Client<DataDef>,
+  query?: API.ProductsListQuery<Include>
+): Promise<API.ProductsListResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
     path: "products",
@@ -99,10 +101,10 @@ export function listProducts<
  *
  * @returns the created product
  */
-export function createProduct<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  body: PaddleAPI.ProductCreateBody<DataDef>
-): Promise<PaddleAPI.ProductCreateResponse<DataDef>> {
+export function createProduct<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  body: API.ProductCreateBody<DataDef>
+): Promise<API.ProductCreateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "products",
@@ -122,13 +124,13 @@ export function createProduct<DataDef extends PaddleAPI.CustomDataDef>(
  * @returns the product
  */
 export function getProduct<
-  DataDef extends PaddleAPI.CustomDataDef,
-  Include extends PaddleAPI.ProductInclude | undefined
+  DataDef extends Core.CustomDataDef,
+  Include extends API.ProductInclude | undefined
 >(
-  client: PaddleAPI.Client<DataDef>,
-  productId: Paddle.ProductId,
-  query?: PaddleAPI.ProductGetQuery<Include>
-): Promise<PaddleAPI.ProductGetResponse<DataDef, Include>> {
+  client: API.Client<DataDef>,
+  productId: Core.ProductId,
+  query?: API.ProductGetQuery<Include>
+): Promise<API.ProductGetResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
     path: "products/" + productId,
@@ -145,11 +147,11 @@ export function getProduct<
  *
  * @returns the updated product
  */
-export function updateProduct<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  productId: Paddle.ProductId,
-  body: PaddleAPI.ProductUpdateBody<DataDef>
-): Promise<PaddleAPI.ProductUpdateResponse<DataDef>> {
+export function updateProduct<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  productId: Core.ProductId,
+  body: API.ProductUpdateBody<DataDef>
+): Promise<API.ProductUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
     path: "products/" + productId,
@@ -175,12 +177,12 @@ export function updateProduct<DataDef extends PaddleAPI.CustomDataDef>(
  * @returns list of prices
  */
 export function listPrices<
-  DataDef extends PaddleAPI.CustomDataDef,
-  Include extends PaddleAPI.PriceInclude | undefined
+  DataDef extends Core.CustomDataDef,
+  Include extends API.PriceInclude | undefined
 >(
-  client: PaddleAPI.Client<DataDef>,
-  query?: PaddleAPI.PricesListQuery<Include>
-): Promise<PaddleAPI.PricesListResponse<DataDef, Include>> {
+  client: API.Client<DataDef>,
+  query?: API.PricesListQuery<Include>
+): Promise<API.PricesListResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
     path: "prices",
@@ -205,10 +207,10 @@ export function listPrices<
  *
  * @returns the created price entity
  */
-export function createPrice<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  body: PaddleAPI.PriceCreateBody<DataDef>
-): Promise<PaddleAPI.PriceCreateResponse<DataDef>> {
+export function createPrice<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  body: API.PriceCreateBody<DataDef>
+): Promise<API.PriceCreateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "prices",
@@ -229,13 +231,13 @@ export function createPrice<DataDef extends PaddleAPI.CustomDataDef>(
  * @returns The price entity with included entities
  */
 export function getPrice<
-  DataDef extends PaddleAPI.CustomDataDef,
-  Include extends PaddleAPI.PriceInclude | undefined
+  DataDef extends Core.CustomDataDef,
+  Include extends API.PriceInclude | undefined
 >(
-  client: PaddleAPI.Client<DataDef>,
-  priceId: Paddle.PriceId,
-  query?: PaddleAPI.PriceGetQuery<Include>
-): Promise<PaddleAPI.PriceGetResponse<DataDef, Include>> {
+  client: API.Client<DataDef>,
+  priceId: Core.PriceId,
+  query?: API.PriceGetQuery<Include>
+): Promise<API.PriceGetResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
     path: "prices/" + priceId,
@@ -253,11 +255,11 @@ export function getPrice<
  *
  * @returns The updated price
  */
-export function updatePrice<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  priceId: Paddle.PriceId,
-  body: PaddleAPI.PriceUpdateBody<DataDef>
-): Promise<PaddleAPI.PriceUpdateResponse<DataDef>> {
+export function updatePrice<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  priceId: Core.PriceId,
+  body: API.PriceUpdateBody<DataDef>
+): Promise<API.PriceUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
     path: "prices/" + priceId,
@@ -279,10 +281,10 @@ export function updatePrice<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns list of discounts
  */
-export function listDiscounts<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  query?: PaddleAPI.DiscountsListQuery
-): Promise<PaddleAPI.DiscountsListResponse> {
+export function listDiscounts<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  query?: API.DiscountsListQuery
+): Promise<API.DiscountsListResponse> {
   return paddleFetch(client, {
     method: "GET",
     path: "discounts",
@@ -300,10 +302,10 @@ export function listDiscounts<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns The created discount
  */
-export function createDiscount<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  body: PaddleAPI.DiscountCreateBody
-): Promise<PaddleAPI.DiscountCreateResponse> {
+export function createDiscount<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  body: API.DiscountCreateBody
+): Promise<API.DiscountCreateResponse> {
   return paddleFetch(client, {
     method: "POST",
     path: "discounts",
@@ -319,10 +321,10 @@ export function createDiscount<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the discount
  */
-export function getDiscount<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  discountId: Paddle.DiscountId
-): Promise<PaddleAPI.DiscountGetResponse> {
+export function getDiscount<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  discountId: Core.DiscountId
+): Promise<API.DiscountGetResponse> {
   return paddleFetch(client, {
     method: "GET",
     path: "discounts/" + discountId,
@@ -340,11 +342,11 @@ export function getDiscount<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the updated discount
  */
-export function updateDiscount<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  discountId: Paddle.DiscountId,
-  body: PaddleAPI.DiscountUpdateBody
-): Promise<PaddleAPI.DiscountUpdateResponse> {
+export function updateDiscount<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  discountId: Core.DiscountId,
+  body: API.DiscountUpdateBody
+): Promise<API.DiscountUpdateResponse> {
   return paddleFetch(client, {
     method: "PATCH",
     path: "discounts/" + discountId,
@@ -366,10 +368,10 @@ export function updateDiscount<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns list of customers
  */
-export function listCustomers<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  query?: PaddleAPI.CustomersListQuery<DataDef>
-): Promise<PaddleAPI.CustomersListResponse<DataDef>> {
+export function listCustomers<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  query?: API.CustomersListQuery<DataDef>
+): Promise<API.CustomersListResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "customers",
@@ -387,10 +389,10 @@ export function listCustomers<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns The created customer
  */
-export function createCustomer<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  body: PaddleAPI.CustomerCreateBody<DataDef>
-): Promise<PaddleAPI.CustomerCreateResponse<DataDef>> {
+export function createCustomer<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  body: API.CustomerCreateBody<DataDef>
+): Promise<API.CustomerCreateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "customers",
@@ -406,10 +408,10 @@ export function createCustomer<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the customer
  */
-export function getCustomer<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  customerId: Paddle.CustomerId
-): Promise<PaddleAPI.CustomerGetResponse<DataDef>> {
+export function getCustomer<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  customerId: Core.CustomerId
+): Promise<API.CustomerGetResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "customers/" + customerId,
@@ -427,11 +429,11 @@ export function getCustomer<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the updated customer
  */
-export function updateCustomer<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  customerId: Paddle.CustomerId,
-  body: PaddleAPI.CustomerUpdateBody<DataDef>
-): Promise<PaddleAPI.CustomerUpdateResponse<DataDef>> {
+export function updateCustomer<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  customerId: Core.CustomerId,
+  body: API.CustomerUpdateBody<DataDef>
+): Promise<API.CustomerUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
     path: "customers/" + customerId,
@@ -454,11 +456,11 @@ export function updateCustomer<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns list of addresses for a customer
  */
-export function listAddresses<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  customerId: Paddle.CustomerId,
-  query?: PaddleAPI.AddressListQuery<DataDef>
-): Promise<PaddleAPI.AddressListResponse<DataDef>> {
+export function listAddresses<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  customerId: Core.CustomerId,
+  query?: API.AddressListQuery<DataDef>
+): Promise<API.AddressListResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "customers/" + customerId + "/addresses",
@@ -481,11 +483,11 @@ export function listAddresses<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns a copy of the new address entity if successful
  */
-export function createAddress<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  customerId: Paddle.CustomerId,
-  body: PaddleAPI.AddressCreateBody<DataDef>
-): Promise<PaddleAPI.AddressCreateResponse<DataDef>> {
+export function createAddress<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  customerId: Core.CustomerId,
+  body: API.AddressCreateBody<DataDef>
+): Promise<API.AddressCreateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "customers/" + customerId + "/addresses",
@@ -502,11 +504,11 @@ export function createAddress<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the requested address
  */
-export function getAddress<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  customerId: Paddle.CustomerId,
-  addressId: Paddle.AddressId
-): Promise<PaddleAPI.AddressGetResponse<DataDef>> {
+export function getAddress<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  customerId: Core.CustomerId,
+  addressId: Core.AddressId
+): Promise<API.AddressGetResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "customers/" + customerId + "/addresses/" + addressId,
@@ -525,12 +527,12 @@ export function getAddress<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the updated address
  */
-export function updateAddress<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  customerId: Paddle.CustomerId,
-  addressId: Paddle.AddressId,
-  body: PaddleAPI.AddressUpdateBody<DataDef>
-): Promise<PaddleAPI.AddressUpdateResponse<DataDef>> {
+export function updateAddress<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  customerId: Core.CustomerId,
+  addressId: Core.AddressId,
+  body: API.AddressUpdateBody<DataDef>
+): Promise<API.AddressUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
     path: "customers/" + customerId + "/addresses/" + addressId,
@@ -551,11 +553,11 @@ export function updateAddress<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns list of businesses for a customer
  */
-export function listBusinesses<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  customerId: Paddle.CustomerId,
-  query?: PaddleAPI.BusinessesListQuery<DataDef>
-): Promise<PaddleAPI.BusinessesListResponse<DataDef>> {
+export function listBusinesses<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  customerId: Core.CustomerId,
+  query?: API.BusinessesListQuery<DataDef>
+): Promise<API.BusinessesListResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "customers/" + customerId + "/businesses",
@@ -574,11 +576,11 @@ export function listBusinesses<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the created business
  */
-export function createBusiness<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  customerId: Paddle.CustomerId,
-  body: PaddleAPI.BusinessCreateBody<DataDef>
-): Promise<PaddleAPI.BusinessCreateResponse<DataDef>> {
+export function createBusiness<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  customerId: Core.CustomerId,
+  body: API.BusinessCreateBody<DataDef>
+): Promise<API.BusinessCreateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "customers/" + customerId + "/businesses",
@@ -595,11 +597,11 @@ export function createBusiness<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the business entity
  */
-export function getBusiness<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  customerId: Paddle.CustomerId,
-  businessId: Paddle.BusinessId
-): Promise<PaddleAPI.BusinessGetResponse<DataDef>> {
+export function getBusiness<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  customerId: Core.CustomerId,
+  businessId: Core.BusinessId
+): Promise<API.BusinessGetResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "customers/" + customerId + "/businesses/" + businessId,
@@ -618,12 +620,12 @@ export function getBusiness<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns The updated business entity or an error response
  */
-export function updateBusiness<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  customerId: Paddle.CustomerId,
+export function updateBusiness<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  customerId: Core.CustomerId,
   businessId: string,
-  body: PaddleAPI.BusinessUpdateBody<DataDef>
-): Promise<PaddleAPI.BusinessUpdateResponse<DataDef>> {
+  body: API.BusinessUpdateBody<DataDef>
+): Promise<API.BusinessUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
     path: `customers/${customerId}/businesses/${businessId}`,
@@ -646,12 +648,12 @@ export function updateBusiness<DataDef extends PaddleAPI.CustomDataDef>(
  * @returns list of transactions
  */
 export function listTransactions<
-  DataDef extends PaddleAPI.CustomDataDef,
-  Include extends PaddleAPI.TransactionResponseInclude | undefined
+  DataDef extends Core.CustomDataDef,
+  Include extends API.TransactionResponseInclude | undefined
 >(
-  client: PaddleAPI.Client<DataDef>,
-  query?: PaddleAPI.TransactionsListQuery<Include>
-): Promise<PaddleAPI.TransactionsListResponse<DataDef, Include>> {
+  client: API.Client<DataDef>,
+  query?: API.TransactionsListQuery<Include>
+): Promise<API.TransactionsListResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
     path: "transactions",
@@ -685,13 +687,13 @@ export function listTransactions<
  * @returns the created transaction
  */
 export function createTransaction<
-  DataDef extends PaddleAPI.CustomDataDef,
-  Include extends PaddleAPI.TransactionResponseInclude | undefined
+  DataDef extends Core.CustomDataDef,
+  Include extends API.TransactionResponseInclude | undefined
 >(
-  client: PaddleAPI.Client<DataDef>,
-  body: PaddleAPI.TransactionCreateBody<DataDef>,
-  query?: PaddleAPI.TransactionCreateQuery<Include>
-): Promise<PaddleAPI.TransactionCreateResponse<DataDef, Include>> {
+  client: API.Client<DataDef>,
+  body: API.TransactionCreateBody<DataDef>,
+  query?: API.TransactionCreateQuery<Include>
+): Promise<API.TransactionCreateResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "POST",
     path: "transactions",
@@ -713,13 +715,13 @@ export function createTransaction<
  * @returns the transaction
  */
 export function getTransaction<
-  DataDef extends PaddleAPI.CustomDataDef,
-  Include extends PaddleAPI.TransactionResponseInclude | undefined
+  DataDef extends Core.CustomDataDef,
+  Include extends API.TransactionResponseInclude | undefined
 >(
-  client: PaddleAPI.Client<DataDef>,
-  transactionId: Paddle.TransactionId,
-  query?: PaddleAPI.TransactionGetQuery<Include>
-): Promise<PaddleAPI.TransactionGetResponse<DataDef, Include>> {
+  client: API.Client<DataDef>,
+  transactionId: Core.TransactionId,
+  query?: API.TransactionGetQuery<Include>
+): Promise<API.TransactionGetResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
     path: "transactions/" + transactionId,
@@ -740,11 +742,11 @@ export function getTransaction<
  *
  * @returns the updated transaction
  */
-export function updateTransaction<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  transactionId: Paddle.TransactionId,
-  body: PaddleAPI.TransactionUpdateBody<DataDef>
-): Promise<PaddleAPI.TransactionUpdateResponse<DataDef>> {
+export function updateTransaction<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  transactionId: Core.TransactionId,
+  body: API.TransactionUpdateBody<DataDef>
+): Promise<API.TransactionUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
     path: "transactions/" + transactionId,
@@ -778,10 +780,10 @@ export function updateTransaction<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the previewed transaction
  */
-export function previewTransaction<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  body: PaddleAPI.TransactionPreviewBody<DataDef>
-): Promise<PaddleAPI.TransactionPreviewResponse<DataDef>> {
+export function previewTransaction<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  body: API.TransactionPreviewBody<DataDef>
+): Promise<API.TransactionPreviewResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "transactions/preview",
@@ -813,10 +815,10 @@ export function previewTransaction<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns a link to an invoice PDF for a transaction
  */
-export function getInvoice<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  transactionId: Paddle.TransactionId
-): Promise<PaddleAPI.InvoiceGetResponse> {
+export function getInvoice<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  transactionId: Core.TransactionId
+): Promise<API.InvoiceGetResponse> {
   return paddleFetch(client, {
     method: "GET",
     path: "transactions/" + transactionId + "/invoice",
@@ -832,10 +834,10 @@ export function getInvoice<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns list of subscriptions
  */
-export function listSubscriptions<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  query?: PaddleAPI.SubscriptionsListQuery
-): Promise<PaddleAPI.SubscriptionsListResponse<DataDef>> {
+export function listSubscriptions<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  query?: API.SubscriptionsListQuery
+): Promise<API.SubscriptionsListResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "subscriptions",
@@ -855,13 +857,13 @@ export function listSubscriptions<DataDef extends PaddleAPI.CustomDataDef>(
  * @returns a subscription entity with included entities
  */
 export function getSubscription<
-  DataDef extends PaddleAPI.CustomDataDef,
-  Include extends PaddleAPI.SubscriptionGetResponseInclude | undefined
+  DataDef extends Core.CustomDataDef,
+  Include extends API.SubscriptionGetResponseInclude | undefined
 >(
-  client: PaddleAPI.Client<DataDef>,
-  subscriptionId: Paddle.SubscriptionId,
-  query?: PaddleAPI.SubscriptionGetQuery<Include>
-): Promise<PaddleAPI.SubscriptionGetResponse<DataDef, Include>> {
+  client: API.Client<DataDef>,
+  subscriptionId: Core.SubscriptionId,
+  query?: API.SubscriptionGetQuery<Include>
+): Promise<API.SubscriptionGetResponse<DataDef, Include>> {
   return paddleFetch(client, {
     method: "GET",
     path: "subscriptions/" + subscriptionId,
@@ -887,11 +889,11 @@ export function getSubscription<
  *
  * @returns the updated subscription
  */
-export function updateSubscription<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  subscriptionId: Paddle.SubscriptionId,
-  body: PaddleAPI.SubscriptionUpdateBody<DataDef>
-): Promise<PaddleAPI.SubscriptionUpdateResponse<DataDef>> {
+export function updateSubscription<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  subscriptionId: Core.SubscriptionId,
+  body: API.SubscriptionUpdateBody<DataDef>
+): Promise<API.SubscriptionUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
     path: "subscriptions/" + subscriptionId,
@@ -923,13 +925,11 @@ export function updateSubscription<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the updated subscription
  */
-export function previewUpdateSubscription<
-  DataDef extends PaddleAPI.CustomDataDef
->(
-  client: PaddleAPI.Client<DataDef>,
-  subscriptionId: Paddle.SubscriptionId,
-  body: PaddleAPI.SubscriptionUpdateBody<DataDef>
-): Promise<PaddleAPI.SubscriptionPreviewUpdateResponse<DataDef>> {
+export function previewUpdateSubscription<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  subscriptionId: Core.SubscriptionId,
+  body: API.SubscriptionUpdateBody<DataDef>
+): Promise<API.SubscriptionPreviewUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "PATCH",
     path: "subscriptions/" + subscriptionId + "/preview",
@@ -959,11 +959,11 @@ export function previewUpdateSubscription<
  * to update their payment details
  */
 export function updatePaymentMethodTransaction<
-  DataDef extends PaddleAPI.CustomDataDef
+  DataDef extends Core.CustomDataDef
 >(
-  client: PaddleAPI.Client<DataDef>,
-  subscriptionId: Paddle.SubscriptionId
-): Promise<PaddleAPI.UpdatePaymentMethodTransactionResponse<DataDef>> {
+  client: API.Client<DataDef>,
+  subscriptionId: Core.SubscriptionId
+): Promise<API.UpdatePaymentMethodTransactionResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path:
@@ -994,11 +994,11 @@ export function updatePaymentMethodTransaction<
  *
  * @returns a promise that resolves with the updated subscription
  */
-export function pauseSubscription<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  subscriptionId: Paddle.SubscriptionId,
-  body?: PaddleAPI.SubscriptionPauseBody
-): Promise<PaddleAPI.SubscriptionUpdateResponse<DataDef>> {
+export function pauseSubscription<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  subscriptionId: Core.SubscriptionId,
+  body?: API.SubscriptionPauseBody
+): Promise<API.SubscriptionUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: `subscriptions/${subscriptionId}/pause`,
@@ -1023,11 +1023,11 @@ export function pauseSubscription<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the updated subscription entity
  */
-export function resumeSubscription<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  subscriptionId: Paddle.SubscriptionId,
-  body: PaddleAPI.SubscriptionResumeBody
-): Promise<PaddleAPI.SubscriptionUpdateResponse<DataDef>> {
+export function resumeSubscription<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  subscriptionId: Core.SubscriptionId,
+  body: API.SubscriptionResumeBody
+): Promise<API.SubscriptionUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "subscriptions/" + subscriptionId + "/resume",
@@ -1057,11 +1057,11 @@ export function resumeSubscription<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns updated subscription entity
  */
-export function cancelSubscription<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  subscriptionId: Paddle.SubscriptionId,
-  body: PaddleAPI.CancelSubscriptionRequestBody
-): Promise<PaddleAPI.SubscriptionUpdateResponse<DataDef>> {
+export function cancelSubscription<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  subscriptionId: Core.SubscriptionId,
+  body: API.CancelSubscriptionRequestBody
+): Promise<API.SubscriptionUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "subscriptions/" + subscriptionId + "/cancel",
@@ -1086,11 +1086,11 @@ export function cancelSubscription<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the updated subscription entity
  */
-export function createCharge<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  subscriptionId: Paddle.SubscriptionId,
-  body: PaddleAPI.ChargeCreateBody
-): Promise<PaddleAPI.SubscriptionUpdateResponse<DataDef>> {
+export function createCharge<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  subscriptionId: Core.SubscriptionId,
+  body: API.ChargeCreateBody
+): Promise<API.SubscriptionUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "subscriptions/" + subscriptionId + "/charge",
@@ -1116,11 +1116,11 @@ export function createCharge<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the updated subscription entity
  */
-export function previewCharge<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  subscriptionId: Paddle.SubscriptionId,
-  body: PaddleAPI.ChargeCreateBody
-): Promise<PaddleAPI.SubscriptionPreviewUpdateResponse<DataDef>> {
+export function previewCharge<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  subscriptionId: Core.SubscriptionId,
+  body: API.ChargeCreateBody
+): Promise<API.SubscriptionPreviewUpdateResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "subscriptions/" + subscriptionId + "/charge/preview",
@@ -1139,10 +1139,10 @@ export function previewCharge<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns list of adjustments
  */
-export function listAdjustments<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  query?: PaddleAPI.AdjustmentsListQuery
-): Promise<PaddleAPI.AdjustmentsListResponse> {
+export function listAdjustments<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  query?: API.AdjustmentsListQuery
+): Promise<API.AdjustmentsListResponse> {
   return paddleFetch(client, {
     method: "GET",
     path: "adjustments",
@@ -1174,10 +1174,10 @@ export function listAdjustments<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the created adjustment
  */
-export function createAdjustment<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  body: PaddleAPI.AdjustmentCreateBody
-): Promise<PaddleAPI.AdjustmentCreateResponse> {
+export function createAdjustment<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  body: API.AdjustmentCreateBody
+): Promise<API.AdjustmentCreateResponse> {
   return paddleFetch(client, {
     method: "POST",
     path: "adjustments",
@@ -1206,10 +1206,10 @@ export function createAdjustment<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns object of price details for the products
  */
-export function previewPrices<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  body: PaddleAPI.PreviewPricesBody
-): Promise<PaddleAPI.PreviewPricesResponse<DataDef>> {
+export function previewPrices<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  body: API.PreviewPricesBody
+): Promise<API.PreviewPricesResponse<DataDef>> {
   return paddleFetch(client, {
     method: "POST",
     path: "pricing-preview",
@@ -1228,9 +1228,9 @@ export function previewPrices<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns a list of event types
  */
-export function listEventTypes<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>
-): Promise<PaddleAPI.EventTypesListResponse> {
+export function listEventTypes<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>
+): Promise<API.EventTypesListResponse> {
   return paddleFetch(client, {
     method: "GET",
     path: "event-types",
@@ -1251,10 +1251,10 @@ export function listEventTypes<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns list of events
  */
-export function listEvents<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  query?: PaddleAPI.EventsListQuery
-): Promise<PaddleAPI.EventsListResponse<DataDef>> {
+export function listEvents<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  query?: API.EventsListQuery
+): Promise<API.EventsListResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "events",
@@ -1273,11 +1273,9 @@ export function listEvents<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns list of notification settings
  */
-export function listNotificationSettings<
-  DataDef extends PaddleAPI.CustomDataDef
->(
-  client: PaddleAPI.Client<DataDef>
-): Promise<PaddleAPI.NotificationSettingsListResponse> {
+export function listNotificationSettings<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>
+): Promise<API.NotificationSettingsListResponse> {
   return paddleFetch(client, {
     method: "GET",
     path: "notification-settings",
@@ -1301,12 +1299,10 @@ export function listNotificationSettings<
  *
  * @returns the notification setting entity and request information
  */
-export function createNotificationSetting<
-  DataDef extends PaddleAPI.CustomDataDef
->(
-  client: PaddleAPI.Client<DataDef>,
-  body: PaddleAPI.NotificationSettingCreateBody
-): Promise<PaddleAPI.NotificationSettingCreateResponse> {
+export function createNotificationSetting<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  body: API.NotificationSettingCreateBody
+): Promise<API.NotificationSettingCreateResponse> {
   return paddleFetch(client, {
     method: "POST",
     path: "notification-settings",
@@ -1323,11 +1319,11 @@ export function createNotificationSetting<
  * @returns a notification destination
  */
 export async function getNotificationSetting<
-  DataDef extends PaddleAPI.CustomDataDef
+  DataDef extends Core.CustomDataDef
 >(
-  client: PaddleAPI.Client<DataDef>,
-  notificationSettingId: Paddle.NotificationSettingId
-): Promise<PaddleAPI.NotificationSettingGetResponse> {
+  client: API.Client<DataDef>,
+  notificationSettingId: Core.NotificationSettingId
+): Promise<API.NotificationSettingGetResponse> {
   return await paddleFetch(client, {
     method: "GET",
     path: `notification-settings/${notificationSettingId}`,
@@ -1352,13 +1348,11 @@ export async function getNotificationSetting<
  *
  * @returns The updated notification setting entity
  */
-export function updateNotificationSetting<
-  DataDef extends PaddleAPI.CustomDataDef
->(
-  client: PaddleAPI.Client<DataDef>,
-  notificationSettingId: Paddle.NotificationSettingId,
-  body: PaddleAPI.NotificationSettingUpdateBody
-): Promise<PaddleAPI.NotificationSettingUpdateResponse> {
+export function updateNotificationSetting<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  notificationSettingId: Core.NotificationSettingId,
+  body: API.NotificationSettingUpdateBody
+): Promise<API.NotificationSettingUpdateResponse> {
   return paddleFetch(client, {
     method: "PATCH",
     path: "notification-settings/" + notificationSettingId,
@@ -1383,12 +1377,10 @@ export function updateNotificationSetting<
  * @returns A promise that resolves to a response object, containing either
  * a success or error response
  */
-export function deleteNotificationSetting<
-  DataDef extends PaddleAPI.CustomDataDef
->(
-  client: PaddleAPI.Client<DataDef>,
-  notificationSettingId: Paddle.NotificationSettingId
-): Promise<PaddleAPI.NotificationSettingDeleteResponse> {
+export function deleteNotificationSetting<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  notificationSettingId: Core.NotificationSettingId
+): Promise<API.NotificationSettingDeleteResponse> {
   return paddleFetch(client, {
     method: "DELETE",
     path: "notification-settings/" + notificationSettingId,
@@ -1406,10 +1398,10 @@ export function deleteNotificationSetting<
  *
  * @returns list of notifications
  */
-export function listNotifications<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  query?: PaddleAPI.NotificationsListQuery
-): Promise<PaddleAPI.NotificationsListResponse<DataDef>> {
+export function listNotifications<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  query?: API.NotificationsListQuery
+): Promise<API.NotificationsListResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "notifications",
@@ -1425,10 +1417,10 @@ export function listNotifications<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns the notification
  */
-export function getNotification<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  notificationId: Paddle.NotificationId
-): Promise<PaddleAPI.NotificationGetResponse<DataDef>> {
+export function getNotification<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  notificationId: Core.NotificationId
+): Promise<API.NotificationGetResponse<DataDef>> {
   return paddleFetch(client, {
     method: "GET",
     path: "notifications/" + notificationId,
@@ -1447,10 +1439,10 @@ export function getNotification<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns object with replayed notification id
  */
-export function replayNotification<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
+export function replayNotification<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
   notificationId: string
-): Promise<PaddleAPI.NotificationReplayResponse> {
+): Promise<API.NotificationReplayResponse> {
   return paddleFetch(client, {
     method: "POST",
     path: "notifications/" + notificationId + "/replay",
@@ -1469,11 +1461,11 @@ export function replayNotification<DataDef extends PaddleAPI.CustomDataDef>(
  *
  * @returns list of notification logs
  */
-export function listNotificationLogs<DataDef extends PaddleAPI.CustomDataDef>(
-  client: PaddleAPI.Client<DataDef>,
-  notificationId: Paddle.NotificationId,
-  query?: PaddleAPI.NotificationLogsListQuery
-): Promise<PaddleAPI.NotificationLogsListResponse> {
+export function listNotificationLogs<DataDef extends Core.CustomDataDef>(
+  client: API.Client<DataDef>,
+  notificationId: Core.NotificationId,
+  query?: API.NotificationLogsListQuery
+): Promise<API.NotificationLogsListResponse> {
   return paddleFetch(client, {
     method: "GET",
     path: "notifications/" + notificationId + "/logs",

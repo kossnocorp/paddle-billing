@@ -8,6 +8,20 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## v1.1.0 - 2023-11-??
+
+### Fixed
+
+- `previewPrices` success response now correctly doesn't include pagination information.
+
+### Changed
+
+- Reorganized custom data types to share between API and web modules. If you used `PaddleAPI` and see a missing type, use the `Paddle` namespace instead.
+
+### Added
+
+- Added web portion of Paddle Billing platform that allows working with Paddle from the browser, i.e., open checkout. See README for more information.
+
 ## v1.0.0 - 2023-11-02
 
 ### Changed

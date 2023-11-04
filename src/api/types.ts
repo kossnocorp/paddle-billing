@@ -1,22 +1,12 @@
 import type { Paddle } from "../types";
+import type { PaddleUtils as Utils } from "../utils";
 /**
  * The API Paddle types namespace. Contains all the types related to the API.
  */
 export namespace PaddleAPI {
-  export interface Client<_DataDef extends CustomDataDef> {
+  export interface Client<_DataDef extends Paddle.CustomDataDef> {
     key: string;
     sandbox?: boolean | undefined;
-  }
-
-  export interface CustomDataDef {
-    Price?: Paddle.CustomData;
-    Product?: Paddle.CustomData;
-    SubscriptionItem?: Paddle.CustomData;
-    Subscription?: Paddle.CustomData;
-    Transaction?: Paddle.CustomData;
-    Customer?: Paddle.CustomData;
-    Address?: Paddle.CustomData;
-    Business?: Paddle.CustomData;
   }
 
   export type CustomData<Data extends Paddle.CustomData | undefined> =
@@ -310,7 +300,7 @@ export namespace PaddleAPI {
    * The products list response.
    */
   export type ProductsListResponse<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends ProductResponseInclude | undefined
   > = ProductsListResponseError | ProductsListResponseSuccess<DataDef, Include>;
 
@@ -324,7 +314,7 @@ export namespace PaddleAPI {
    * The successful products list response.
    */
   export interface ProductsListResponseSuccess<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends ProductResponseInclude | undefined
   > extends ResponseBase<
       ProductsListDataItem<
@@ -356,8 +346,8 @@ export namespace PaddleAPI {
   /**
    * The create product body.
    */
-  export type ProductCreateBody<DataDef extends CustomDataDef> =
-    MakeNullableFieldsOptional<
+  export type ProductCreateBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.MakeNullableFieldsOptional<
       Omit<
         Paddle.Product<CustomData<DataDef["Product"]>>,
         ProductAutoAssignFields | "status"
@@ -367,7 +357,7 @@ export namespace PaddleAPI {
   /**
    * The create product response.
    */
-  export type ProductCreateResponse<DataDef extends CustomDataDef> =
+  export type ProductCreateResponse<DataDef extends Paddle.CustomDataDef> =
     | ProductCreateResponseError
     | ProductCreateResponseSuccess<CustomData<DataDef["Product"]>>;
 
@@ -398,7 +388,7 @@ export namespace PaddleAPI {
    * The get product response.
    */
   export type ProductGetResponse<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends ProductInclude | undefined
   > = ProductGetResponseError | ProductGetResponseSuccess<DataDef, Include>;
 
@@ -412,7 +402,7 @@ export namespace PaddleAPI {
    * The successful product get response.
    */
   export interface ProductGetResponseSuccess<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends ProductInclude | undefined
   > extends ResponseBase<
       ProductGetData<
@@ -442,17 +432,18 @@ export namespace PaddleAPI {
   /**
    * The update product body.
    */
-  export type ProductUpdateBody<DataDef extends CustomDataDef> = Optional<
-    Omit<
-      Paddle.Product<CustomData<DataDef["Product"]>>,
-      ProductAutoAssignFields
-    >
-  >;
+  export type ProductUpdateBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.Optional<
+      Omit<
+        Paddle.Product<CustomData<DataDef["Product"]>>,
+        ProductAutoAssignFields
+      >
+    >;
 
   /**
    * The update product response.
    */
-  export type ProductUpdateResponse<DataDef extends CustomDataDef> =
+  export type ProductUpdateResponse<DataDef extends Paddle.CustomDataDef> =
     | ProductUpdateResponseError
     | ProductUpdateResponseSuccess<DataDef>;
 
@@ -465,8 +456,9 @@ export namespace PaddleAPI {
   /**
    * The successful product update response.
    */
-  export interface ProductUpdateResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface ProductUpdateResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Product<CustomData<DataDef["Product"]>>,
       MetaBasic
     > {}
@@ -517,7 +509,7 @@ export namespace PaddleAPI {
    * The prices list response.
    */
   export type PricesListResponse<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends PriceInclude | undefined
   > = PricesListResponseError | PricesListResponseSuccess<DataDef, Include>;
 
@@ -531,7 +523,7 @@ export namespace PaddleAPI {
    * The successful prices list response.
    */
   export interface PricesListResponseSuccess<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends PriceInclude | undefined
   > extends ResponseBase<
       PricesListDataItem<CustomData<DataDef["Price"]>, Include>[],
@@ -554,9 +546,9 @@ export namespace PaddleAPI {
   /**
    * The create price body.
    */
-  export type PriceCreateBody<DataDef extends CustomDataDef> =
-    MakeNullableFieldsOptional<
-      MakeFieldsOptional<
+  export type PriceCreateBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.MakeNullableFieldsOptional<
+      Utils.MakeFieldsOptional<
         Omit<
           Paddle.Price<
             Paddle.TimeInterval | null,
@@ -571,7 +563,7 @@ export namespace PaddleAPI {
   /**
    * The create price response.
    */
-  export type PriceCreateResponse<DataDef extends CustomDataDef> =
+  export type PriceCreateResponse<DataDef extends Paddle.CustomDataDef> =
     | PriceCreateResponseError
     | PriceCreateResponseSuccess<CustomData<DataDef["Price"]>>;
 
@@ -605,7 +597,7 @@ export namespace PaddleAPI {
    * The get price response.
    */
   export type PriceGetResponse<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends PriceInclude | undefined
   > = PriceGetResponseError | PriceGetResponseSuccess<DataDef, Include>;
 
@@ -619,7 +611,7 @@ export namespace PaddleAPI {
    * The successful price get response.
    */
   export interface PriceGetResponseSuccess<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends PriceInclude | undefined
   > extends ResponseBase<
       PriceGetData<CustomData<DataDef["Price"]>, Include>,
@@ -642,17 +634,18 @@ export namespace PaddleAPI {
   /**
    * The update price body.
    */
-  export type PriceUpdateBody<DataDef extends CustomDataDef> = Optional<
-    Omit<
-      Paddle.Price<Paddle.TimeInterval | null, CustomData<DataDef["Price"]>>,
-      PriceAutoAssignFields
-    >
-  >;
+  export type PriceUpdateBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.Optional<
+      Omit<
+        Paddle.Price<Paddle.TimeInterval | null, CustomData<DataDef["Price"]>>,
+        PriceAutoAssignFields
+      >
+    >;
 
   /**
    * The update price response.
    */
-  export type PriceUpdateResponse<DataDef extends CustomDataDef> =
+  export type PriceUpdateResponse<DataDef extends Paddle.CustomDataDef> =
     | PriceUpdateResponseError
     | PriceUpdateResponseSuccess<DataDef>;
 
@@ -665,8 +658,9 @@ export namespace PaddleAPI {
   /**
    * The successful price update response.
    */
-  export interface PriceUpdateResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface PriceUpdateResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Price<Paddle.TimeInterval | null, CustomData<DataDef["Price"]>>,
       MetaBasic
     > {}
@@ -731,7 +725,7 @@ export namespace PaddleAPI {
   /**
    * The create discount body.
    */
-  export type DiscountCreateBody = MakeNullableFieldsOptional<
+  export type DiscountCreateBody = Utils.MakeNullableFieldsOptional<
     Omit<Paddle.Discount, DiscountAutoAssignFields | "status">
   >;
 
@@ -780,8 +774,10 @@ export namespace PaddleAPI {
   /**
    * The update discount body.
    */
-  export type DiscountUpdateBody = Optional<
-    MakeNullableFieldsOptional<Omit<Paddle.Discount, DiscountAutoAssignFields>>
+  export type DiscountUpdateBody = Utils.Optional<
+    Utils.MakeNullableFieldsOptional<
+      Omit<Paddle.Discount, DiscountAutoAssignFields>
+    >
   >;
 
   /**
@@ -819,7 +815,7 @@ export namespace PaddleAPI {
   /**
    * The customers list query.
    */
-  export interface CustomersListQuery<DataDef extends CustomDataDef> {
+  export interface CustomersListQuery<DataDef extends Paddle.CustomDataDef> {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
     after?: string | undefined;
@@ -841,7 +837,7 @@ export namespace PaddleAPI {
   /**
    * The customers list response.
    */
-  export type CustomersListResponse<DataDef extends CustomDataDef> =
+  export type CustomersListResponse<DataDef extends Paddle.CustomDataDef> =
     | CustomersListResponseError
     | CustomersListResponseSuccess<DataDef>;
 
@@ -854,8 +850,9 @@ export namespace PaddleAPI {
   /**
    * The successful customers list response.
    */
-  export interface CustomersListResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface CustomersListResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Customer<CustomData<DataDef["Customer"]>>[],
       MetaPaginated
     > {}
@@ -865,9 +862,9 @@ export namespace PaddleAPI {
   /**
    * The create customer body.
    */
-  export type CustomerCreateBody<DataDef extends CustomDataDef> =
-    MakeNullableFieldsOptional<
-      MakeFieldsOptional<
+  export type CustomerCreateBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.MakeNullableFieldsOptional<
+      Utils.MakeFieldsOptional<
         Omit<
           Paddle.Customer<CustomData<DataDef["Customer"]>>,
           CustomerAutoAssignFields | "status"
@@ -879,7 +876,7 @@ export namespace PaddleAPI {
   /**
    * The create customer response.
    */
-  export type CustomerCreateResponse<DataDef extends CustomDataDef> =
+  export type CustomerCreateResponse<DataDef extends Paddle.CustomDataDef> =
     | CustomerCreateResponseError
     | CustomerCreateResponseSuccess<DataDef>;
 
@@ -892,8 +889,9 @@ export namespace PaddleAPI {
   /**
    * The successful customer create response.
    */
-  export interface CustomerCreateResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface CustomerCreateResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Customer<CustomData<DataDef["Customer"]>>,
       MetaBasic
     > {}
@@ -903,7 +901,7 @@ export namespace PaddleAPI {
   /**
    * The get customer response.
    */
-  export type CustomerGetResponse<DataDef extends CustomDataDef> =
+  export type CustomerGetResponse<DataDef extends Paddle.CustomDataDef> =
     | CustomerGetResponseError
     | CustomerGetResponseSuccess<DataDef>;
 
@@ -916,8 +914,9 @@ export namespace PaddleAPI {
   /**
    * The successful customer get response.
    */
-  export interface CustomerGetResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface CustomerGetResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Customer<CustomData<DataDef["Customer"]>>,
       MetaBasic
     > {}
@@ -927,17 +926,18 @@ export namespace PaddleAPI {
   /**
    * The update customer body.
    */
-  export type CustomerUpdateBody<DataDef extends CustomDataDef> = Optional<
-    Omit<
-      Paddle.Customer<CustomData<DataDef["Customer"]>>,
-      CustomerAutoAssignFields
-    >
-  >;
+  export type CustomerUpdateBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.Optional<
+      Omit<
+        Paddle.Customer<CustomData<DataDef["Customer"]>>,
+        CustomerAutoAssignFields
+      >
+    >;
 
   /**
    * The update customer response.
    */
-  export type CustomerUpdateResponse<DataDef extends CustomDataDef> =
+  export type CustomerUpdateResponse<DataDef extends Paddle.CustomDataDef> =
     | CustomerUpdateResponseError
     | CustomerUpdateResponseSuccess<DataDef>;
 
@@ -950,8 +950,9 @@ export namespace PaddleAPI {
   /**
    * The successful customer update response.
    */
-  export interface CustomerUpdateResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface CustomerUpdateResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Customer<CustomData<DataDef["Customer"]>>,
       MetaBasic
     > {}
@@ -968,7 +969,7 @@ export namespace PaddleAPI {
   /**
    * The customer's list addresses query.
    */
-  export interface AddressListQuery<DataDef extends CustomDataDef> {
+  export interface AddressListQuery<DataDef extends Paddle.CustomDataDef> {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
     after?: string | undefined;
@@ -993,7 +994,7 @@ export namespace PaddleAPI {
   /**
    * The list addresses response.
    */
-  export type AddressListResponse<DataDef extends CustomDataDef> =
+  export type AddressListResponse<DataDef extends Paddle.CustomDataDef> =
     | AddressListResponseError
     | AddressListResponseSuccess<DataDef>;
 
@@ -1006,8 +1007,9 @@ export namespace PaddleAPI {
   /**
    * The successful list addresses response.
    */
-  export interface AddressListResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface AddressListResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Address<CustomData<DataDef["Address"]>>[],
       MetaPaginated
     > {}
@@ -1017,8 +1019,8 @@ export namespace PaddleAPI {
   /**
    * The create address body.
    */
-  export type AddressCreateBody<DataDef extends CustomDataDef> =
-    MakeNullableFieldsOptional<
+  export type AddressCreateBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.MakeNullableFieldsOptional<
       Omit<
         Paddle.Address<CustomData<DataDef["Address"]>>,
         AddressAutoAssignFields | "status"
@@ -1028,7 +1030,7 @@ export namespace PaddleAPI {
   /**
    * The create address response.
    */
-  export type AddressCreateResponse<DataDef extends CustomDataDef> =
+  export type AddressCreateResponse<DataDef extends Paddle.CustomDataDef> =
     | AddressCreateResponseError
     | AddressCreateResponseSuccess<DataDef>;
 
@@ -1041,8 +1043,9 @@ export namespace PaddleAPI {
   /**
    * The successful address create response.
    */
-  export interface AddressCreateResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface AddressCreateResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Address<CustomData<DataDef["Address"]>>,
       MetaBasic
     > {}
@@ -1052,7 +1055,7 @@ export namespace PaddleAPI {
   /**
    * The get address response.
    */
-  export type AddressGetResponse<DataDef extends CustomDataDef> =
+  export type AddressGetResponse<DataDef extends Paddle.CustomDataDef> =
     | AddressGetResponseError
     | AddressGetResponseSuccess<DataDef>;
 
@@ -1065,8 +1068,9 @@ export namespace PaddleAPI {
   /**
    * The successful address get response.
    */
-  export interface AddressGetResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface AddressGetResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Address<CustomData<DataDef["Address"]>>,
       MetaBasic
     > {}
@@ -1076,17 +1080,18 @@ export namespace PaddleAPI {
   /**
    * Address update body.
    */
-  export type AddressUpdateBody<DataDef extends CustomDataDef> = Optional<
-    Omit<
-      Paddle.Address<CustomData<DataDef["Address"]>>,
-      AddressAutoAssignFields
-    >
-  >;
+  export type AddressUpdateBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.Optional<
+      Omit<
+        Paddle.Address<CustomData<DataDef["Address"]>>,
+        AddressAutoAssignFields
+      >
+    >;
 
   /**
    * The update address response.
    */
-  export type AddressUpdateResponse<DataDef extends CustomDataDef> =
+  export type AddressUpdateResponse<DataDef extends Paddle.CustomDataDef> =
     | AddressUpdateResponseError
     | AddressUpdateResponseSuccess<DataDef>;
 
@@ -1099,8 +1104,9 @@ export namespace PaddleAPI {
   /**
    * The successful address update response.
    */
-  export interface AddressUpdateResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface AddressUpdateResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Address<CustomData<DataDef["Address"]>>,
       MetaBasic
     > {}
@@ -1117,7 +1123,7 @@ export namespace PaddleAPI {
   /**
    * The businesses list query.
    */
-  export interface BusinessesListQuery<DataDef extends CustomDataDef> {
+  export interface BusinessesListQuery<DataDef extends Paddle.CustomDataDef> {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
     after?: string | undefined;
@@ -1141,7 +1147,7 @@ export namespace PaddleAPI {
   /**
    * The businesses list response.
    */
-  export type BusinessesListResponse<DataDef extends CustomDataDef> =
+  export type BusinessesListResponse<DataDef extends Paddle.CustomDataDef> =
     | BusinessesListResponseError
     | BusinessesListResponseSuccess<DataDef>;
 
@@ -1154,8 +1160,9 @@ export namespace PaddleAPI {
   /**
    * The successful businesses list response.
    */
-  export interface BusinessesListResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface BusinessesListResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Business<CustomData<DataDef["Business"]>>[],
       MetaPaginated
     > {}
@@ -1165,8 +1172,8 @@ export namespace PaddleAPI {
   /**
    * The create business request body.
    */
-  export type BusinessCreateBody<DataDef extends CustomDataDef> =
-    MakeNullableFieldsOptional<
+  export type BusinessCreateBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.MakeNullableFieldsOptional<
       Omit<
         Paddle.Business<CustomData<DataDef["Business"]>>,
         BusinessAutoAssignFields | "status"
@@ -1176,7 +1183,7 @@ export namespace PaddleAPI {
   /**
    * The create business response.
    */
-  export type BusinessCreateResponse<DataDef extends CustomDataDef> =
+  export type BusinessCreateResponse<DataDef extends Paddle.CustomDataDef> =
     | BusinessCreateResponseError
     | BusinessCreateResponseSuccess<DataDef>;
 
@@ -1189,8 +1196,9 @@ export namespace PaddleAPI {
   /**
    * The successful create business response.
    */
-  export interface BusinessCreateResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface BusinessCreateResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Business<CustomData<DataDef["Business"]>>,
       MetaBasic
     > {}
@@ -1200,7 +1208,7 @@ export namespace PaddleAPI {
   /**
    * The response for getBusiness function.
    */
-  export type BusinessGetResponse<DataDef extends CustomDataDef> =
+  export type BusinessGetResponse<DataDef extends Paddle.CustomDataDef> =
     | BusinessGetResponseError
     | BusinessGetResponseSuccess<DataDef>;
 
@@ -1213,8 +1221,9 @@ export namespace PaddleAPI {
   /**
    * The successful response for getBusiness function.
    */
-  export interface BusinessGetResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface BusinessGetResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Business<CustomData<DataDef["Business"]>>,
       MetaBasic
     > {}
@@ -1224,17 +1233,18 @@ export namespace PaddleAPI {
   /**
    * The update business body.
    */
-  export type BusinessUpdateBody<DataDef extends CustomDataDef> = Optional<
-    Omit<
-      Paddle.Business<CustomData<DataDef["Business"]>>,
-      BusinessAutoAssignFields
-    >
-  >;
+  export type BusinessUpdateBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.Optional<
+      Omit<
+        Paddle.Business<CustomData<DataDef["Business"]>>,
+        BusinessAutoAssignFields
+      >
+    >;
 
   /**
    * The update business response.
    */
-  export type BusinessUpdateResponse<DataDef extends CustomDataDef> =
+  export type BusinessUpdateResponse<DataDef extends Paddle.CustomDataDef> =
     | BusinessUpdateResponseError
     | BusinessUpdateResponseSuccess<DataDef>;
 
@@ -1247,8 +1257,9 @@ export namespace PaddleAPI {
   /**
    * The successful business update response.
    */
-  export interface BusinessUpdateResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface BusinessUpdateResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Business<CustomData<DataDef["Business"]>>,
       MetaBasic
     > {}
@@ -1290,7 +1301,7 @@ export namespace PaddleAPI {
    * Represents a transaction response entity with included entities.
    */
   export interface TransactionWithIncluded<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     BillingCycle extends Paddle.TimeInterval | null,
     Include extends TransactionResponseInclude | undefined
   > extends Paddle.Transaction<
@@ -1383,7 +1394,7 @@ export namespace PaddleAPI {
    * The transactions list response.
    */
   export type TransactionsListResponse<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends TransactionResponseInclude | undefined
   > =
     | TransactionsListResponseError
@@ -1399,7 +1410,7 @@ export namespace PaddleAPI {
    * The successful transactions list response.
    */
   export interface TransactionsListResponseSuccess<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends TransactionResponseInclude | undefined
   > extends ResponseBase<
       TransactionWithIncluded<DataDef, Paddle.TimeInterval | null, Include>[],
@@ -1420,8 +1431,8 @@ export namespace PaddleAPI {
   /**
    * The create transaction body.
    */
-  export type TransactionCreateBody<DataDef extends CustomDataDef> =
-    MakeNullableFieldsOptional<
+  export type TransactionCreateBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.MakeNullableFieldsOptional<
       Omit<
         Paddle.Transaction<
           Paddle.TimeInterval | null,
@@ -1439,7 +1450,7 @@ export namespace PaddleAPI {
    * The create transaction response.
    */
   export type TransactionCreateResponse<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends PaddleAPI.TransactionResponseInclude | undefined
   > =
     | TransactionCreateResponseError
@@ -1455,7 +1466,7 @@ export namespace PaddleAPI {
    * The successful transaction create response.
    */
   export interface TransactionCreateResponseSuccess<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends PaddleAPI.TransactionResponseInclude | undefined
   > extends ResponseBase<
       TransactionWithIncluded<DataDef, Paddle.TimeInterval | null, Include>,
@@ -1478,7 +1489,7 @@ export namespace PaddleAPI {
    * The get transaction response.
    */
   export type TransactionGetResponse<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends TransactionResponseInclude | undefined
   > =
     | TransactionGetResponseError
@@ -1494,7 +1505,7 @@ export namespace PaddleAPI {
    * The successful transaction get response.
    */
   export interface TransactionGetResponseSuccess<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends TransactionResponseInclude | undefined
   > extends ResponseBase<
       TransactionWithIncluded<DataDef, Paddle.TimeInterval | null, Include>,
@@ -1506,24 +1517,25 @@ export namespace PaddleAPI {
   /**
    * The update transaction body.
    */
-  export type TransactionUpdateBody<DataDef extends CustomDataDef> = Optional<
-    Omit<
-      Paddle.Transaction<
-        Paddle.TimeInterval | null,
-        CustomData<DataDef["Price"]>,
-        CustomData<DataDef["Transaction"]>
-      >,
-      TransactionAutoAssignFields | "status"
-    >
-  > & {
-    /** Status of this transaction. */
-    status?: "billed" | "canceled" | undefined;
-  };
+  export type TransactionUpdateBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.Optional<
+      Omit<
+        Paddle.Transaction<
+          Paddle.TimeInterval | null,
+          CustomData<DataDef["Price"]>,
+          CustomData<DataDef["Transaction"]>
+        >,
+        TransactionAutoAssignFields | "status"
+      >
+    > & {
+      /** Status of this transaction. */
+      status?: "billed" | "canceled" | undefined;
+    };
 
   /**
    * The update transaction response.
    */
-  export type TransactionUpdateResponse<DataDef extends CustomDataDef> =
+  export type TransactionUpdateResponse<DataDef extends Paddle.CustomDataDef> =
     | TransactionUpdateResponseError
     | TransactionUpdateResponseSuccess<DataDef>;
 
@@ -1537,7 +1549,7 @@ export namespace PaddleAPI {
    * The successful transaction update response.
    */
   export interface TransactionUpdateResponseSuccess<
-    DataDef extends CustomDataDef
+    DataDef extends Paddle.CustomDataDef
   > extends ResponseBase<
       Paddle.Transaction<
         Paddle.TimeInterval,
@@ -1569,8 +1581,8 @@ export namespace PaddleAPI {
   /**
    * The payload for previewing a transaction.
    */
-  export type TransactionPreviewBody<DataDef extends CustomDataDef> =
-    MakeFieldsOptional<
+  export type TransactionPreviewBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.MakeFieldsOptional<
       Pick<
         Paddle.Transaction<
           Paddle.TimeInterval | null,
@@ -1593,9 +1605,10 @@ export namespace PaddleAPI {
   /**
    * The response of the transaction preview API.
    */
-  export type TransactionPreviewResponse<DataDef extends CustomDataDef> =
-    | TransactionPreviewResponseError
-    | TransactionPreviewResponseSuccess<DataDef>;
+  export type TransactionPreviewResponse<DataDef extends Paddle.CustomDataDef> =
+
+      | TransactionPreviewResponseError
+      | TransactionPreviewResponseSuccess<DataDef>;
 
   /**
    * The error response of transaction preview API.
@@ -1607,7 +1620,7 @@ export namespace PaddleAPI {
    * The successful response of transaction preview API.
    */
   export interface TransactionPreviewResponseSuccess<
-    DataDef extends CustomDataDef
+    DataDef extends Paddle.CustomDataDef
   > extends ResponseBase<
       Paddle.Transaction<
         Paddle.TimeInterval | null,
@@ -1769,7 +1782,7 @@ export namespace PaddleAPI {
   /**
    * The Subscriptions list response.
    */
-  export type SubscriptionsListResponse<DataDef extends CustomDataDef> =
+  export type SubscriptionsListResponse<DataDef extends Paddle.CustomDataDef> =
     | SubscriptionsListResponseError
     | SubscriptionsListResponseSuccess<DataDef>;
 
@@ -1783,7 +1796,7 @@ export namespace PaddleAPI {
    * The successful subscriptions list response.
    */
   export interface SubscriptionsListResponseSuccess<
-    DataDef extends CustomDataDef
+    DataDef extends Paddle.CustomDataDef
   > extends ResponseBase<
       Paddle.Subscription<
         Paddle.CollectionMode,
@@ -1821,7 +1834,7 @@ export namespace PaddleAPI {
    * The get subscription response.
    */
   export type SubscriptionGetResponse<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends SubscriptionGetResponseInclude | undefined
   > =
     | SubscriptionGetResponseError
@@ -1837,7 +1850,7 @@ export namespace PaddleAPI {
    * The successful subscription get response.
    */
   export interface SubscriptionGetResponseSuccess<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends SubscriptionGetResponseInclude | undefined
   > extends ResponseBase<SubscriptionGetData<DataDef, Include>, MetaBasic> {}
 
@@ -1845,7 +1858,7 @@ export namespace PaddleAPI {
    * The subscription get data.
    */
   export interface SubscriptionGetData<
-    DataDef extends CustomDataDef,
+    DataDef extends Paddle.CustomDataDef,
     Include extends SubscriptionGetResponseInclude | undefined
   > extends Paddle.Subscription<
       Paddle.CollectionMode,
@@ -1895,25 +1908,27 @@ export namespace PaddleAPI {
   /**
    * The update subscription body.
    */
-  export type SubscriptionUpdateBody<DataDef extends CustomDataDef> = Optional<
-    Omit<
-      Paddle.Subscription<
-        Paddle.CollectionMode,
-        Paddle.TimeInterval | null,
-        CustomData<DataDef["Price"]>,
-        CustomData<DataDef["SubscriptionItem"]>,
-        CustomData<DataDef["Subscription"]>
-      >,
-      SubscriptionUpdateAutoAssignFields
-    >
-  >;
+  export type SubscriptionUpdateBody<DataDef extends Paddle.CustomDataDef> =
+    Utils.Optional<
+      Omit<
+        Paddle.Subscription<
+          Paddle.CollectionMode,
+          Paddle.TimeInterval | null,
+          CustomData<DataDef["Price"]>,
+          CustomData<DataDef["SubscriptionItem"]>,
+          CustomData<DataDef["Subscription"]>
+        >,
+        SubscriptionUpdateAutoAssignFields
+      >
+    >;
 
   /**
    * The update subscription response.
    */
-  export type SubscriptionUpdateResponse<DataDef extends CustomDataDef> =
-    | SubscriptionUpdateResponseError
-    | SubscriptionUpdateResponseSuccess<DataDef>;
+  export type SubscriptionUpdateResponse<DataDef extends Paddle.CustomDataDef> =
+
+      | SubscriptionUpdateResponseError
+      | SubscriptionUpdateResponseSuccess<DataDef>;
 
   /**
    * The errored subscription update response.
@@ -1925,7 +1940,7 @@ export namespace PaddleAPI {
    * The successful subscription update response.
    */
   export interface SubscriptionUpdateResponseSuccess<
-    DataDef extends CustomDataDef
+    DataDef extends Paddle.CustomDataDef
   > extends ResponseBase<
       Paddle.Subscription<
         Paddle.CollectionMode,
@@ -1942,10 +1957,11 @@ export namespace PaddleAPI {
   /**
    * The preview update subscription response.
    */
-  export type SubscriptionPreviewUpdateResponse<DataDef extends CustomDataDef> =
-
-      | SubscriptionUpdateResponseError
-      | SubscriptionUpdateResponseSuccess<DataDef>;
+  export type SubscriptionPreviewUpdateResponse<
+    DataDef extends Paddle.CustomDataDef
+  > =
+    | SubscriptionUpdateResponseError
+    | SubscriptionUpdateResponseSuccess<DataDef>;
 
   /**
    * The errored subscription preview update response.
@@ -1957,7 +1973,7 @@ export namespace PaddleAPI {
    * The successful subscription preview update response.
    */
   export interface SubscriptionPreviewUpdateResponseSuccess<
-    DataDef extends CustomDataDef
+    DataDef extends Paddle.CustomDataDef
   > extends ResponseBase<
       SubscriptionPreviewUpdateResponseData<DataDef>,
       MetaBasic
@@ -1967,7 +1983,7 @@ export namespace PaddleAPI {
    * The preview update subscription data.
    */
   export interface SubscriptionPreviewUpdateResponseData<
-    DataDef extends CustomDataDef
+    DataDef extends Paddle.CustomDataDef
   > extends Omit<
       Paddle.Subscription<
         Paddle.CollectionMode,
@@ -2044,7 +2060,7 @@ export namespace PaddleAPI {
    * The update payment method transaction response.
    */
   export type UpdatePaymentMethodTransactionResponse<
-    DataDef extends CustomDataDef
+    DataDef extends Paddle.CustomDataDef
   > =
     | UpdatePaymentMethodTransactionResponseError
     | UpdatePaymentMethodTransactionSuccess<DataDef>;
@@ -2059,7 +2075,7 @@ export namespace PaddleAPI {
    * The successful update payment method transaction response.
    */
   export interface UpdatePaymentMethodTransactionSuccess<
-    DataDef extends CustomDataDef
+    DataDef extends Paddle.CustomDataDef
   > extends ResponseBase<
       Paddle.Transaction<
         Paddle.TimeInterval | null,
@@ -2215,7 +2231,7 @@ export namespace PaddleAPI {
   /**
    * The create adjustment body.
    */
-  export type AdjustmentCreateBody = MakeNullableFieldsOptional<
+  export type AdjustmentCreateBody = Utils.MakeNullableFieldsOptional<
     Omit<Paddle.Adjustment, AdjustmentCreateAutoAssignFields>
   >;
 
@@ -2277,7 +2293,7 @@ export namespace PaddleAPI {
   /**
    * Represents pricing previews response.
    */
-  export type PreviewPricesResponse<DataDef extends CustomDataDef> =
+  export type PreviewPricesResponse<DataDef extends Paddle.CustomDataDef> =
     | PreviewPricesResponseError
     | PreviewPricesResponseSuccess<DataDef>;
 
@@ -2290,13 +2306,14 @@ export namespace PaddleAPI {
   /**
    * Represents pricing previews success response.
    */
-  export interface PreviewPricesResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface PreviewPricesResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.PricingPreview<
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["Product"]>
       >,
-      MetaPaginated
+      MetaBasic
     > {}
 
   /// Event types
@@ -2341,7 +2358,7 @@ export namespace PaddleAPI {
   /**
    * The list events response.
    */
-  export type EventsListResponse<DataDef extends CustomDataDef> =
+  export type EventsListResponse<DataDef extends Paddle.CustomDataDef> =
     | EventsListResponseError
     | EventsListResponseSuccess<DataDef>;
 
@@ -2354,8 +2371,9 @@ export namespace PaddleAPI {
   /**
    * The successful list events response.
    */
-  export interface EventsListResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface EventsListResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Event<
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["Product"]>,
@@ -2404,7 +2422,7 @@ export namespace PaddleAPI {
   /**
    * The create notification setting body.
    */
-  export type NotificationSettingCreateBody = MakeNullableFieldsOptional<
+  export type NotificationSettingCreateBody = Utils.MakeNullableFieldsOptional<
     Omit<Paddle.NotificationSetting, NotificationSettingAutoAssignFields>
   >;
 
@@ -2453,7 +2471,7 @@ export namespace PaddleAPI {
   /**
    * Body for updating a notification setting.
    */
-  export type NotificationSettingUpdateBody = Optional<
+  export type NotificationSettingUpdateBody = Utils.Optional<
     Omit<
       Paddle.NotificationSetting,
       NotificationSettingAutoAssignFields | "type"
@@ -2527,7 +2545,7 @@ export namespace PaddleAPI {
   /**
    * The list notifications response.
    */
-  export type NotificationsListResponse<DataDef extends CustomDataDef> =
+  export type NotificationsListResponse<DataDef extends Paddle.CustomDataDef> =
     | NotificationsListResponseError
     | NotificationsListResponseSuccess<DataDef>;
 
@@ -2541,7 +2559,7 @@ export namespace PaddleAPI {
    * The successful list notifications response.
    */
   export interface NotificationsListResponseSuccess<
-    DataDef extends CustomDataDef
+    DataDef extends Paddle.CustomDataDef
   > extends ResponseBase<
       Paddle.Notification<
         CustomData<DataDef["Price"]>,
@@ -2561,7 +2579,7 @@ export namespace PaddleAPI {
   /**
    * The get notification response.
    */
-  export type NotificationGetResponse<DataDef extends CustomDataDef> =
+  export type NotificationGetResponse<DataDef extends Paddle.CustomDataDef> =
     | NotificationGetResponseError
     | NotificationGetResponseSuccess<DataDef>;
 
@@ -2574,8 +2592,9 @@ export namespace PaddleAPI {
   /**
    * The successful get notification response.
    */
-  export interface NotificationGetResponseSuccess<DataDef extends CustomDataDef>
-    extends ResponseBase<
+  export interface NotificationGetResponseSuccess<
+    DataDef extends Paddle.CustomDataDef
+  > extends ResponseBase<
       Paddle.Notification<
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["Product"]>,
@@ -2733,35 +2752,4 @@ export namespace PaddleAPI {
     /** Estimated number of entities for this response. */
     estimated_total: number;
   }
-
-  /**
-   * Make all properties in the type optional
-   */
-  export type Optional<Type> = {
-    [Key in keyof Type]?: Type[Key] | undefined;
-  };
-
-  /**
-   * Makes the specified fields optional.
-   */
-  export type MakeFieldsOptional<Type, Field extends keyof Type> = Omit<
-    Type,
-    Field
-  > &
-    Optional<Pick<Type, Field>>;
-
-  /**
-   * Lists keys that extend null.
-   */
-  type NullbleKeys<Type> = {
-    [Key in keyof Type]: null extends Type[Key] ? Key : never;
-  }[keyof Type];
-
-  /**
-   * Makes nullable fields optional
-   */
-  export type MakeNullableFieldsOptional<Type> = MakeFieldsOptional<
-    Type,
-    NullbleKeys<Type>
-  >;
 }

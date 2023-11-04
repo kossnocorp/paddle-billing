@@ -54,6 +54,7 @@ import {
   updateSubscription,
   updateTransaction,
 } from ".";
+import { Paddle as Core } from "../types";
 
 const api = client("test");
 
@@ -77,11 +78,13 @@ interface CustomDataPrice {
 }
 
 interface CustomDataTransaction {
-  qwe: "123";
+  qwe?: "123";
+  shared: boolean;
 }
 
 interface CustomDataSubscription {
-  sub: "scription";
+  sub?: "scription";
+  shared: boolean;
 }
 
 interface CustomDataSubscriptionItem {
@@ -99,6 +102,93 @@ interface CustomDataAddress {
 interface CustomDataBusiness {
   type: "b2b" | "b2c";
 }
+
+/// Client
+
+//// Shared fields are equal
+
+interface ClientSharedOKData {
+  Transaction: CustomDataTransaction;
+  Subscription: CustomDataSubscription;
+}
+
+const clientSharedOK = client<ClientSharedOKData>("test");
+
+clientSharedOK.key;
+
+type TestClientSharedOkResult =
+  Core.SharedTransactionSubscriptionCustomData<ClientSharedOKData>;
+
+type TestClientSharedOk = Assert<
+  TestClientSharedOkResult,
+  { shared: boolean }
+> &
+  Assert<{ shared: boolean }, TestClientSharedOkResult>;
+
+//// Shared fields don't match
+
+const clientSharedNope = client<{
+  Transaction: CustomDataTransaction;
+  Subscription: { notCool: true };
+}>("test");
+
+// @ts-expect-error: clientSharedNope should be never
+clientSharedNope.key;
+
+//// One of the types is not specified
+
+interface ClientSharedNotSpecifiedTransaction {
+  Subscription: CustomDataSubscription;
+}
+
+const clientSharedNotSpecifiedTransaction =
+  client<ClientSharedNotSpecifiedTransaction>("test");
+
+clientSharedNotSpecifiedTransaction.key;
+
+type TestClientSharedNotSpecifiedTransactionResult =
+  Core.SharedTransactionSubscriptionCustomData<ClientSharedNotSpecifiedTransaction>;
+
+type TestClientSharedNotSpecifiedTransaction = Assert<
+  TestClientSharedNotSpecifiedTransactionResult,
+  { shared: boolean }
+> &
+  Assert<{ shared: boolean }, TestClientSharedNotSpecifiedTransactionResult>;
+
+interface ClientSharedNotSpecifiedSubscription {
+  Transaction: CustomDataTransaction;
+}
+
+const clientSharedNotSpecifiedSubscription =
+  client<ClientSharedNotSpecifiedSubscription>("test");
+
+clientSharedNotSpecifiedSubscription.key;
+
+type TestClientSharedNotSpecifiedSubscriptionResult =
+  Core.SharedTransactionSubscriptionCustomData<ClientSharedNotSpecifiedSubscription>;
+
+type TestClientSharedNotSpecifiedSubscription = Assert<
+  TestClientSharedNotSpecifiedSubscriptionResult,
+  { shared: boolean }
+> &
+  Assert<{ shared: boolean }, TestClientSharedNotSpecifiedSubscriptionResult>;
+
+//// Both are not specified
+
+interface ClientSharedNotSpecified {}
+
+const clientSharedNotSpecified = client<ClientSharedNotSpecified>("test");
+
+clientSharedNotSpecified.key;
+
+type TestClientSharedNotSpecifiedResult =
+  Core.SharedTransactionSubscriptionCustomData<ClientSharedNotSpecified>;
+
+type TestClientSharedNotSpecified = Assert<
+  TestClientSharedNotSpecifiedResult,
+  Record<string, any> | null
+> &
+  Assert<Record<string, any> | null, TestClientSharedNotSpecifiedResult>;
 
 /// Products
 
@@ -1781,3 +1871,15 @@ listNotificationLogs(api, "ntf_123").then((logs) => {
   if (logs.error) return;
   logs.data[0]?.attempted_at;
 });
+
+/// Utils
+
+type Assert<Type1, _Type2 extends Type1> = true;
+
+function assertType<Type>(_value: Type) {}
+
+type TypeEqual<T, U> = Exclude<T, U> extends never
+  ? Exclude<U, T> extends never
+    ? true
+    : false
+  : false;

@@ -1,6 +1,6 @@
 import { createHmac } from "crypto";
-import type { Paddle } from "../types";
-import type { PaddleAPI } from "../api/types";
+import type { Paddle as Core } from "../types";
+import type { PaddleAPI as API } from "../api/types";
 
 /**
  * Validates Paddle event using the secret key and the signature.
@@ -12,20 +12,20 @@ import type { PaddleAPI } from "../api/types";
  *
  * @returns true if the body is authentic
  */
-export function parseWebhookBody<DataDef extends PaddleAPI.CustomDataDef>(
-  _client: PaddleAPI.Client<DataDef> | null,
+export function parseWebhookBody<DataDef extends Core.CustomDataDef>(
+  _client: API.Client<DataDef> | null,
   secret: string,
   signature: string,
   body: string
-): Paddle.Event<
-  PaddleAPI.CustomData<DataDef["Price"]>,
-  PaddleAPI.CustomData<DataDef["Product"]>,
-  PaddleAPI.CustomData<DataDef["SubscriptionItem"]>,
-  PaddleAPI.CustomData<DataDef["Subscription"]>,
-  PaddleAPI.CustomData<DataDef["Transaction"]>,
-  PaddleAPI.CustomData<DataDef["Customer"]>,
-  PaddleAPI.CustomData<DataDef["Address"]>,
-  PaddleAPI.CustomData<DataDef["Business"]>
+): Core.Event<
+  API.CustomData<DataDef["Price"]>,
+  API.CustomData<DataDef["Product"]>,
+  API.CustomData<DataDef["SubscriptionItem"]>,
+  API.CustomData<DataDef["Subscription"]>,
+  API.CustomData<DataDef["Transaction"]>,
+  API.CustomData<DataDef["Customer"]>,
+  API.CustomData<DataDef["Address"]>,
+  API.CustomData<DataDef["Business"]>
 > | null {
   const captures = signature.match(/^ts=(\d+);h1=(.+)$/);
   if (!captures) return null;
