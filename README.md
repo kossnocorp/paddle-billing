@@ -1,6 +1,6 @@
 # Paddle Billing
 
-Paddle Billing [API](https://developer.paddle.com/api-reference/overview) and [Webhooks](https://developer.paddle.com/webhooks/overview) wrapper with detailed TypeScript types.
+Paddle Billing [API](https://developer.paddle.com/api-reference/overview), [Webhooks](https://developer.paddle.com/webhooks/overview) and [web (Paddle.js)](https://developer.paddle.com/paddlejs/overview) wrapper with detailed TypeScript types.
 
 ## Installing
 
@@ -18,6 +18,7 @@ The minimum required Node.js version is v18, as it uses Fetch API. It's possible
 
 - [API](#api)
 - [Webhooks](#webhooks)
+- [Web](#web)
 
 ### API
 
@@ -250,6 +251,73 @@ const webhook = parseWebhookBody(
   request.body.toString()
 );
 ```
+
+### Web
+
+The package also provides the web portion of the Paddle Billing platform replacing the first-party package [`@paddle/paddle-js`](https://www.npmjs.com/package/@paddle/paddle-js). Unlike the official package, this one provides more elaborate types and integration with [custom data](#typing-custom_data) that you might use on the backend.
+
+To load the web API (known as Paddle.js), use `loadScript`:
+
+```ts
+import { loadScript } from "paddle-billing";
+
+loadScript().then((Paddle) => {
+  Paddle.Checkout.open({
+    settings: {
+      displayMode: "overlay",
+      theme: "light",
+      locale: "en",
+    },
+
+    items: [
+      {
+        priceId: "pri_01gm81eqze2vmmvhpjg13bfeqg",
+        quantity: 1,
+      },
+      {
+        priceId: "pri_01gm82kny0ad1tk358gxmsq87m",
+        quantity: 1,
+      },
+    ],
+  });
+});
+```
+
+If you have custom data assigned to Paddle entities, use the `loadScript` generic param, the same way as when [creating the API client](#typing-custom_data):
+
+```ts
+interface CustomData {
+  Transaction: AccountData;
+  Subscription: AccountData;
+}
+
+interface AccountData {
+  accountId: string;
+}
+
+const paddle = client<CustomData>("PADDLE_SECRET");
+
+// ...later on web:
+
+loadScript<CustomData>().then((Paddle) => {
+  Paddle.Checkout.open({
+    items: [
+      {
+        priceId: "pri_01gm81eqze2vmmvhpjg13bfeqg",
+        quantity: 1,
+      },
+    ],
+
+    customData: {
+      accountId: "ACCOUNT_ID",
+    },
+  });
+});
+```
+
+> ⚠️ When specifing `Subscription` and `Transaction`, you should make sure they overlap. Fields that do not overlap should be optional. It's dictated by the web's custom data-assigning to relevant transaction and subscription simultaneously. Creating an API or web client with incompatible custom data definitions will result in the client function returning `never`.
+
+Read more about using [custom data through API](#typing-custom_data).
 
 ## License
 

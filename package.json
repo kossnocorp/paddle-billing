@@ -1,6 +1,6 @@
 {
   "name": "paddle-billing",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Paddle Billing API and Webhooks wrapper with detailed TypeScript types",
   "main": "./index.js",
   "module": "./index.mjs",
@@ -16,6 +16,10 @@
     "./webhooks": {
       "require": "./webhooks/index.js",
       "import": "./webhooks/index.mjs"
+    },
+    "./web": {
+      "require": "./web/index.js",
+      "import": "./web/index.mjs"
     }
   },
   "scripts": {
@@ -42,9 +46,11 @@
     "@babel/plugin-transform-modules-commonjs": "^7.22.15",
     "@babel/preset-env": "^7.22.20",
     "@babel/preset-typescript": "^7.22.15",
+    "@vitest/browser": "^0.34.6",
     "babel-plugin-add-import-extension": "^1.6.0",
     "babel-plugin-add-module-exports": "^1.0.4",
+    "playwright": "^1.39.0",
     "typescript": "^5.2.2",
-    "vitest": "^0.34.3"
+    "vitest": "^0.34.6"
   }
 }

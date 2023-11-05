@@ -2,12 +2,13 @@ import type { PaddleAPI as API } from "../api/types";
 import type { Paddle as Core } from "../types";
 import type { PaddleUtils as Utils } from "../utils";
 
-/**
- * Returns lightweight web client for Paddle API.
- */
-export function webClient() {}
-
 export namespace PaddleWeb {
+  /**
+   * Window type with Paddle global.
+   */
+  export type WindowWithPaddle = Window &
+    typeof globalThis & { Paddle: Global<any> };
+
   /**
    * Global Paddle client present on window.Paddle
    */

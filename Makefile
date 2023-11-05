@@ -1,3 +1,17 @@
+test: test-node test-web
+
+test-node:
+	@npx vitest run
+
+test-web:
+	@npx vitest run -c vitest.config.web.ts --browser.headless
+
+test-node-watch:
+	@npx vitest
+
+test-web-watch:
+	@npx vitest -c vitest.config.web.ts
+
 build: prepare-build
 	@env BABEL_ENV=esm npx babel src --config-file ./babel.config.js --source-root src --out-dir lib --extensions .mjs,.ts --out-file-extension .mjs --quiet
 	@env BABEL_ENV=cjs npx babel src --config-file ./babel.config.js --source-root src --out-dir lib --extensions .mjs,.ts --out-file-extension .js --quiet

@@ -1,16 +1,16 @@
-import type { Paddle } from "../types";
+import type { Paddle as Core } from "../types";
 import type { PaddleUtils as Utils } from "../utils";
 /**
  * The API Paddle types namespace. Contains all the types related to the API.
  */
 export namespace PaddleAPI {
-  export interface Client<_DataDef extends Paddle.CustomDataDef> {
+  export interface Client<_DataDef extends Core.CustomDataDef> {
     key: string;
     sandbox?: boolean | undefined;
   }
 
-  export type CustomData<Data extends Paddle.CustomData | undefined> =
-    Data extends Paddle.CustomData ? Data : Paddle.CustomData;
+  export type CustomData<Data extends Core.CustomData | undefined> =
+    Data extends Core.CustomData ? Data : Core.CustomData;
 
   /**
    * The error response.
@@ -279,28 +279,28 @@ export namespace PaddleAPI {
      * paginated results. */
     after?: string | undefined;
     /** Return only the IDs specified. */
-    id?: Paddle.ProductId | Paddle.ProductId[] | undefined;
+    id?: Core.ProductId | Core.ProductId[] | undefined;
     /** Include related entities in the response. */
     include?: Include;
     /** Order returned entities by the specified field and direction
      * [ASC] or [DESC]). */
     order_by?:
-      | OrderQuery<Paddle.Product>
-      | OrderQuery<Paddle.Product>[]
+      | OrderQuery<Core.Product>
+      | OrderQuery<Core.Product>[]
       | undefined;
     /** Set how many entities are returned per page. */
     per_page?: number | undefined;
     /** Return entities that match the specified status. */
-    status?: Paddle.EntityStatus | Paddle.EntityStatus[] | undefined;
+    status?: Core.EntityStatus | Core.EntityStatus[] | undefined;
     /** Return entities that match the specified tax category. */
-    tax_category?: Paddle.TaxCategory | undefined;
+    tax_category?: Core.TaxCategory | undefined;
   }
 
   /**
    * The products list response.
    */
   export type ProductsListResponse<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends ProductResponseInclude | undefined
   > = ProductsListResponseError | ProductsListResponseSuccess<DataDef, Include>;
 
@@ -314,7 +314,7 @@ export namespace PaddleAPI {
    * The successful products list response.
    */
   export interface ProductsListResponseSuccess<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends ProductResponseInclude | undefined
   > extends ResponseBase<
       ProductsListDataItem<
@@ -329,15 +329,15 @@ export namespace PaddleAPI {
    * The products list data item.
    */
   export interface ProductsListDataItem<
-    PriceData extends Paddle.CustomData,
-    ProductData extends Paddle.CustomData,
+    PriceData extends Core.CustomData,
+    ProductData extends Core.CustomData,
     Include extends ProductResponseInclude | undefined
-  > extends Paddle.Product<ProductData> {
+  > extends Core.Product<ProductData> {
     /** The product prices */
     prices: ResponseIncludedField<
       Include,
       "prices",
-      Paddle.Price<Paddle.TimeInterval | null, PriceData>[]
+      Core.Price<Core.TimeInterval | null, PriceData>[]
     >;
   }
 
@@ -346,10 +346,10 @@ export namespace PaddleAPI {
   /**
    * The create product body.
    */
-  export type ProductCreateBody<DataDef extends Paddle.CustomDataDef> =
+  export type ProductCreateBody<DataDef extends Core.CustomDataDef> =
     Utils.MakeNullableFieldsOptional<
       Omit<
-        Paddle.Product<CustomData<DataDef["Product"]>>,
+        Core.Product<CustomData<DataDef["Product"]>>,
         ProductAutoAssignFields | "status"
       >
     >;
@@ -357,7 +357,7 @@ export namespace PaddleAPI {
   /**
    * The create product response.
    */
-  export type ProductCreateResponse<DataDef extends Paddle.CustomDataDef> =
+  export type ProductCreateResponse<DataDef extends Core.CustomDataDef> =
     | ProductCreateResponseError
     | ProductCreateResponseSuccess<CustomData<DataDef["Product"]>>;
 
@@ -371,8 +371,8 @@ export namespace PaddleAPI {
    * The successful product create response.
    */
   export interface ProductCreateResponseSuccess<
-    ProductData extends Paddle.CustomData
-  > extends ResponseBase<Paddle.Product<ProductData>, MetaBasic> {}
+    ProductData extends Core.CustomData
+  > extends ResponseBase<Core.Product<ProductData>, MetaBasic> {}
 
   //// Get a product
 
@@ -388,7 +388,7 @@ export namespace PaddleAPI {
    * The get product response.
    */
   export type ProductGetResponse<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends ProductInclude | undefined
   > = ProductGetResponseError | ProductGetResponseSuccess<DataDef, Include>;
 
@@ -402,7 +402,7 @@ export namespace PaddleAPI {
    * The successful product get response.
    */
   export interface ProductGetResponseSuccess<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends ProductInclude | undefined
   > extends ResponseBase<
       ProductGetData<
@@ -417,14 +417,14 @@ export namespace PaddleAPI {
    * The get product data.
    */
   export interface ProductGetData<
-    PriceData extends Paddle.CustomData,
-    ProductData extends Paddle.CustomData,
+    PriceData extends Core.CustomData,
+    ProductData extends Core.CustomData,
     Include extends ProductInclude | undefined
-  > extends Paddle.Product<ProductData> {
+  > extends Core.Product<ProductData> {
     /** The product prices */
     prices: undefined extends Include
       ? never
-      : Paddle.Price<Paddle.TimeInterval | null, PriceData>[];
+      : Core.Price<Core.TimeInterval | null, PriceData>[];
   }
 
   //// Update a product
@@ -432,10 +432,10 @@ export namespace PaddleAPI {
   /**
    * The update product body.
    */
-  export type ProductUpdateBody<DataDef extends Paddle.CustomDataDef> =
+  export type ProductUpdateBody<DataDef extends Core.CustomDataDef> =
     Utils.Optional<
       Omit<
-        Paddle.Product<CustomData<DataDef["Product"]>>,
+        Core.Product<CustomData<DataDef["Product"]>>,
         ProductAutoAssignFields
       >
     >;
@@ -443,7 +443,7 @@ export namespace PaddleAPI {
   /**
    * The update product response.
    */
-  export type ProductUpdateResponse<DataDef extends Paddle.CustomDataDef> =
+  export type ProductUpdateResponse<DataDef extends Core.CustomDataDef> =
     | ProductUpdateResponseError
     | ProductUpdateResponseSuccess<DataDef>;
 
@@ -457,9 +457,9 @@ export namespace PaddleAPI {
    * The successful product update response.
    */
   export interface ProductUpdateResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Product<CustomData<DataDef["Product"]>>,
+      Core.Product<CustomData<DataDef["Product"]>>,
       MetaBasic
     > {}
 
@@ -485,21 +485,18 @@ export namespace PaddleAPI {
      * paginated results. */
     after?: string | undefined;
     /** Return only the IDs specified. */
-    id?: Paddle.PriceId | Paddle.PriceId[] | undefined;
+    id?: Core.PriceId | Core.PriceId[] | undefined;
     /** Include related entities in the response. */
     include?: Include;
     /** Order returned entities by the specified field and direction
      * [ASC] or [DESC]). */
-    order_by?:
-      | OrderQuery<Paddle.Price>
-      | OrderQuery<Paddle.Price>[]
-      | undefined;
+    order_by?: OrderQuery<Core.Price> | OrderQuery<Core.Price>[] | undefined;
     /** Set how many entities are returned per page. */
     per_page?: number | undefined;
     /** Return entities related to the specified product. */
-    product_id?: Paddle.ProductId | Paddle.ProductId[] | undefined;
+    product_id?: Core.ProductId | Core.ProductId[] | undefined;
     /** Return entities that match the specified status. */
-    status?: Paddle.EntityStatus | Paddle.EntityStatus[] | undefined;
+    status?: Core.EntityStatus | Core.EntityStatus[] | undefined;
     /** Determine whether returned entities are for recurring prices (true) or
      * one-time prices (false). */
     recurring?: boolean | undefined;
@@ -509,7 +506,7 @@ export namespace PaddleAPI {
    * The prices list response.
    */
   export type PricesListResponse<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends PriceInclude | undefined
   > = PricesListResponseError | PricesListResponseSuccess<DataDef, Include>;
 
@@ -523,7 +520,7 @@ export namespace PaddleAPI {
    * The successful prices list response.
    */
   export interface PricesListResponseSuccess<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends PriceInclude | undefined
   > extends ResponseBase<
       PricesListDataItem<CustomData<DataDef["Price"]>, Include>[],
@@ -534,11 +531,11 @@ export namespace PaddleAPI {
    * The prices list data item.
    */
   export interface PricesListDataItem<
-    Data extends Paddle.CustomData,
+    Data extends Core.CustomData,
     Include extends PriceInclude | undefined
-  > extends Paddle.Price<Paddle.TimeInterval | null, Data> {
+  > extends Core.Price<Core.TimeInterval | null, Data> {
     /** The related product object */
-    product: undefined extends Include ? never : Paddle.Product;
+    product: undefined extends Include ? never : Core.Product;
   }
 
   /// Create a price
@@ -546,14 +543,11 @@ export namespace PaddleAPI {
   /**
    * The create price body.
    */
-  export type PriceCreateBody<DataDef extends Paddle.CustomDataDef> =
+  export type PriceCreateBody<DataDef extends Core.CustomDataDef> =
     Utils.MakeNullableFieldsOptional<
       Utils.MakeFieldsOptional<
         Omit<
-          Paddle.Price<
-            Paddle.TimeInterval | null,
-            CustomData<DataDef["Price"]>
-          >,
+          Core.Price<Core.TimeInterval | null, CustomData<DataDef["Price"]>>,
           PriceAutoAssignFields | "status"
         >,
         "quantity"
@@ -563,7 +557,7 @@ export namespace PaddleAPI {
   /**
    * The create price response.
    */
-  export type PriceCreateResponse<DataDef extends Paddle.CustomDataDef> =
+  export type PriceCreateResponse<DataDef extends Core.CustomDataDef> =
     | PriceCreateResponseError
     | PriceCreateResponseSuccess<CustomData<DataDef["Price"]>>;
 
@@ -576,10 +570,9 @@ export namespace PaddleAPI {
   /**
    * The successful price create response.
    */
-  export interface PriceCreateResponseSuccess<
-    PriceData extends Paddle.CustomData
-  > extends ResponseBase<
-      Paddle.Price<Paddle.TimeInterval | null, PriceData>,
+  export interface PriceCreateResponseSuccess<PriceData extends Core.CustomData>
+    extends ResponseBase<
+      Core.Price<Core.TimeInterval | null, PriceData>,
       MetaBasic
     > {}
 
@@ -597,7 +590,7 @@ export namespace PaddleAPI {
    * The get price response.
    */
   export type PriceGetResponse<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends PriceInclude | undefined
   > = PriceGetResponseError | PriceGetResponseSuccess<DataDef, Include>;
 
@@ -611,7 +604,7 @@ export namespace PaddleAPI {
    * The successful price get response.
    */
   export interface PriceGetResponseSuccess<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends PriceInclude | undefined
   > extends ResponseBase<
       PriceGetData<CustomData<DataDef["Price"]>, Include>,
@@ -622,11 +615,11 @@ export namespace PaddleAPI {
    * The get price data.
    */
   export interface PriceGetData<
-    PriceData extends Paddle.CustomData,
+    PriceData extends Core.CustomData,
     Include extends PriceInclude | undefined
-  > extends Paddle.Price<Paddle.TimeInterval | null, PriceData> {
+  > extends Core.Price<Core.TimeInterval | null, PriceData> {
     /** The related product object */
-    product: undefined extends Include ? never : Paddle.Product;
+    product: undefined extends Include ? never : Core.Product;
   }
 
   //// Update a price
@@ -634,10 +627,10 @@ export namespace PaddleAPI {
   /**
    * The update price body.
    */
-  export type PriceUpdateBody<DataDef extends Paddle.CustomDataDef> =
+  export type PriceUpdateBody<DataDef extends Core.CustomDataDef> =
     Utils.Optional<
       Omit<
-        Paddle.Price<Paddle.TimeInterval | null, CustomData<DataDef["Price"]>>,
+        Core.Price<Core.TimeInterval | null, CustomData<DataDef["Price"]>>,
         PriceAutoAssignFields
       >
     >;
@@ -645,7 +638,7 @@ export namespace PaddleAPI {
   /**
    * The update price response.
    */
-  export type PriceUpdateResponse<DataDef extends Paddle.CustomDataDef> =
+  export type PriceUpdateResponse<DataDef extends Core.CustomDataDef> =
     | PriceUpdateResponseError
     | PriceUpdateResponseSuccess<DataDef>;
 
@@ -659,9 +652,9 @@ export namespace PaddleAPI {
    * The successful price update response.
    */
   export interface PriceUpdateResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Price<Paddle.TimeInterval | null, CustomData<DataDef["Price"]>>,
+      Core.Price<Core.TimeInterval | null, CustomData<DataDef["Price"]>>,
       MetaBasic
     > {}
 
@@ -688,17 +681,17 @@ export namespace PaddleAPI {
     /** Return entities that match the discount code. */
     code?: string | string[] | undefined;
     /** Return only the IDs specified. */
-    id?: Paddle.DiscountId | Paddle.DiscountId[] | undefined;
+    id?: Core.DiscountId | Core.DiscountId[] | undefined;
     /** Order returned entities by the specified field and direction
      * ([ASC] or [DESC]). */
     order_by?:
-      | OrderQuery<Paddle.Discount>
-      | OrderQuery<Paddle.Discount>[]
+      | OrderQuery<Core.Discount>
+      | OrderQuery<Core.Discount>[]
       | undefined;
     /** Set how many entities are returned per page. */
     per_page?: number | undefined;
     /** Return entities that match the specified status. */
-    status?: Paddle.DiscountStatus | Paddle.DiscountStatus[] | undefined;
+    status?: Core.DiscountStatus | Core.DiscountStatus[] | undefined;
   }
 
   /**
@@ -711,7 +704,7 @@ export namespace PaddleAPI {
    * The successful Discounts list response.
    */
   export interface DiscountsListResponseSuccess
-    extends ResponseBase<Paddle.Discount[], MetaPaginated> {}
+    extends ResponseBase<Core.Discount[], MetaPaginated> {}
 
   /**
    * The Discounts list response.
@@ -726,7 +719,7 @@ export namespace PaddleAPI {
    * The create discount body.
    */
   export type DiscountCreateBody = Utils.MakeNullableFieldsOptional<
-    Omit<Paddle.Discount, DiscountAutoAssignFields | "status">
+    Omit<Core.Discount, DiscountAutoAssignFields | "status">
   >;
 
   /**
@@ -746,7 +739,7 @@ export namespace PaddleAPI {
    * The successful discount create response.
    */
   export interface DiscountCreateResponseSuccess
-    extends ResponseBase<Paddle.Discount, MetaBasic> {}
+    extends ResponseBase<Core.Discount, MetaBasic> {}
 
   //// Get a discount
 
@@ -767,7 +760,7 @@ export namespace PaddleAPI {
    * The successful discount get response.
    */
   export interface DiscountGetResponseSuccess
-    extends ResponseBase<Paddle.Discount, MetaBasic> {}
+    extends ResponseBase<Core.Discount, MetaBasic> {}
 
   //// Update a discount
 
@@ -776,7 +769,7 @@ export namespace PaddleAPI {
    */
   export type DiscountUpdateBody = Utils.Optional<
     Utils.MakeNullableFieldsOptional<
-      Omit<Paddle.Discount, DiscountAutoAssignFields>
+      Omit<Core.Discount, DiscountAutoAssignFields>
     >
   >;
 
@@ -797,7 +790,7 @@ export namespace PaddleAPI {
    * The successful update discount response.
    */
   export interface DiscountUpdateResponseSuccess
-    extends ResponseBase<Paddle.Discount, MetaBasic> {}
+    extends ResponseBase<Core.Discount, MetaBasic> {}
 
   /// Customers
 
@@ -815,29 +808,29 @@ export namespace PaddleAPI {
   /**
    * The customers list query.
    */
-  export interface CustomersListQuery<DataDef extends Paddle.CustomDataDef> {
+  export interface CustomersListQuery<DataDef extends Core.CustomDataDef> {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
     after?: string | undefined;
     /** Return only the IDs specified. */
-    id?: Paddle.CustomerId | Paddle.CustomerId[] | undefined;
+    id?: Core.CustomerId | Core.CustomerId[] | undefined;
     /** Order returned entities by the specified field and direction
      * [ASC] or [DESC]). */
     order_by?:
-      | OrderQuery<Paddle.Customer<CustomData<DataDef["Customer"]>>>
+      | OrderQuery<Core.Customer<CustomData<DataDef["Customer"]>>>
       | undefined;
     /** Set how many entities are returned per page. */
     per_page?: number | undefined;
     /** Return entities that match a search query. Searches id, name, and email fields. */
     search?: string | undefined;
     /** Return entities that match the specified status. */
-    status?: Paddle.EntityStatus | Paddle.EntityStatus[] | undefined;
+    status?: Core.EntityStatus | Core.EntityStatus[] | undefined;
   }
 
   /**
    * The customers list response.
    */
-  export type CustomersListResponse<DataDef extends Paddle.CustomDataDef> =
+  export type CustomersListResponse<DataDef extends Core.CustomDataDef> =
     | CustomersListResponseError
     | CustomersListResponseSuccess<DataDef>;
 
@@ -851,9 +844,9 @@ export namespace PaddleAPI {
    * The successful customers list response.
    */
   export interface CustomersListResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Customer<CustomData<DataDef["Customer"]>>[],
+      Core.Customer<CustomData<DataDef["Customer"]>>[],
       MetaPaginated
     > {}
 
@@ -862,11 +855,11 @@ export namespace PaddleAPI {
   /**
    * The create customer body.
    */
-  export type CustomerCreateBody<DataDef extends Paddle.CustomDataDef> =
+  export type CustomerCreateBody<DataDef extends Core.CustomDataDef> =
     Utils.MakeNullableFieldsOptional<
       Utils.MakeFieldsOptional<
         Omit<
-          Paddle.Customer<CustomData<DataDef["Customer"]>>,
+          Core.Customer<CustomData<DataDef["Customer"]>>,
           CustomerAutoAssignFields | "status"
         >,
         "locale"
@@ -876,7 +869,7 @@ export namespace PaddleAPI {
   /**
    * The create customer response.
    */
-  export type CustomerCreateResponse<DataDef extends Paddle.CustomDataDef> =
+  export type CustomerCreateResponse<DataDef extends Core.CustomDataDef> =
     | CustomerCreateResponseError
     | CustomerCreateResponseSuccess<DataDef>;
 
@@ -890,9 +883,9 @@ export namespace PaddleAPI {
    * The successful customer create response.
    */
   export interface CustomerCreateResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Customer<CustomData<DataDef["Customer"]>>,
+      Core.Customer<CustomData<DataDef["Customer"]>>,
       MetaBasic
     > {}
 
@@ -901,7 +894,7 @@ export namespace PaddleAPI {
   /**
    * The get customer response.
    */
-  export type CustomerGetResponse<DataDef extends Paddle.CustomDataDef> =
+  export type CustomerGetResponse<DataDef extends Core.CustomDataDef> =
     | CustomerGetResponseError
     | CustomerGetResponseSuccess<DataDef>;
 
@@ -915,9 +908,9 @@ export namespace PaddleAPI {
    * The successful customer get response.
    */
   export interface CustomerGetResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Customer<CustomData<DataDef["Customer"]>>,
+      Core.Customer<CustomData<DataDef["Customer"]>>,
       MetaBasic
     > {}
 
@@ -926,10 +919,10 @@ export namespace PaddleAPI {
   /**
    * The update customer body.
    */
-  export type CustomerUpdateBody<DataDef extends Paddle.CustomDataDef> =
+  export type CustomerUpdateBody<DataDef extends Core.CustomDataDef> =
     Utils.Optional<
       Omit<
-        Paddle.Customer<CustomData<DataDef["Customer"]>>,
+        Core.Customer<CustomData<DataDef["Customer"]>>,
         CustomerAutoAssignFields
       >
     >;
@@ -937,7 +930,7 @@ export namespace PaddleAPI {
   /**
    * The update customer response.
    */
-  export type CustomerUpdateResponse<DataDef extends Paddle.CustomDataDef> =
+  export type CustomerUpdateResponse<DataDef extends Core.CustomDataDef> =
     | CustomerUpdateResponseError
     | CustomerUpdateResponseSuccess<DataDef>;
 
@@ -951,9 +944,9 @@ export namespace PaddleAPI {
    * The successful customer update response.
    */
   export interface CustomerUpdateResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Customer<CustomData<DataDef["Customer"]>>,
+      Core.Customer<CustomData<DataDef["Customer"]>>,
       MetaBasic
     > {}
 
@@ -969,17 +962,17 @@ export namespace PaddleAPI {
   /**
    * The customer's list addresses query.
    */
-  export interface AddressListQuery<DataDef extends Paddle.CustomDataDef> {
+  export interface AddressListQuery<DataDef extends Core.CustomDataDef> {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
     after?: string | undefined;
     /** Return only the IDs specified. */
-    id?: Paddle.AddressId | Paddle.AddressId[] | undefined;
+    id?: Core.AddressId | Core.AddressId[] | undefined;
     /** Order returned entities by the specified field and direction
      * [ASC] or [DESC]. */
     order_by?:
-      | OrderQuery<Paddle.Address<CustomData<DataDef["Address"]>>>
-      | OrderQuery<Paddle.Address<CustomData<DataDef["Address"]>>>[]
+      | OrderQuery<Core.Address<CustomData<DataDef["Address"]>>>
+      | OrderQuery<Core.Address<CustomData<DataDef["Address"]>>>[]
       | undefined;
     /** Set how many entities are returned per page. */
     per_page?: number | undefined;
@@ -994,7 +987,7 @@ export namespace PaddleAPI {
   /**
    * The list addresses response.
    */
-  export type AddressListResponse<DataDef extends Paddle.CustomDataDef> =
+  export type AddressListResponse<DataDef extends Core.CustomDataDef> =
     | AddressListResponseError
     | AddressListResponseSuccess<DataDef>;
 
@@ -1008,9 +1001,9 @@ export namespace PaddleAPI {
    * The successful list addresses response.
    */
   export interface AddressListResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Address<CustomData<DataDef["Address"]>>[],
+      Core.Address<CustomData<DataDef["Address"]>>[],
       MetaPaginated
     > {}
 
@@ -1019,10 +1012,10 @@ export namespace PaddleAPI {
   /**
    * The create address body.
    */
-  export type AddressCreateBody<DataDef extends Paddle.CustomDataDef> =
+  export type AddressCreateBody<DataDef extends Core.CustomDataDef> =
     Utils.MakeNullableFieldsOptional<
       Omit<
-        Paddle.Address<CustomData<DataDef["Address"]>>,
+        Core.Address<CustomData<DataDef["Address"]>>,
         AddressAutoAssignFields | "status"
       >
     >;
@@ -1030,7 +1023,7 @@ export namespace PaddleAPI {
   /**
    * The create address response.
    */
-  export type AddressCreateResponse<DataDef extends Paddle.CustomDataDef> =
+  export type AddressCreateResponse<DataDef extends Core.CustomDataDef> =
     | AddressCreateResponseError
     | AddressCreateResponseSuccess<DataDef>;
 
@@ -1044,9 +1037,9 @@ export namespace PaddleAPI {
    * The successful address create response.
    */
   export interface AddressCreateResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Address<CustomData<DataDef["Address"]>>,
+      Core.Address<CustomData<DataDef["Address"]>>,
       MetaBasic
     > {}
 
@@ -1055,7 +1048,7 @@ export namespace PaddleAPI {
   /**
    * The get address response.
    */
-  export type AddressGetResponse<DataDef extends Paddle.CustomDataDef> =
+  export type AddressGetResponse<DataDef extends Core.CustomDataDef> =
     | AddressGetResponseError
     | AddressGetResponseSuccess<DataDef>;
 
@@ -1068,10 +1061,9 @@ export namespace PaddleAPI {
   /**
    * The successful address get response.
    */
-  export interface AddressGetResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
-  > extends ResponseBase<
-      Paddle.Address<CustomData<DataDef["Address"]>>,
+  export interface AddressGetResponseSuccess<DataDef extends Core.CustomDataDef>
+    extends ResponseBase<
+      Core.Address<CustomData<DataDef["Address"]>>,
       MetaBasic
     > {}
 
@@ -1080,10 +1072,10 @@ export namespace PaddleAPI {
   /**
    * Address update body.
    */
-  export type AddressUpdateBody<DataDef extends Paddle.CustomDataDef> =
+  export type AddressUpdateBody<DataDef extends Core.CustomDataDef> =
     Utils.Optional<
       Omit<
-        Paddle.Address<CustomData<DataDef["Address"]>>,
+        Core.Address<CustomData<DataDef["Address"]>>,
         AddressAutoAssignFields
       >
     >;
@@ -1091,7 +1083,7 @@ export namespace PaddleAPI {
   /**
    * The update address response.
    */
-  export type AddressUpdateResponse<DataDef extends Paddle.CustomDataDef> =
+  export type AddressUpdateResponse<DataDef extends Core.CustomDataDef> =
     | AddressUpdateResponseError
     | AddressUpdateResponseSuccess<DataDef>;
 
@@ -1105,9 +1097,9 @@ export namespace PaddleAPI {
    * The successful address update response.
    */
   export interface AddressUpdateResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Address<CustomData<DataDef["Address"]>>,
+      Core.Address<CustomData<DataDef["Address"]>>,
       MetaBasic
     > {}
 
@@ -1123,17 +1115,17 @@ export namespace PaddleAPI {
   /**
    * The businesses list query.
    */
-  export interface BusinessesListQuery<DataDef extends Paddle.CustomDataDef> {
+  export interface BusinessesListQuery<DataDef extends Core.CustomDataDef> {
     /** Return entities after the specified cursor. Used for working through
      * paginated results. */
     after?: string | undefined;
     /** Return only the IDs specified. */
-    id?: Paddle.BusinessId | Paddle.BusinessId[] | undefined;
+    id?: Core.BusinessId | Core.BusinessId[] | undefined;
     /** Order returned entities by the specified field and direction
      * [ASC] or [DESC]). */
     order_by?:
-      | OrderQuery<Paddle.Business<CustomData<DataDef["Business"]>>>
-      | OrderQuery<Paddle.Business<CustomData<DataDef["Business"]>>>[]
+      | OrderQuery<Core.Business<CustomData<DataDef["Business"]>>>
+      | OrderQuery<Core.Business<CustomData<DataDef["Business"]>>>[]
       | undefined;
     /** Set how many entities are returned per page. */
     per_page?: number | undefined;
@@ -1141,13 +1133,13 @@ export namespace PaddleAPI {
      * including contacts, except status, created_at, and updated_at. */
     search?: string | undefined;
     /** Return entities that match the specified status. */
-    status?: Paddle.EntityStatus | Paddle.EntityStatus[] | undefined;
+    status?: Core.EntityStatus | Core.EntityStatus[] | undefined;
   }
 
   /**
    * The businesses list response.
    */
-  export type BusinessesListResponse<DataDef extends Paddle.CustomDataDef> =
+  export type BusinessesListResponse<DataDef extends Core.CustomDataDef> =
     | BusinessesListResponseError
     | BusinessesListResponseSuccess<DataDef>;
 
@@ -1161,9 +1153,9 @@ export namespace PaddleAPI {
    * The successful businesses list response.
    */
   export interface BusinessesListResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Business<CustomData<DataDef["Business"]>>[],
+      Core.Business<CustomData<DataDef["Business"]>>[],
       MetaPaginated
     > {}
 
@@ -1172,10 +1164,10 @@ export namespace PaddleAPI {
   /**
    * The create business request body.
    */
-  export type BusinessCreateBody<DataDef extends Paddle.CustomDataDef> =
+  export type BusinessCreateBody<DataDef extends Core.CustomDataDef> =
     Utils.MakeNullableFieldsOptional<
       Omit<
-        Paddle.Business<CustomData<DataDef["Business"]>>,
+        Core.Business<CustomData<DataDef["Business"]>>,
         BusinessAutoAssignFields | "status"
       >
     >;
@@ -1183,7 +1175,7 @@ export namespace PaddleAPI {
   /**
    * The create business response.
    */
-  export type BusinessCreateResponse<DataDef extends Paddle.CustomDataDef> =
+  export type BusinessCreateResponse<DataDef extends Core.CustomDataDef> =
     | BusinessCreateResponseError
     | BusinessCreateResponseSuccess<DataDef>;
 
@@ -1197,9 +1189,9 @@ export namespace PaddleAPI {
    * The successful create business response.
    */
   export interface BusinessCreateResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Business<CustomData<DataDef["Business"]>>,
+      Core.Business<CustomData<DataDef["Business"]>>,
       MetaBasic
     > {}
 
@@ -1208,7 +1200,7 @@ export namespace PaddleAPI {
   /**
    * The response for getBusiness function.
    */
-  export type BusinessGetResponse<DataDef extends Paddle.CustomDataDef> =
+  export type BusinessGetResponse<DataDef extends Core.CustomDataDef> =
     | BusinessGetResponseError
     | BusinessGetResponseSuccess<DataDef>;
 
@@ -1222,9 +1214,9 @@ export namespace PaddleAPI {
    * The successful response for getBusiness function.
    */
   export interface BusinessGetResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Business<CustomData<DataDef["Business"]>>,
+      Core.Business<CustomData<DataDef["Business"]>>,
       MetaBasic
     > {}
 
@@ -1233,10 +1225,10 @@ export namespace PaddleAPI {
   /**
    * The update business body.
    */
-  export type BusinessUpdateBody<DataDef extends Paddle.CustomDataDef> =
+  export type BusinessUpdateBody<DataDef extends Core.CustomDataDef> =
     Utils.Optional<
       Omit<
-        Paddle.Business<CustomData<DataDef["Business"]>>,
+        Core.Business<CustomData<DataDef["Business"]>>,
         BusinessAutoAssignFields
       >
     >;
@@ -1244,7 +1236,7 @@ export namespace PaddleAPI {
   /**
    * The update business response.
    */
-  export type BusinessUpdateResponse<DataDef extends Paddle.CustomDataDef> =
+  export type BusinessUpdateResponse<DataDef extends Core.CustomDataDef> =
     | BusinessUpdateResponseError
     | BusinessUpdateResponseSuccess<DataDef>;
 
@@ -1258,9 +1250,9 @@ export namespace PaddleAPI {
    * The successful business update response.
    */
   export interface BusinessUpdateResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Business<CustomData<DataDef["Business"]>>,
+      Core.Business<CustomData<DataDef["Business"]>>,
       MetaBasic
     > {}
 
@@ -1301,10 +1293,10 @@ export namespace PaddleAPI {
    * Represents a transaction response entity with included entities.
    */
   export interface TransactionWithIncluded<
-    DataDef extends Paddle.CustomDataDef,
-    BillingCycle extends Paddle.TimeInterval | null,
+    DataDef extends Core.CustomDataDef,
+    BillingCycle extends Core.TimeInterval | null,
     Include extends TransactionResponseInclude | undefined
-  > extends Paddle.Transaction<
+  > extends Core.Transaction<
       BillingCycle,
       CustomData<DataDef["Price"]>,
       CustomData<DataDef["Transaction"]>
@@ -1313,34 +1305,30 @@ export namespace PaddleAPI {
     address: ResponseIncludedField<
       Include,
       "address",
-      Paddle.Address<CustomData<DataDef["Address"]>>
+      Core.Address<CustomData<DataDef["Address"]>>
     >;
     /** The array of adjustments related to the transaction */
-    adjustment: ResponseIncludedField<
-      Include,
-      "adjustment",
-      Paddle.Adjustment[]
-    >;
+    adjustment: ResponseIncludedField<Include, "adjustment", Core.Adjustment[]>;
     /** The object that includes totals for all adjustments against the transaction */
     adjustments_totals: ResponseIncludedField<
       Include,
       "adjustments_totals",
-      Paddle.AdjustmentsTotals
+      Core.AdjustmentsTotals
     >;
     /** The business object related to the transaction */
     business: ResponseIncludedField<
       Include,
       "business",
-      Paddle.Business<CustomData<DataDef["Business"]>>
+      Core.Business<CustomData<DataDef["Business"]>>
     >;
     /** The customer object related to the transaction */
     customer: ResponseIncludedField<
       Include,
       "customer",
-      Paddle.Customer<CustomData<DataDef["Customer"]>>
+      Core.Customer<CustomData<DataDef["Customer"]>>
     >;
     /** The discount object related to the transaction */
-    discount: ResponseIncludedField<Include, "discount", Paddle.Discount>;
+    discount: ResponseIncludedField<Include, "discount", Core.Discount>;
   }
 
   //// List transactions
@@ -1361,29 +1349,26 @@ export namespace PaddleAPI {
      * billed_at[LT]=2023-04-18T17:03:26. */
     billed_at?: OperatorQuery | undefined;
     /** Return entities that match the specified collection mode. */
-    collection_mode?: Paddle.CollectionMode | undefined;
+    collection_mode?: Core.CollectionMode | undefined;
     /** Return entities created at a specific time */
     created_at?: string | undefined;
     /** Return entities related to the specified customer */
-    customer_id?: Paddle.CustomerId | Paddle.CustomerId[] | undefined;
+    customer_id?: Core.CustomerId | Core.CustomerId[] | undefined;
     /** Return only the IDs specified */
-    id?: Paddle.TransactionId | Paddle.TransactionId[] | undefined;
+    id?: Core.TransactionId | Core.TransactionId[] | undefined;
     /** Include related entities in the response */
     include?: Include;
     /** Return entities that match the invoice number */
     invoice_number?: string | string[] | undefined;
     /** Order returned entities by the specified field and direction */
     order_by?:
-      | OrderQuery<Paddle.Transaction>
-      | OrderQuery<Paddle.Transaction>[]
+      | OrderQuery<Core.Transaction>
+      | OrderQuery<Core.Transaction>[]
       | undefined;
     /** Return entities that match the specified status */
-    status?: Paddle.TransactionStatus | Paddle.TransactionStatus[] | undefined;
+    status?: Core.TransactionStatus | Core.TransactionStatus[] | undefined;
     /** Return entities related to the specified subscription */
-    subscription_id?:
-      | Paddle.SubscriptionId
-      | Paddle.SubscriptionId[]
-      | undefined;
+    subscription_id?: Core.SubscriptionId | Core.SubscriptionId[] | undefined;
     /** Set how many entities are returned per page */
     per_page?: number | undefined;
     /** Return entities updated at a specific time */
@@ -1394,7 +1379,7 @@ export namespace PaddleAPI {
    * The transactions list response.
    */
   export type TransactionsListResponse<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends TransactionResponseInclude | undefined
   > =
     | TransactionsListResponseError
@@ -1410,10 +1395,10 @@ export namespace PaddleAPI {
    * The successful transactions list response.
    */
   export interface TransactionsListResponseSuccess<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends TransactionResponseInclude | undefined
   > extends ResponseBase<
-      TransactionWithIncluded<DataDef, Paddle.TimeInterval | null, Include>[],
+      TransactionWithIncluded<DataDef, Core.TimeInterval | null, Include>[],
       MetaPaginated
     > {}
 
@@ -1431,11 +1416,11 @@ export namespace PaddleAPI {
   /**
    * The create transaction body.
    */
-  export type TransactionCreateBody<DataDef extends Paddle.CustomDataDef> =
+  export type TransactionCreateBody<DataDef extends Core.CustomDataDef> =
     Utils.MakeNullableFieldsOptional<
       Omit<
-        Paddle.Transaction<
-          Paddle.TimeInterval | null,
+        Core.Transaction<
+          Core.TimeInterval | null,
           CustomData<DataDef["Price"]>,
           CustomData<DataDef["Transaction"]>
         >,
@@ -1450,7 +1435,7 @@ export namespace PaddleAPI {
    * The create transaction response.
    */
   export type TransactionCreateResponse<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends PaddleAPI.TransactionResponseInclude | undefined
   > =
     | TransactionCreateResponseError
@@ -1466,10 +1451,10 @@ export namespace PaddleAPI {
    * The successful transaction create response.
    */
   export interface TransactionCreateResponseSuccess<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends PaddleAPI.TransactionResponseInclude | undefined
   > extends ResponseBase<
-      TransactionWithIncluded<DataDef, Paddle.TimeInterval | null, Include>,
+      TransactionWithIncluded<DataDef, Core.TimeInterval | null, Include>,
       MetaBasic
     > {}
 
@@ -1489,7 +1474,7 @@ export namespace PaddleAPI {
    * The get transaction response.
    */
   export type TransactionGetResponse<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends TransactionResponseInclude | undefined
   > =
     | TransactionGetResponseError
@@ -1505,10 +1490,10 @@ export namespace PaddleAPI {
    * The successful transaction get response.
    */
   export interface TransactionGetResponseSuccess<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends TransactionResponseInclude | undefined
   > extends ResponseBase<
-      TransactionWithIncluded<DataDef, Paddle.TimeInterval | null, Include>,
+      TransactionWithIncluded<DataDef, Core.TimeInterval | null, Include>,
       MetaBasic
     > {}
 
@@ -1517,11 +1502,11 @@ export namespace PaddleAPI {
   /**
    * The update transaction body.
    */
-  export type TransactionUpdateBody<DataDef extends Paddle.CustomDataDef> =
+  export type TransactionUpdateBody<DataDef extends Core.CustomDataDef> =
     Utils.Optional<
       Omit<
-        Paddle.Transaction<
-          Paddle.TimeInterval | null,
+        Core.Transaction<
+          Core.TimeInterval | null,
           CustomData<DataDef["Price"]>,
           CustomData<DataDef["Transaction"]>
         >,
@@ -1535,7 +1520,7 @@ export namespace PaddleAPI {
   /**
    * The update transaction response.
    */
-  export type TransactionUpdateResponse<DataDef extends Paddle.CustomDataDef> =
+  export type TransactionUpdateResponse<DataDef extends Core.CustomDataDef> =
     | TransactionUpdateResponseError
     | TransactionUpdateResponseSuccess<DataDef>;
 
@@ -1549,10 +1534,10 @@ export namespace PaddleAPI {
    * The successful transaction update response.
    */
   export interface TransactionUpdateResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Transaction<
-        Paddle.TimeInterval,
+      Core.Transaction<
+        Core.TimeInterval,
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["Transaction"]>
       >,
@@ -1581,11 +1566,11 @@ export namespace PaddleAPI {
   /**
    * The payload for previewing a transaction.
    */
-  export type TransactionPreviewBody<DataDef extends Paddle.CustomDataDef> =
+  export type TransactionPreviewBody<DataDef extends Core.CustomDataDef> =
     Utils.MakeFieldsOptional<
       Pick<
-        Paddle.Transaction<
-          Paddle.TimeInterval | null,
+        Core.Transaction<
+          Core.TimeInterval | null,
           CustomData<DataDef["Price"]>,
           CustomData<DataDef["Transaction"]>
         >,
@@ -1605,10 +1590,9 @@ export namespace PaddleAPI {
   /**
    * The response of the transaction preview API.
    */
-  export type TransactionPreviewResponse<DataDef extends Paddle.CustomDataDef> =
-
-      | TransactionPreviewResponseError
-      | TransactionPreviewResponseSuccess<DataDef>;
+  export type TransactionPreviewResponse<DataDef extends Core.CustomDataDef> =
+    | TransactionPreviewResponseError
+    | TransactionPreviewResponseSuccess<DataDef>;
 
   /**
    * The error response of transaction preview API.
@@ -1620,10 +1604,10 @@ export namespace PaddleAPI {
    * The successful response of transaction preview API.
    */
   export interface TransactionPreviewResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Transaction<
-        Paddle.TimeInterval | null,
+      Core.Transaction<
+        Core.TimeInterval | null,
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["Transaction"]>
       >,
@@ -1674,10 +1658,10 @@ export namespace PaddleAPI {
    * Preview of a transaction.
    */
   export interface SubscriptionDataTransaction<
-    ProductData extends Paddle.CustomData
+    ProductData extends Core.CustomData
   > {
     /** Billing period for the next transaction. */
-    billing_period: Paddle.TimePeriod;
+    billing_period: Core.TimePeriod;
     /** Calculated totals for a transaction preview, including discounts, tax,
      * and currency conversion. Considered the source of truth for totals on
      * a transaction preview. */
@@ -1690,10 +1674,10 @@ export namespace PaddleAPI {
    * Transaction preview details.
    */
   export interface SubscriptionDataTransactionDetails<
-    ProductData extends Paddle.CustomData
+    ProductData extends Core.CustomData
   > {
     /** List of tax rates applied to this transaction preview. */
-    tax_rates_used: Paddle.TaxRate[];
+    tax_rates_used: Core.TaxRate[];
     /** Breakdown of the total for a transaction preview. fee and earnings
      * always return null for transaction previews. */
     totals: SubscriptionDataTransactionTotals;
@@ -1706,7 +1690,7 @@ export namespace PaddleAPI {
   /**
    * Breakdown of the total for a transaction.
    */
-  export interface SubscriptionDataTransactionTotals extends Paddle.TotalsBase {
+  export interface SubscriptionDataTransactionTotals extends Core.TotalsBase {
     /** Total discount as a result of any discounts applied. Except
      * for percentage discounts, Paddle applies tax to discounts based on
      * the line item price.tax_mode. If price.tax_mode for a line item
@@ -1733,22 +1717,22 @@ export namespace PaddleAPI {
    * Information about line items for this transaction preview.
    */
   export interface SubscriptionDataTransactionLineItem<
-    ProductData extends Paddle.CustomData
+    ProductData extends Core.CustomData
   > {
     /** Paddle ID for the price related to this transaction line item */
-    price_id: Paddle.PriceId;
+    price_id: Core.PriceId;
     /** Quantity of this transaction line item */
     quantity: number;
     /** Rate used to calculate tax for this transaction line item */
     tax_rate: string;
     /** Breakdown of the charge for one unit in the lowest denomination of
      * a curreny (e.g. cents for USD) */
-    unit_totals: Paddle.TotalsWithDiscount;
+    unit_totals: Core.TotalsWithDiscount;
     /** Breakdown of a charge in the lowest unit of a currency
      * (e.g. cents for USD) */
-    totals: Paddle.TotalsWithDiscount;
+    totals: Core.TotalsWithDiscount;
     /** Related product entity for this trasaction line item price */
-    product: Paddle.Product<ProductData>;
+    product: Core.Product<ProductData>;
   }
 
   //// List subscriptions
@@ -1761,28 +1745,25 @@ export namespace PaddleAPI {
      * paginated results. */
     after?: string | undefined;
     /** Return entities related to the specified customer. */
-    customer_id?: Paddle.CustomerId | Paddle.CustomerId[] | undefined;
+    customer_id?: Core.CustomerId | Core.CustomerId[] | undefined;
     /** Order returned entities by the specified field and direction
      * [ASC] or [DESC]). */
     order_by?:
-      | OrderQuery<Paddle.Subscription>
-      | OrderQuery<Paddle.Subscription>[]
+      | OrderQuery<Core.Subscription>
+      | OrderQuery<Core.Subscription>[]
       | undefined;
     /** Set how many entities are returned per page. */
     per_page?: number | undefined;
     /** Return entities related to the specified price. */
-    price_id?: Paddle.PriceId | Paddle.PriceId[] | undefined;
+    price_id?: Core.PriceId | Core.PriceId[] | undefined;
     /** Return entities that match the specified status. */
-    status?:
-      | Paddle.SubscriptionStatus
-      | Paddle.SubscriptionStatus[]
-      | undefined;
+    status?: Core.SubscriptionStatus | Core.SubscriptionStatus[] | undefined;
   }
 
   /**
    * The Subscriptions list response.
    */
-  export type SubscriptionsListResponse<DataDef extends Paddle.CustomDataDef> =
+  export type SubscriptionsListResponse<DataDef extends Core.CustomDataDef> =
     | SubscriptionsListResponseError
     | SubscriptionsListResponseSuccess<DataDef>;
 
@@ -1796,11 +1777,11 @@ export namespace PaddleAPI {
    * The successful subscriptions list response.
    */
   export interface SubscriptionsListResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Subscription<
-        Paddle.CollectionMode,
-        Paddle.TimeInterval | null,
+      Core.Subscription<
+        Core.CollectionMode,
+        Core.TimeInterval | null,
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["SubscriptionItem"]>,
         CustomData<DataDef["Subscription"]>
@@ -1834,7 +1815,7 @@ export namespace PaddleAPI {
    * The get subscription response.
    */
   export type SubscriptionGetResponse<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends SubscriptionGetResponseInclude | undefined
   > =
     | SubscriptionGetResponseError
@@ -1850,7 +1831,7 @@ export namespace PaddleAPI {
    * The successful subscription get response.
    */
   export interface SubscriptionGetResponseSuccess<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends SubscriptionGetResponseInclude | undefined
   > extends ResponseBase<SubscriptionGetData<DataDef, Include>, MetaBasic> {}
 
@@ -1858,11 +1839,11 @@ export namespace PaddleAPI {
    * The subscription get data.
    */
   export interface SubscriptionGetData<
-    DataDef extends Paddle.CustomDataDef,
+    DataDef extends Core.CustomDataDef,
     Include extends SubscriptionGetResponseInclude | undefined
-  > extends Paddle.Subscription<
-      Paddle.CollectionMode,
-      Paddle.TimeInterval | null,
+  > extends Core.Subscription<
+      Core.CollectionMode,
+      Core.TimeInterval | null,
       CustomData<DataDef["Price"]>,
       CustomData<DataDef["SubscriptionItem"]>,
       CustomData<DataDef["Subscription"]>
@@ -1908,12 +1889,12 @@ export namespace PaddleAPI {
   /**
    * The update subscription body.
    */
-  export type SubscriptionUpdateBody<DataDef extends Paddle.CustomDataDef> =
+  export type SubscriptionUpdateBody<DataDef extends Core.CustomDataDef> =
     Utils.Optional<
       Omit<
-        Paddle.Subscription<
-          Paddle.CollectionMode,
-          Paddle.TimeInterval | null,
+        Core.Subscription<
+          Core.CollectionMode,
+          Core.TimeInterval | null,
           CustomData<DataDef["Price"]>,
           CustomData<DataDef["SubscriptionItem"]>,
           CustomData<DataDef["Subscription"]>
@@ -1925,10 +1906,9 @@ export namespace PaddleAPI {
   /**
    * The update subscription response.
    */
-  export type SubscriptionUpdateResponse<DataDef extends Paddle.CustomDataDef> =
-
-      | SubscriptionUpdateResponseError
-      | SubscriptionUpdateResponseSuccess<DataDef>;
+  export type SubscriptionUpdateResponse<DataDef extends Core.CustomDataDef> =
+    | SubscriptionUpdateResponseError
+    | SubscriptionUpdateResponseSuccess<DataDef>;
 
   /**
    * The errored subscription update response.
@@ -1940,11 +1920,11 @@ export namespace PaddleAPI {
    * The successful subscription update response.
    */
   export interface SubscriptionUpdateResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Subscription<
-        Paddle.CollectionMode,
-        Paddle.TimeInterval | null,
+      Core.Subscription<
+        Core.CollectionMode,
+        Core.TimeInterval | null,
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["SubscriptionItem"]>,
         CustomData<DataDef["Subscription"]>
@@ -1958,7 +1938,7 @@ export namespace PaddleAPI {
    * The preview update subscription response.
    */
   export type SubscriptionPreviewUpdateResponse<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > =
     | SubscriptionUpdateResponseError
     | SubscriptionUpdateResponseSuccess<DataDef>;
@@ -1973,7 +1953,7 @@ export namespace PaddleAPI {
    * The successful subscription preview update response.
    */
   export interface SubscriptionPreviewUpdateResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
       SubscriptionPreviewUpdateResponseData<DataDef>,
       MetaBasic
@@ -1983,11 +1963,11 @@ export namespace PaddleAPI {
    * The preview update subscription data.
    */
   export interface SubscriptionPreviewUpdateResponseData<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends Omit<
-      Paddle.Subscription<
-        Paddle.CollectionMode,
-        Paddle.TimeInterval | null,
+      Core.Subscription<
+        Core.CollectionMode,
+        Core.TimeInterval | null,
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["SubscriptionItem"]>,
         CustomData<DataDef["Subscription"]>
@@ -2025,10 +2005,10 @@ export namespace PaddleAPI {
   export interface SubscriptionPreviewUpdateDataSummary {
     /** Details of any credit adjustments. Paddle creates adjustments against
      * existing transactions when prorating. */
-    credit: Paddle.UnitPrice;
+    credit: Core.UnitPrice;
     /** Details of the transaction to be created for this update. Paddle
      * creates a transaction to bill for new charges. */
-    charge: Paddle.UnitPrice;
+    charge: Core.UnitPrice;
     /** Details of the result of credits and charges. Where the total of any
      * credit adjustments is greater than the total charge, the result is
      * a prorated credit; otherwise, the result is a prorated charge. */
@@ -2044,7 +2024,7 @@ export namespace PaddleAPI {
     action: SubscriptionPreviewUpdateDataResultAction;
     /** Three-letter ISO 4217 currency code for the transaction or
      * adjustment. */
-    currency_code: Paddle.CurrencyCode;
+    currency_code: Core.CurrencyCode;
   }
 
   /**
@@ -2060,7 +2040,7 @@ export namespace PaddleAPI {
    * The update payment method transaction response.
    */
   export type UpdatePaymentMethodTransactionResponse<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > =
     | UpdatePaymentMethodTransactionResponseError
     | UpdatePaymentMethodTransactionSuccess<DataDef>;
@@ -2075,10 +2055,10 @@ export namespace PaddleAPI {
    * The successful update payment method transaction response.
    */
   export interface UpdatePaymentMethodTransactionSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Transaction<
-        Paddle.TimeInterval | null,
+      Core.Transaction<
+        Core.TimeInterval | null,
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["Transaction"]>
       >,
@@ -2139,7 +2119,7 @@ export namespace PaddleAPI {
    */
   export interface ChargeBillingItem {
     /** Price entity's Paddle ID to charge for. Must be a non-recurring price. */
-    price_id: Paddle.PriceId;
+    price_id: Core.PriceId;
     /** Quantity to charge for. */
     quantity: number;
   }
@@ -2167,29 +2147,26 @@ export namespace PaddleAPI {
    */
   export interface AdjustmentsListQuery {
     /** Return entities for the specified action. */
-    action?: Paddle.AdjustmentAction | undefined;
+    action?: Core.AdjustmentAction | undefined;
     /** Return entities after the specified cursor. Used for working through paginated results. */
     after?: string | undefined;
     /** Return entities related to the specified customer. Use a comma-separated list to specify multiple customer IDs. */
-    customer_id?: Paddle.CustomerId | Paddle.CustomerId[] | undefined;
+    customer_id?: Core.CustomerId | Core.CustomerId[] | undefined;
     /** Order returned entities by the specified field and direction ([ASC] or [DESC]). */
     order_by?:
-      | OrderQuery<Paddle.Adjustment>
-      | OrderQuery<Paddle.Adjustment>[]
+      | OrderQuery<Core.Adjustment>
+      | OrderQuery<Core.Adjustment>[]
       | undefined;
     /** Set how many entities are returned per page. */
     per_page?: number | undefined;
     /** Return entities that match the specified status. Use a comma-separated list to specify multiple status values. */
-    status?: Paddle.AdjustmentStatus | Paddle.AdjustmentStatus[] | undefined;
+    status?: Core.AdjustmentStatus | Core.AdjustmentStatus[] | undefined;
     /** Return entities related to the specified subscription. Use a comma-separated list to specify multiple subscription IDs. */
-    subscription_id?:
-      | Paddle.SubscriptionId
-      | Paddle.SubscriptionId[]
-      | undefined;
+    subscription_id?: Core.SubscriptionId | Core.SubscriptionId[] | undefined;
     /** Return entities related to the specified transaction. Use a comma-separated list to specify multiple transaction IDs. */
-    transaction_id?: Paddle.TransactionId | Paddle.TransactionId[] | undefined;
+    transaction_id?: Core.TransactionId | Core.TransactionId[] | undefined;
     /** Return only the IDs specified. Use a comma separated list to get multiple entities. */
-    id?: Paddle.AdjustmentId | Paddle.AdjustmentId[] | undefined;
+    id?: Core.AdjustmentId | Core.AdjustmentId[] | undefined;
   }
 
   /**
@@ -2209,7 +2186,7 @@ export namespace PaddleAPI {
    * Represents list adjustments success response.
    */
   export interface AdjustmentsListResponseSuccess
-    extends ResponseBase<Paddle.Adjustment[], MetaPaginated> {}
+    extends ResponseBase<Core.Adjustment[], MetaPaginated> {}
 
   //// Create adjustment
 
@@ -2232,7 +2209,7 @@ export namespace PaddleAPI {
    * The create adjustment body.
    */
   export type AdjustmentCreateBody = Utils.MakeNullableFieldsOptional<
-    Omit<Paddle.Adjustment, AdjustmentCreateAutoAssignFields>
+    Omit<Core.Adjustment, AdjustmentCreateAutoAssignFields>
   >;
 
   /**
@@ -2252,7 +2229,7 @@ export namespace PaddleAPI {
    * The successful adjustment create response.
    */
   export interface AdjustmentCreateResponseSuccess
-    extends ResponseBase<Paddle.Adjustment, MetaBasic> {}
+    extends ResponseBase<Core.Adjustment, MetaBasic> {}
 
   /// Pricing preview
 
@@ -2271,21 +2248,21 @@ export namespace PaddleAPI {
    */
   interface PreviewPricesItem {
     /** Paddle ID for the price to add to this transaction, prefixed with pri_. */
-    price_id: Paddle.PriceId;
+    price_id: Core.PriceId;
     /** Quantity of the item. */
     quantity: number;
     /** Paddle ID of the customer, prefixed with ctm_. */
-    customer_id?: Paddle.CustomerId | null;
+    customer_id?: Core.CustomerId | null;
     /** Paddle ID of the address, prefixed with add_. */
-    address_id?: Paddle.AddressId | null;
+    address_id?: Core.AddressId | null;
     /** Paddle ID of the business, prefixed with biz_. */
-    business_id?: Paddle.BusinessId | null;
+    business_id?: Core.BusinessId | null;
     /** Supported three-letter ISO 4217 currency code. */
     currency_code?: string;
     /** Paddle ID of the discount applied, prefixed with dsc_. */
-    discount_id?: Paddle.DiscountId | null;
+    discount_id?: Core.DiscountId | null;
     /** Address for this preview. */
-    address?: Paddle.PricingPreviewAddress | null;
+    address?: Core.PricingPreviewAddress | null;
     /** IP address for transaction preview. */
     customer_ip_address?: string | null;
   }
@@ -2293,7 +2270,7 @@ export namespace PaddleAPI {
   /**
    * Represents pricing previews response.
    */
-  export type PreviewPricesResponse<DataDef extends Paddle.CustomDataDef> =
+  export type PreviewPricesResponse<DataDef extends Core.CustomDataDef> =
     | PreviewPricesResponseError
     | PreviewPricesResponseSuccess<DataDef>;
 
@@ -2307,9 +2284,9 @@ export namespace PaddleAPI {
    * Represents pricing previews success response.
    */
   export interface PreviewPricesResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.PricingPreview<
+      Core.PricingPreview<
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["Product"]>
       >,
@@ -2337,7 +2314,7 @@ export namespace PaddleAPI {
    * The successful list event types response.
    */
   export interface EventTypesListResponseSuccess
-    extends ResponseBase<Paddle.EventType[], MetaBasic> {}
+    extends ResponseBase<Core.EventType[], MetaBasic> {}
 
   /// Events
 
@@ -2358,7 +2335,7 @@ export namespace PaddleAPI {
   /**
    * The list events response.
    */
-  export type EventsListResponse<DataDef extends Paddle.CustomDataDef> =
+  export type EventsListResponse<DataDef extends Core.CustomDataDef> =
     | EventsListResponseError
     | EventsListResponseSuccess<DataDef>;
 
@@ -2371,10 +2348,9 @@ export namespace PaddleAPI {
   /**
    * The successful list events response.
    */
-  export interface EventsListResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
-  > extends ResponseBase<
-      Paddle.Event<
+  export interface EventsListResponseSuccess<DataDef extends Core.CustomDataDef>
+    extends ResponseBase<
+      Core.Event<
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["Product"]>,
         CustomData<DataDef["SubscriptionItem"]>,
@@ -2415,7 +2391,7 @@ export namespace PaddleAPI {
    * The successful list notification settings response.
    */
   export interface NotificationSettingsListResponseSuccess
-    extends ResponseBase<Paddle.NotificationSetting[], MetaBasic> {}
+    extends ResponseBase<Core.NotificationSetting[], MetaBasic> {}
 
   //// Create notification setting
 
@@ -2423,7 +2399,7 @@ export namespace PaddleAPI {
    * The create notification setting body.
    */
   export type NotificationSettingCreateBody = Utils.MakeNullableFieldsOptional<
-    Omit<Paddle.NotificationSetting, NotificationSettingAutoAssignFields>
+    Omit<Core.NotificationSetting, NotificationSettingAutoAssignFields>
   >;
 
   /**
@@ -2443,7 +2419,7 @@ export namespace PaddleAPI {
    * The successful notification setting create response.
    */
   export interface NotificationSettingCreateResponseSuccess
-    extends ResponseBase<Paddle.NotificationSetting, MetaBasic> {}
+    extends ResponseBase<Core.NotificationSetting, MetaBasic> {}
 
   //// Get notification setting
 
@@ -2464,7 +2440,7 @@ export namespace PaddleAPI {
    * The successful notification setting get response.
    */
   export interface NotificationSettingGetResponseSuccess
-    extends ResponseBase<Paddle.NotificationSetting, MetaBasic> {}
+    extends ResponseBase<Core.NotificationSetting, MetaBasic> {}
 
   //// Update notification setting
 
@@ -2472,17 +2448,14 @@ export namespace PaddleAPI {
    * Body for updating a notification setting.
    */
   export type NotificationSettingUpdateBody = Utils.Optional<
-    Omit<
-      Paddle.NotificationSetting,
-      NotificationSettingAutoAssignFields | "type"
-    >
+    Omit<Core.NotificationSetting, NotificationSettingAutoAssignFields | "type">
   >;
 
   /**
    * Response of successful update of notification setting.
    */
   export interface NotificationSettingUpdateResponseSuccess
-    extends ResponseBase<Paddle.NotificationSetting, MetaBasic> {}
+    extends ResponseBase<Core.NotificationSetting, MetaBasic> {}
 
   /**
    * The errored update notification setting response.
@@ -2516,8 +2489,8 @@ export namespace PaddleAPI {
     after?: string | undefined;
     /** Return entities related to the specified notification destination */
     notification_setting_id?:
-      | Paddle.NotificationSettingId
-      | Paddle.NotificationSettingId[]
+      | Core.NotificationSettingId
+      | Core.NotificationSettingId[]
       | undefined;
     /** Order returned entities by the specified field and direction */
     order_by?: string | undefined;
@@ -2526,15 +2499,12 @@ export namespace PaddleAPI {
     /** Return entities that match a search query */
     search?: string | undefined;
     /** Return entities that match the specified status */
-    status?:
-      | Paddle.NotificationStatus
-      | Paddle.NotificationStatus[]
-      | undefined;
+    status?: Core.NotificationStatus | Core.NotificationStatus[] | undefined;
     /** Return entities that contain the Paddle ID specified */
     filter?:
-      | Paddle.TransactionId
-      | Paddle.CustomerId
-      | Paddle.SubscriptionId
+      | Core.TransactionId
+      | Core.CustomerId
+      | Core.SubscriptionId
       | undefined;
     /** Return entities up to a specific time */
     to?: string | undefined;
@@ -2545,7 +2515,7 @@ export namespace PaddleAPI {
   /**
    * The list notifications response.
    */
-  export type NotificationsListResponse<DataDef extends Paddle.CustomDataDef> =
+  export type NotificationsListResponse<DataDef extends Core.CustomDataDef> =
     | NotificationsListResponseError
     | NotificationsListResponseSuccess<DataDef>;
 
@@ -2559,9 +2529,9 @@ export namespace PaddleAPI {
    * The successful list notifications response.
    */
   export interface NotificationsListResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Notification<
+      Core.Notification<
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["Product"]>,
         CustomData<DataDef["SubscriptionItem"]>,
@@ -2579,7 +2549,7 @@ export namespace PaddleAPI {
   /**
    * The get notification response.
    */
-  export type NotificationGetResponse<DataDef extends Paddle.CustomDataDef> =
+  export type NotificationGetResponse<DataDef extends Core.CustomDataDef> =
     | NotificationGetResponseError
     | NotificationGetResponseSuccess<DataDef>;
 
@@ -2593,9 +2563,9 @@ export namespace PaddleAPI {
    * The successful get notification response.
    */
   export interface NotificationGetResponseSuccess<
-    DataDef extends Paddle.CustomDataDef
+    DataDef extends Core.CustomDataDef
   > extends ResponseBase<
-      Paddle.Notification<
+      Core.Notification<
         CustomData<DataDef["Price"]>,
         CustomData<DataDef["Product"]>,
         CustomData<DataDef["SubscriptionItem"]>,
@@ -2634,7 +2604,7 @@ export namespace PaddleAPI {
    */
   export interface NotificationReplayData {
     /** Unique Paddle ID for this new notification */
-    notification_id: Paddle.NotificationId;
+    notification_id: Core.NotificationId;
   }
 
   /// Notification logs
@@ -2667,7 +2637,7 @@ export namespace PaddleAPI {
    * The successful notification logs list response.
    */
   export interface NotificationLogsListResponseSuccess
-    extends ResponseBase<Paddle.NotificationLog[], MetaPaginated> {}
+    extends ResponseBase<Core.NotificationLog[], MetaPaginated> {}
 
   ///
 

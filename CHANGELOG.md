@@ -8,7 +8,7 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
-## v1.1.0 - 2023-11-??
+## v1.1.0 - 2023-11-05
 
 ### Fixed
 
@@ -22,7 +22,7 @@ This change log follows the format documented in [Keep a CHANGELOG].
 
 ### Added
 
-- Added web portion of Paddle Billing platform that allows working with Paddle from the browser, i.e., open checkout. See README for more information.
+- Added web portion of Paddle Billing platform that allows working with Paddle from the browser, i.e., open checkout. Use `loadScript` to load and use the web API. [See README for more information](#web).
 
 ## v1.0.0 - 2023-11-02
 
