@@ -16,3 +16,6 @@ prepare-build:
 
 publish: build
 	@cd lib && npm publish --access public
+
+link:
+	@cd lib && npm link
