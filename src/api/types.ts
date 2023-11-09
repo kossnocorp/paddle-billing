@@ -4,11 +4,23 @@ import type { PaddleUtils as Utils } from "../utils";
  * The API Paddle types namespace. Contains all the types related to the API.
  */
 export namespace PaddleAPI {
+  /**
+   * Function that returns the Paddle key.
+   */
+  export type ClientKeyFn = () => string;
+
+  /**
+   * The client interface that contains the authentication key and
+   * the sandbox key.
+   */
   export interface Client<_DataDef extends Core.CustomDataDef> {
-    key: string;
+    key: string | ClientKeyFn;
     sandbox?: boolean | undefined;
   }
 
+  /**
+   * Custom data type resolver.
+   */
   export type CustomData<Data extends Core.CustomData | undefined> =
     Data extends Core.CustomData ? Data : Core.CustomData;
 

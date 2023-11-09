@@ -45,7 +45,7 @@ cancelSubscription(paddle, "SUBCRIPTION_ID").then((subscription) => {
 
 #### Sandbox
 
-To use the Sandbox, pass `true` as second argument to client:
+To use the Sandbox, pass `true` as the second argument to `client`:
 
 ```ts
 import { client, cancelSubscription } from "paddle-billing";
@@ -84,6 +84,14 @@ const paddle = client<{
   Product: CustomDataProduct;
   Price: CustomDataPrice;
 }>("PADDLE_SECRET");
+```
+
+#### Key function
+
+You can also pass a function that returns the key as the key argument, which allows the use of Google Cloud Secrets and calling `client` on the module level where the secrets aren't defined in `process`:
+
+```ts
+const paddle = client(() => "PADDLE_SECRET");
 ```
 
 #### Methods List

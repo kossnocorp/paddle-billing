@@ -13,13 +13,13 @@ import type { PaddleAPI as API } from "./types";
  * or web client with incompatible custom data definitions will result in
  * the client function returning never.
  *
- * @param key - the Paddle key
+ * @param key - the Paddle key or function that returns the key
  * @param sandbox - if to use the sandbox API
  *
  * @returns the Paddle API client
  */
 export function client<DataDef extends Core.CustomDataDef>(
-  key: string,
+  key: string | API.ClientKeyFn,
   sandbox?: boolean
 ): Core.WithValidatedDataDef<DataDef, API.Client<DataDef>> {
   // @ts-expect-error: Because of WithValidatedDataDef, TS will complain but
@@ -53,8 +53,9 @@ export async function paddleFetch(
   client: API.Client<Core.CustomDataDef>,
   props: PaddleFetchProps
 ) {
+  const key = typeof client.key === "string" ? client.key : client.key();
   const headers: Record<string, string> = {
-    Authorization: `Bearer ${client.key}`,
+    Authorization: `Bearer ${key}`,
   };
 
   if (props.body) headers["Content-Type"] = "application/json";

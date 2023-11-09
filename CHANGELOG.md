@@ -8,6 +8,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## v1.2.0 - 2023-11-09
+
+### Added
+
+- Added the ability to pass a function that returns the key as the key argument to `client`. This allows the use of Google Cloud Secrets and calling `client` on the module level where the secrets aren't defined in `process`.
+
 ## v1.1.0 - 2023-11-05
 
 ### Fixed

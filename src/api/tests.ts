@@ -121,6 +121,29 @@ describe("paddleFetch", () => {
     );
   });
 
+  it("allows to use function that returns key as the key", async () => {
+    await paddleFetch(
+      { key: () => "test", sandbox: true },
+      {
+        method: "POST",
+        path: "test",
+        body: { hello: "world" },
+      }
+    );
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://sandbox-api.paddle.com/test",
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer test",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ hello: "world" }),
+      }
+    );
+  });
+
   it("includes query", async () => {
     await paddleFetch(
       { key: "test" },
