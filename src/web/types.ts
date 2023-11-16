@@ -67,7 +67,7 @@ export namespace PaddleWeb {
      *
      * @param props - The checkout props.
      */
-    open(props: Utils.MakeNullableFieldsOptional<CheckoutProps<Data>>): void;
+    open(props: CheckoutProps<Data>): void;
 
     /**
      * Updates the list of items, discounts, customer, address, and business
@@ -116,14 +116,16 @@ export namespace PaddleWeb {
   /**
    * The checkout open function props.
    */
-  export type CheckoutProps<Data extends Core.CustomData> = {
-    /** Set general checkout settings. */
-    settings?: CheckoutSettingsObject | undefined;
-    /** Custom key-value data to include with the checkout. Must be valid JSON
-     * and contain at least one key. */
-    customData: Data;
-  } & CheckoutPropsPayload &
-    CheckoutDiscount;
+  export type CheckoutProps<Data extends Core.CustomData> =
+    Utils.MakeNullableFieldsOptional<{
+      /** Set general checkout settings. */
+      settings?: CheckoutSettingsObject | undefined;
+      /** Custom key-value data to include with the checkout. Must be valid JSON
+       * and contain at least one key. */
+      customData: Data;
+    }> &
+      CheckoutPropsPayload &
+      CheckoutDiscount;
 
   /**
    * The checkout open function items.
@@ -138,10 +140,10 @@ export namespace PaddleWeb {
   export interface CheckoutPropsItems {
     /** List of items for this checkout. You must pass at least one item. Use
      * the updateItems() or updateCheckout() method to update the items list. */
-    items: Item[];
+    items: [Item, ...Item[]];
     /** Information about the customer for this checkout. Pass either
      * an existing id, or the other fields. */
-    customer: CheckoutCustomer;
+    customer?: CheckoutCustomer | undefined;
   }
 
   /**
@@ -222,10 +224,10 @@ export namespace PaddleWeb {
   export type UpdateCheckoutProps = {
     /** List of items for this checkout. You must pass at least one item. Use
      * the updateItems() or updateCheckout)() method to update the items list. */
-    items: Item[];
+    items: [Item, ...Item[]];
     /** Information about the customer for this checkout. Pass either
      * an existing id, or the other fields. */
-    customer: CheckoutCustomer;
+    customer?: CheckoutCustomer | undefined;
   } & CheckoutDiscount;
 
   /**
@@ -235,7 +237,7 @@ export namespace PaddleWeb {
     /** Paddle ID of the price for this item. */
     priceId: Core.PriceId;
     /** Quantity for this line item. */
-    quantity: number;
+    quantity?: number;
   }
 
   /**

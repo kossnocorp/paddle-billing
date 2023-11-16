@@ -8,6 +8,19 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## v1.3.0 - 2023-11-16
+
+### Changed
+
+- Improved web portion types, making checkout methods closer to the actual API:
+  - At least on item is required when `items` is passed.
+  - Made `customer` optional.
+  - Made `quantity` optional (it defaults to `1`).
+
+### Fixed
+
+- Fixed TypeScript errors on `Paddle.Checkout.open`.
+
 ## v1.2.0 - 2023-11-09
 
 ### Added

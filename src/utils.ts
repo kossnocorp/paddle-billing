@@ -9,16 +9,16 @@ export namespace PaddleUtils {
   /**
    * Makes the specified fields optional.
    */
-  export type MakeFieldsOptional<Type, Field extends keyof Type> = Omit<
+  export type MakeFieldsOptional<Type, Keys extends keyof Type> = Omit<
     Type,
-    Field
+    Keys
   > &
-    Optional<Pick<Type, Field>>;
+    Optional<Pick<Type, Keys>>;
 
   /**
    * Lists keys that extend null.
    */
-  type NullbleKeys<Type> = {
+  type NullableKeys<Type> = {
     [Key in keyof Type]: null extends Type[Key] ? Key : never;
   }[keyof Type];
 
@@ -27,7 +27,7 @@ export namespace PaddleUtils {
    */
   export type MakeNullableFieldsOptional<Type> = MakeFieldsOptional<
     Type,
-    NullbleKeys<Type>
+    NullableKeys<Type>
   >;
 
   //// Snake to camel case, source: https://stackoverflow.com/a/65642944/75284
