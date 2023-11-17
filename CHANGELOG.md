@@ -10,6 +10,10 @@ This change log follows the format documented in [Keep a CHANGELOG].
 
 ## v1.4.0 - 2023-11-17
 
+### Changed
+
+- `customData` is now not required in the checkout props when using `transactionId` as it must be already attached to the transaction.
+
 ### Added
 
 - Added missing `transaction.paid` event to the webhooks.

@@ -120,30 +120,30 @@ export namespace PaddleWeb {
     Utils.MakeNullableFieldsOptional<{
       /** Set general checkout settings. */
       settings?: CheckoutSettingsObject | undefined;
-      /** Custom key-value data to include with the checkout. Must be valid JSON
-       * and contain at least one key. */
-      customData: Data;
     }> &
-      CheckoutPropsPayload &
+      CheckoutPropsPayload<Data> &
       CheckoutDiscount;
 
   /**
    * The checkout open function items.
    */
-  export type CheckoutPropsPayload =
-    | CheckoutPropsItems
+  export type CheckoutPropsPayload<Data extends Core.CustomData> =
+    | CheckoutPropsItems<Data>
     | CheckoutPropsTransactionId;
 
   /**
    * The checkout open function items list.
    */
-  export interface CheckoutPropsItems {
+  export interface CheckoutPropsItems<Data extends Core.CustomData> {
     /** List of items for this checkout. You must pass at least one item. Use
      * the updateItems() or updateCheckout() method to update the items list. */
     items: [Item, ...Item[]];
     /** Information about the customer for this checkout. Pass either
      * an existing id, or the other fields. */
     customer?: CheckoutCustomer | undefined;
+    /** Custom key-value data to include with the checkout. Must be valid JSON
+     * and contain at least one key. */
+    customData: Data;
   }
 
   /**
