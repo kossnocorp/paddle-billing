@@ -1875,7 +1875,8 @@ export namespace Paddle {
     | EventTransactionPastDue<PriceData, TransactionData>
     | EventTransactionPaymentFailed<PriceData, TransactionData>
     | EventTransactionReady<PriceData, TransactionData>
-    | EventTransactionUpdated<PriceData, TransactionData>;
+    | EventTransactionUpdated<PriceData, TransactionData>
+    | EventTransactionPaid<PriceData, TransactionData>;
 
   /**
    * Occurs when a transaction is billed. Its status field changes to billed
@@ -1979,6 +1980,31 @@ export namespace Paddle {
     TransactionData extends CustomData = CustomData
   > = EventBase<
     "transaction.ready",
+    Transaction<TimeInterval | null, PriceData, TransactionData>
+  >;
+
+  /**
+   * Occurs when a transaction is paid. Its status field changes to paid.
+   *
+   * Transactions are paid when payment has been captured successfully, but
+   * Paddle hasn't yet fully processed the transaction internally.
+   *
+   * For example:
+   *
+   * - Payout totals may not be present.
+   * - Automatically-collected transactions for recurring items might not yet
+   *   have a subscription_id.
+   * - Automatically-collected transactions might not yet have
+   *   an invoice_number.
+   *
+   * Transactions move to completed and transaction.completed occurs when
+   * they're fully processed.
+   */
+  export type EventTransactionPaid<
+    PriceData extends CustomData = CustomData,
+    TransactionData extends CustomData = CustomData
+  > = EventBase<
+    "transaction.paid",
     Transaction<TimeInterval | null, PriceData, TransactionData>
   >;
 

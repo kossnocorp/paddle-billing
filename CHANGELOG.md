@@ -8,6 +8,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## v1.4.0 - 2023-11-17
+
+### Added
+
+- Added missing `transaction.paid` event to the webhooks.
+
 ## v1.3.0 - 2023-11-16
 
 ### Changed
