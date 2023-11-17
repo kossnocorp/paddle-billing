@@ -586,6 +586,8 @@ export namespace Paddle {
     details: TransactionDetails;
     /** Paddle Checkout details for this transaction. */
     checkout: Checkout | null;
+    /** List of payment attempts for this transaction. */
+    payments: Payment[];
     /** RFC 3339 datetime string of when this entity was created. */
     created_at: string;
     /** RFC 3339 datetime string of when this entity was updated. */
@@ -647,8 +649,6 @@ export namespace Paddle {
     payout_totals: PayoutTotals | null;
     /** Information about line items for this transaction. */
     line_items: LineItem[];
-    /** List of payment attempts for this transaction. */
-    payments: Payment[];
   }
 
   /**

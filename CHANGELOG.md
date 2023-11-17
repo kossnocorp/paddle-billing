@@ -8,6 +8,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## v1.4.1 - 2023-11-17
+
+### Fixed
+
+- Moved the `payments` property in the `Transaction` type from `details` to the root level where it is supposed to be.p
+
 ## v1.4.0 - 2023-11-17
 
 ### Changed
