@@ -8,6 +8,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## v1.5.0 - 2023-11-20
+
+### Added
+
+- Added types for payment's `status` and `error_code`: `Paddle.PaymentStatus` and `Paddle.PaymentErrorCode` correspondingly.
+
 ## v1.4.1 - 2023-11-17
 
 ### Fixed

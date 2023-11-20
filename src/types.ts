@@ -853,9 +853,9 @@ export namespace Paddle {
      * cents for USD). */
     amount: string;
     /** Status of this payment attempt. */
-    status: string;
+    status: PaymentStatus;
     /** Error code relating to a payment issue. */
-    error_code: string | null;
+    error_code: PaymentErrorCode | null;
     /** Information about the payment method used for a payment attempt. */
     method_details: MethodDetails;
     /** RFC 3339 datetime string of when this entity was created. */
@@ -864,6 +864,43 @@ export namespace Paddle {
      * if status is not captured. */
     captured_at: string | null;
   }
+
+  /**
+   * Status of this payment attempt.
+   */
+  export type PaymentStatus =
+    | "authorized" // Authorized but not captured. Payment attempt is incomplete.
+    | "authorized_flagged" // Authorized but not captured because it has been flagged as potentially fraudulent. Payment attempt is incomplete.
+    | "canceled" // Previously authorized payment attempt has been canceled. Typically when authorized_flagged payment attempts are rejected.
+    | "captured" // Payment captured successfully. Payment attempt is complete.
+    | "error" // Something went wrong and the payment attempt was unsuccessful. Check the error for more information.
+    | "action_required" // Customer must complete an action for this payment attempt to proceed. Typically means that the payment attempt requires 3DS.
+    | "pending_no_action_required" // Response required from the bank or payment provider. Transaction is pending.
+    | "created" // New payment attempt created.
+    | "unknown" // Payment attempt status not known.
+    | "dropped"; // Payment attempt dropped by Paddle.
+
+  /**
+   * Error code relating to a payment issue.
+   */
+  export type PaymentErrorCode =
+    | "already_canceled" // Cancelation not possible because the amount has already been canceled. Not typically returned for payments.
+    | "already_refunded" // Refund is not possible because the amount has already been refunded. Not typically returned for payments.
+    | "authentication_failed" // Payment required a 3DS2 authentication challenge. The customer completed the challenge but was not successful.
+    | "blocked_card" // Card issuer has indicated that the card cannot be used as it is frozen, lost, damaged, or stolen.
+    | "canceled" // Customer has requested that the mandate for recurring payments be canceled.
+    | "declined" // Card has been declined, with no other information returned.
+    | "expired_card" // Card issuer has indicated that this card is expired. Expired cards may also return invalid_payment_details, depending on how a payment is routed.
+    | "fraud" // Card issuer or payment service provider flagged this payment as potentially fraudulent.
+    | "invalid_amount" // Card issuer or payment service provider cannot process a payment that is this high or low.
+    | "invalid_payment_details" // Payment service provider has indicated the card isn't valid. This typically means that it's expired. expired_card is returned by the card issuer, rather than the payment service provider.
+    | "issuer_unavailable" // Payment service provider couldn't reach the card issuer.
+    | "not_enough_balance" // Payment method declined because of insufficient funds, or fund limits being reached.
+    | "psp_error" // Something went wrong with the payment service provider, with no other information returned.
+    | "redacted_payment_method" // Payment service provider didn't receive payment method information as they've been redacted.
+    | "system_error" // Something went wrong with the Paddle platform. Try again later, or check status.paddle.com.
+    | "transaction_not_permitted" // Card issuer doesn't allow this kind of payment because of limits on the account, or legal or compliance reasons.
+    | "unknown"; // Payment attempt unsuccessful, with no other information returned.
 
   /**
    * Information about the payment method used for a payment attempt.
