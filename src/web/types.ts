@@ -2,6 +2,9 @@ import type { PaddleAPI as API } from "../api/types";
 import type { Paddle as Core } from "../types";
 import type { PaddleUtils as Utils } from "../utils";
 
+/**
+ * The web Paddle types namespace. Contains all the types related to Paddle.js.
+ */
 export namespace PaddleWeb {
   /**
    * Window type with Paddle global.
@@ -116,19 +119,17 @@ export namespace PaddleWeb {
   /**
    * The checkout open function props.
    */
-  export type CheckoutProps<Data extends Core.CustomData> =
-    Utils.MakeNullableFieldsOptional<{
-      /** Set general checkout settings. */
-      settings?: CheckoutSettingsObject | undefined;
-    }> &
-      CheckoutPropsPayload<Data> &
-      CheckoutDiscount;
+  export type CheckoutProps<Data extends Core.CustomData> = {
+    /** Set general checkout settings. */
+    settings?: CheckoutSettingsObject | undefined;
+  } & CheckoutPropsPayload<Data> &
+    CheckoutDiscount;
 
   /**
    * The checkout open function items.
    */
   export type CheckoutPropsPayload<Data extends Core.CustomData> =
-    | CheckoutPropsItems<Data>
+    | Utils.MakeNullableFieldsOptional<CheckoutPropsItems<Data>>
     | CheckoutPropsTransactionId;
 
   /**

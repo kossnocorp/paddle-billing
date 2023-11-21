@@ -27,6 +27,12 @@ export namespace Paddle {
   }
 
   /**
+   * Custom data type resolver.
+   */
+  export type ResolveCustomData<Data extends CustomData | undefined> =
+    Data extends CustomData ? Data : CustomData;
+
+  /**
    * Validates the custom data definition.
    */
   export type WithValidatedDataDef<
@@ -95,7 +101,7 @@ export namespace Paddle {
    */
   export interface Price<
     BillingCycle extends TimeInterval | null = TimeInterval | null,
-    Data extends CustomData = CustomData
+    Def extends CustomDataDef = CustomDataDef
   > {
     /** Unique Paddle ID for this price, prefixed with pri_ */
     id: PriceId;
@@ -118,7 +124,7 @@ export namespace Paddle {
     /** Whether this entity can be used in  */
     status: EntityStatus;
     /** Your own structured key-value data. */
-    custom_data: Data;
+    custom_data: ResolveCustomData<Def["Price"]>;
     /** How often this price should be charged. null if price is non-recurring
      * (one-time) */
     billing_cycle: BillingCycle;
@@ -285,7 +291,7 @@ export namespace Paddle {
   /**
    * Represents the Product object.
    */
-  export interface Product<Data extends CustomData = CustomData> {
+  export interface Product<Def extends CustomDataDef> {
     /** Unique Paddle ID for this product, prefixed with pro_. */
     id: ProductId;
     /** Name of this product. */
@@ -299,7 +305,7 @@ export namespace Paddle {
      * customer documents. */
     image_url: string | null;
     /** Your own structured key-value data. */
-    custom_data: Data;
+    custom_data: ResolveCustomData<Def["Product"]>;
     /** Whether this entity can be used in  */
     status: EntityStatus;
     /** RFC 3339 datetime string of when this entity was created. Set
@@ -311,11 +317,9 @@ export namespace Paddle {
    * Subscription interface.
    */
   export interface Subscription<
-    Mode extends CollectionMode = CollectionMode,
-    BillingCycle extends TimeInterval | null = TimeInterval | null,
-    PriceData extends CustomData = CustomData,
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
+    Mode extends CollectionMode,
+    BillingCycle extends TimeInterval | null,
+    Def extends CustomDataDef
   > {
     /** Unique Paddle ID for this subscription entity, prefixed with sub_. */
     id: SubscriptionId;
@@ -360,9 +364,9 @@ export namespace Paddle {
     /** Public URLs that customers can use to make changes to this subscription. */
     management_urls: ManagementURLs;
     /** Represents subscription items. */
-    items: SubscriptionItem<BillingCycle, PriceData, SubscriptionItemData>[];
+    items: SubscriptionItem<BillingCycle, Def>[];
     /** Your own structured key-value data. */
-    custom_data: SubscriptionData;
+    custom_data: ResolveCustomData<Def["Subscription"]>;
     /** How payment is collected for transactions created for this
      * subscription. */
     collection_mode: Mode;
@@ -439,8 +443,7 @@ export namespace Paddle {
    */
   export interface SubscriptionItem<
     BillingCycle extends TimeInterval | null,
-    PriceData extends CustomData = CustomData,
-    SubscriptionItemData extends CustomData = CustomData
+    Def extends CustomDataDef
   > {
     /** Status of this subscription item. */
     status: SubscriptionItemStatus;
@@ -462,9 +465,9 @@ export namespace Paddle {
     /** Trial dates for this item. */
     trial_dates: TimePeriod | null;
     /** Price object for this item. */
-    price: Price<BillingCycle, PriceData>;
+    price: Price<BillingCycle, Def>;
     /** Your own structured key-value data. */
-    custom_data: SubscriptionItemData;
+    custom_data: ResolveCustomData<Def["SubscriptionItem"]>;
   }
 
   /**
@@ -540,9 +543,8 @@ export namespace Paddle {
    * Represents the transaction entity.
    */
   export interface Transaction<
-    BillingCycle extends TimeInterval | null = TimeInterval | null,
-    PriceData extends CustomData = CustomData,
-    TransactionData extends CustomData = CustomData
+    BillingCycle extends TimeInterval | null,
+    Def extends CustomDataDef
   > {
     /** Unique Paddle ID for this transaction entity, prefixed with txn_. */
     id: TransactionId;
@@ -558,7 +560,7 @@ export namespace Paddle {
      * with biz_. */
     business_id: BusinessId | null;
     /** Your own structured key-value data. */
-    custom_data: TransactionData;
+    custom_data: ResolveCustomData<Def["Transaction"]>;
     /** Supported three-letter ISO 4217 currency code. */
     currency_code: CurrencyCode;
     /** Describes how this transaction was created. */
@@ -581,9 +583,9 @@ export namespace Paddle {
     /**  */
     billing_period: TimePeriod | null;
     /** List of items on this transaction. */
-    items: TransactionItem<BillingCycle, PriceData>[];
+    items: TransactionItem<BillingCycle, Def>[];
     /** Details for this transaction. */
-    details: TransactionDetails;
+    details: TransactionDetails<Def>;
     /** Paddle Checkout details for this transaction. */
     checkout: Checkout | null;
     /** List of payment attempts for this transaction. */
@@ -612,13 +614,13 @@ export namespace Paddle {
    */
   export interface TransactionItem<
     BillingCycle extends TimeInterval | null,
-    PriceData extends CustomData
+    Def extends CustomDataDef
   > {
     /** Paddle ID for the price to add to this transaction, prefixed
      * with pri_. */
     price_id: string;
     /** Represents a price entity. */
-    price: Price<BillingCycle, PriceData>;
+    price: Price<BillingCycle, Def>;
     /** Quantity of this item on the transaction. */
     quantity: number;
     /** How proration was calculated for this item. */
@@ -638,7 +640,7 @@ export namespace Paddle {
   /**
    * Represents transaction details.
    */
-  export interface TransactionDetails {
+  export interface TransactionDetails<Def extends CustomDataDef> {
     /** List of tax rates applied for this transaction. */
     tax_rates_used: TaxRate[];
     /** Breakdown of the total for a transaction. */
@@ -648,7 +650,7 @@ export namespace Paddle {
     /** Breakdown of the payout total for a transaction. */
     payout_totals: PayoutTotals | null;
     /** Information about line items for this transaction. */
-    line_items: LineItem[];
+    line_items: LineItem<Def>[];
   }
 
   /**
@@ -782,7 +784,7 @@ export namespace Paddle {
   /**
    * Information about line items for a transaction.
    */
-  export interface LineItem {
+  export interface LineItem<Def extends CustomDataDef> {
     /** Unique Paddle ID for this transaction item, prefixed with txnitm_. */
     id: TransactionItemId;
     /** Paddle ID for the price related to this transaction line item,
@@ -800,7 +802,7 @@ export namespace Paddle {
      * (e.g. cents for USD). */
     totals: TotalsWithDiscount;
     /** Related product entity for this transaction line item price. */
-    product: Product;
+    product: Product<Def>;
   }
 
   /**
@@ -972,7 +974,7 @@ export namespace Paddle {
   /**
    * Address attributes.
    */
-  export interface Address<Data extends CustomData> {
+  export interface Address<Def extends CustomDataDef> {
     /** Unique Paddle ID for this address entity */
     id: AddressId;
     /** Memorable description for this address */
@@ -990,7 +992,7 @@ export namespace Paddle {
     /** Supported two-letter ISO 3166-1 alpha-2 country code for this address */
     country_code: CountryCode;
     /** Your own structured key-value data. */
-    custom_data: Data;
+    custom_data: ResolveCustomData<Def["Address"]>;
     /** Whether this entity can be used in Paddle */
     status: EntityStatus;
     /** RFC 3339 datetime string of when this entity was created */
@@ -1382,7 +1384,7 @@ export namespace Paddle {
   /**
    * Represents a business entity.
    */
-  export interface Business<Data extends CustomData> {
+  export interface Business<Def extends CustomDataDef> {
     /** Unique Paddle ID for this business entity, prefixed with biz_. */
     id: BusinessId;
     /** Name of this business */
@@ -1403,7 +1405,7 @@ export namespace Paddle {
      * Set automatically by Paddle */
     updated_at: string;
     /** Your own structured key-value data. */
-    custom_data: Data;
+    custom_data: ResolveCustomData<Def["Business"]>;
   }
 
   /**
@@ -1419,7 +1421,7 @@ export namespace Paddle {
   /**
    * Represents a customer entity.
    */
-  export interface Customer<Data extends CustomData> {
+  export interface Customer<Def extends CustomDataDef> {
     /** Unique Paddle ID for this customer entity, prefixed with ctm_. */
     id: CustomerId;
     /** Full name of this customer. Required when creating transactions where
@@ -1434,7 +1436,7 @@ export namespace Paddle {
     /** Whether this entity can be used in  */
     status: EntityStatus;
     /** Your own structured key-value data. */
-    custom_data: Data;
+    custom_data: ResolveCustomData<Def["Customer"]>;
     /** Valid IETF BCP 47 short form locale tag. If omitted, defaults to en. */
     locale: string;
     /** RFC 3339 datetime string of when this entity was created.
@@ -1515,10 +1517,7 @@ export namespace Paddle {
   /**
    * Pricing preview.
    */
-  export interface PricingPreview<
-    PriceData extends CustomData,
-    ProductData extends CustomData
-  > {
+  export interface PricingPreview<Def extends CustomDataDef> {
     /** Paddle ID of the customer that this preview is for, prefixed with
      * ctm_. */
     customer_id?: CustomerId | null;
@@ -1542,7 +1541,7 @@ export namespace Paddle {
     customer_ip_address?: string | null;
     /** Calculated totals for a price preview, including discounts, tax,
      * and currency conversion. */
-    details: PricingPreviewDetails<PriceData, ProductData>;
+    details: PricingPreviewDetails<Def>;
   }
 
   /**
@@ -1558,25 +1557,19 @@ export namespace Paddle {
   /**
    * Pricing previews details.
    */
-  export interface PricingPreviewDetails<
-    PriceData extends CustomData,
-    ProductData extends CustomData
-  > {
+  export interface PricingPreviewDetails<Def extends CustomDataDef> {
     /** Information about line items for this preview. Includes totals
      * calculated by  Considered the source of truth for line
      * item totals. */
-    line_items: PricingPreviewLineItem<PriceData, ProductData>[];
+    line_items: PricingPreviewLineItem<Def>[];
   }
 
   /**
    * Pricing previews line item.
    */
-  export interface PricingPreviewLineItem<
-    PriceData extends CustomData,
-    ProductData extends CustomData
-  > {
+  export interface PricingPreviewLineItem<Def extends CustomDataDef> {
     /** Related price entity for this preview line item. */
-    price: Price<TimeInterval | null, PriceData>;
+    price: Price<TimeInterval | null, Def>;
     /** Quantity of this preview line item. */
     quantity: number;
     /** Rate used to calculate tax for this preview line item. */
@@ -1594,7 +1587,7 @@ export namespace Paddle {
      * currency. */
     formatted_totals: TotalsWithDiscount;
     /** Related product entity for this preview line item price. */
-    product: Product<ProductData>;
+    product: Product<Def>;
     /** List of discounts applied to this preview line item. Empty if no
      * discounts applied. */
     discounts: PricingPreviewDiscount[];
@@ -1642,24 +1635,15 @@ export namespace Paddle {
   /**
    * Event alias. Lists all possible events.
    */
-  export type Event<
-    PriceData extends CustomData,
-    ProductData extends CustomData,
-    SubscriptionItemData extends CustomData,
-    SubscriptionData extends CustomData,
-    TransactionData extends CustomData,
-    CustomerData extends CustomData,
-    AddressData extends CustomData,
-    BusinessData extends CustomData
-  > =
-    | EventSubscription<PriceData, SubscriptionItemData, SubscriptionData>
-    | EventTransaction<PriceData, TransactionData>
-    | EventProduct<ProductData>
-    | EventPrice<PriceData>
-    | EventAddress<AddressData>
+  export type Event<Def extends CustomDataDef> =
+    | EventSubscription<Def>
+    | EventTransaction<Def>
+    | EventProduct<Def>
+    | EventPrice<Def>
+    | EventAddress<Def>
     | EventAdjustment
-    | EventBusiness<BusinessData>
-    | EventCustomer<CustomerData>;
+    | EventBusiness<Def>
+    | EventCustomer<Def>;
 
   /**
    * Base event interface.
@@ -1685,47 +1669,15 @@ export namespace Paddle {
   /**
    * Subscription event alias.
    */
-  export type EventSubscription<
-    PriceData extends CustomData = CustomData,
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
-  > =
-    | EventSubscriptionActivated<
-        PriceData,
-        SubscriptionItemData,
-        SubscriptionData
-      >
-    | EventSubscriptionUpdated<
-        PriceData,
-        SubscriptionItemData,
-        SubscriptionData
-      >
-    | EventSubscriptionCanceled<
-        PriceData,
-        SubscriptionItemData,
-        SubscriptionData
-      >
-    | EventSubscriptionPastDue<
-        PriceData,
-        SubscriptionItemData,
-        SubscriptionData
-      >
-    | EventSubscriptionPaused<PriceData, SubscriptionItemData, SubscriptionData>
-    | EventSubscriptionResumed<
-        PriceData,
-        SubscriptionItemData,
-        SubscriptionData
-      >
-    | EventSubscriptionTrialing<
-        PriceData,
-        SubscriptionItemData,
-        SubscriptionData
-      >
-    | EventSubscriptionCreated<
-        PriceData,
-        SubscriptionItemData,
-        SubscriptionData
-      >;
+  export type EventSubscription<Def extends CustomDataDef> =
+    | EventSubscriptionActivated<Def>
+    | EventSubscriptionUpdated<Def>
+    | EventSubscriptionCanceled<Def>
+    | EventSubscriptionPastDue<Def>
+    | EventSubscriptionPaused<Def>
+    | EventSubscriptionResumed<Def>
+    | EventSubscriptionTrialing<Def>
+    | EventSubscriptionCreated<Def>;
 
   /**
    * Occurs when a subscription becomes active. Its status field changes
@@ -1734,37 +1686,17 @@ export namespace Paddle {
    * This means any trial period has elapsed and Paddle has successfully billed
    * the customer.
    */
-  export type EventSubscriptionActivated<
-    PriceData extends CustomData = CustomData,
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventSubscriptionActivated<Def extends CustomDataDef> = EventBase<
     "subscription.activated",
-    Subscription<
-      CollectionMode,
-      TimeInterval | null,
-      PriceData,
-      SubscriptionItemData,
-      SubscriptionData
-    >
+    Subscription<CollectionMode, TimeInterval | null, Def>
   >;
 
   /**
    * Occurs when a subscription is updated.
    */
-  export type EventSubscriptionUpdated<
-    PriceData extends CustomData = CustomData,
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventSubscriptionUpdated<Def extends CustomDataDef> = EventBase<
     "subscription.updated",
-    Subscription<
-      CollectionMode,
-      TimeInterval | null,
-      PriceData,
-      SubscriptionItemData,
-      SubscriptionData
-    >
+    Subscription<CollectionMode, TimeInterval | null, Def>
   >;
 
   /**
@@ -1778,19 +1710,9 @@ export namespace Paddle {
    * On the next billing date, the subscription status changes to canceled and
    * subscription.canceled occurs.
    */
-  export type EventSubscriptionCanceled<
-    PriceData extends CustomData = CustomData,
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventSubscriptionCanceled<Def extends CustomDataDef> = EventBase<
     "subscription.canceled",
-    Subscription<
-      CollectionMode,
-      TimeInterval | null,
-      PriceData,
-      SubscriptionItemData,
-      SubscriptionData
-    >
+    Subscription<CollectionMode, TimeInterval | null, Def>
   >;
 
   /**
@@ -1798,38 +1720,18 @@ export namespace Paddle {
    *
    * subscription.trialing or subscription.activated typically follow.
    */
-  export type EventSubscriptionCreated<
-    PriceData extends CustomData = CustomData,
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventSubscriptionCreated<Def extends CustomDataDef> = EventBase<
     "subscription.created",
-    Subscription<
-      CollectionMode,
-      TimeInterval | null,
-      PriceData,
-      SubscriptionItemData,
-      SubscriptionData
-    >
+    Subscription<CollectionMode, TimeInterval | null, Def>
   >;
 
   /**
    * Occurs when a subscription has an unpaid transaction. Its status changes
    * to past_due.
    */
-  export type EventSubscriptionPastDue<
-    PriceData extends CustomData = CustomData,
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventSubscriptionPastDue<Def extends CustomDataDef> = EventBase<
     "subscription.past_due",
-    Subscription<
-      CollectionMode,
-      TimeInterval | null,
-      PriceData,
-      SubscriptionItemData,
-      SubscriptionData
-    >
+    Subscription<CollectionMode, TimeInterval | null, Def>
   >;
 
   /**
@@ -1842,19 +1744,9 @@ export namespace Paddle {
    * On the next billing date, the subscription status changes to paused and
    * subscription.paused occurs.
    */
-  export type EventSubscriptionPaused<
-    PriceData extends CustomData = CustomData,
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventSubscriptionPaused<Def extends CustomDataDef> = EventBase<
     "subscription.paused",
-    Subscription<
-      CollectionMode,
-      TimeInterval | null,
-      PriceData,
-      SubscriptionItemData,
-      SubscriptionData
-    >
+    Subscription<CollectionMode, TimeInterval | null, Def>
   >;
 
   /**
@@ -1865,55 +1757,32 @@ export namespace Paddle {
    * transaction.created and other transaction events occur, depending on
    * the collection mode.
    */
-  export type EventSubscriptionResumed<
-    PriceData extends CustomData = CustomData,
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventSubscriptionResumed<Def extends CustomDataDef> = EventBase<
     "subscription.resumed",
-    Subscription<
-      CollectionMode,
-      TimeInterval | null,
-      PriceData,
-      SubscriptionItemData,
-      SubscriptionData
-    >
+    Subscription<CollectionMode, TimeInterval | null, Def>
   >;
 
   /**
    * Occurs when a subscription enters trial period.
    */
-  export type EventSubscriptionTrialing<
-    PriceData extends CustomData = CustomData,
-    SubscriptionItemData extends CustomData = CustomData,
-    SubscriptionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventSubscriptionTrialing<Def extends CustomDataDef> = EventBase<
     "subscription.trialing",
-    Subscription<
-      CollectionMode,
-      TimeInterval | null,
-      PriceData,
-      SubscriptionItemData,
-      SubscriptionData
-    >
+    Subscription<CollectionMode, TimeInterval | null, Def>
   >;
 
   /**
    * Transaction event alias.
    */
-  export type EventTransaction<
-    PriceData extends CustomData = CustomData,
-    TransactionData extends CustomData = CustomData
-  > =
-    | EventTransactionBilled<PriceData, TransactionData>
-    | EventTransactionCanceled<PriceData, TransactionData>
-    | EventTransactionCompleted<PriceData, TransactionData>
-    | EventTransactionCreated<PriceData, TransactionData>
-    | EventTransactionPastDue<PriceData, TransactionData>
-    | EventTransactionPaymentFailed<PriceData, TransactionData>
-    | EventTransactionReady<PriceData, TransactionData>
-    | EventTransactionUpdated<PriceData, TransactionData>
-    | EventTransactionPaid<PriceData, TransactionData>;
+  export type EventTransaction<Def extends CustomDataDef> =
+    | EventTransactionBilled<Def>
+    | EventTransactionCanceled<Def>
+    | EventTransactionCompleted<Def>
+    | EventTransactionCreated<Def>
+    | EventTransactionPastDue<Def>
+    | EventTransactionPaymentFailed<Def>
+    | EventTransactionReady<Def>
+    | EventTransactionUpdated<Def>
+    | EventTransactionPaid<Def>;
 
   /**
    * Occurs when a transaction is billed. Its status field changes to billed
@@ -1923,12 +1792,9 @@ export namespace Paddle {
    * manually-collected transactions to issue an invoice. It's not typically
    * part of checkout workflows, where collection mode is automatic.
    */
-  export type EventTransactionBilled<
-    PriceData extends CustomData = CustomData,
-    TransactionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventTransactionBilled<Def extends CustomDataDef> = EventBase<
     "transaction.billed",
-    Transaction<TimeInterval | null, PriceData, TransactionData>
+    Transaction<TimeInterval | null, Def>
   >;
 
   /**
@@ -1940,47 +1806,35 @@ export namespace Paddle {
    * in error. It's not typically part of checkout workflows, where collection
    * mode is automatic.
    */
-  export type EventTransactionCanceled<
-    PriceData extends CustomData = CustomData,
-    TransactionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventTransactionCanceled<Def extends CustomDataDef> = EventBase<
     "transaction.canceled",
-    Transaction<TimeInterval | null, PriceData, TransactionData>
+    Transaction<TimeInterval | null, Def>
   >;
 
   /**
    * Occurs when a transaction is completed. Its status field changes
    * to completed.
    */
-  export type EventTransactionCompleted<
-    PriceData extends CustomData = CustomData,
-    TransactionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventTransactionCompleted<Def extends CustomDataDef> = EventBase<
     "transaction.completed",
-    Transaction<TimeInterval | null, PriceData, TransactionData>
+    Transaction<TimeInterval | null, Def>
   >;
 
   /**
    * Occurs when a transaction is created.
    */
-  export type EventTransactionCreated<
-    PriceData extends CustomData = CustomData,
-    TransactionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventTransactionCreated<Def extends CustomDataDef> = EventBase<
     "transaction.created",
-    Transaction<TimeInterval | null, PriceData, TransactionData>
+    Transaction<TimeInterval | null, Def>
   >;
 
   /**
    * Occurs when a transaction becomes past due. Its status field changes
    * to past_due.
    */
-  export type EventTransactionPastDue<
-    PriceData extends CustomData = CustomData,
-    TransactionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventTransactionPastDue<Def extends CustomDataDef> = EventBase<
     "transaction.past_due",
-    Transaction<TimeInterval | null, PriceData, TransactionData>
+    Transaction<TimeInterval | null, Def>
   >;
 
   /**
@@ -1991,13 +1845,11 @@ export namespace Paddle {
    * for manually-collected transactions (invoices) where a customer pays using
    * Paddle Checkout and their payment is declined.
    */
-  export type EventTransactionPaymentFailed<
-    PriceData extends CustomData = CustomData,
-    TransactionData extends CustomData = CustomData
-  > = EventBase<
-    "transaction.payment_failed",
-    Transaction<TimeInterval | null, PriceData, TransactionData>
-  >;
+  export type EventTransactionPaymentFailed<Def extends CustomDataDef> =
+    EventBase<
+      "transaction.payment_failed",
+      Transaction<TimeInterval | null, Def>
+    >;
 
   /**
    * Occurs when a transaction is ready to be billed. Its status field changes
@@ -2012,12 +1864,9 @@ export namespace Paddle {
    * transaction.updated may occur immediately after to add invoice_id
    * and adjusted_totals.
    */
-  export type EventTransactionReady<
-    PriceData extends CustomData = CustomData,
-    TransactionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventTransactionReady<Def extends CustomDataDef> = EventBase<
     "transaction.ready",
-    Transaction<TimeInterval | null, PriceData, TransactionData>
+    Transaction<TimeInterval | null, Def>
   >;
 
   /**
@@ -2037,12 +1886,9 @@ export namespace Paddle {
    * Transactions move to completed and transaction.completed occurs when
    * they're fully processed.
    */
-  export type EventTransactionPaid<
-    PriceData extends CustomData = CustomData,
-    TransactionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventTransactionPaid<Def extends CustomDataDef> = EventBase<
     "transaction.paid",
-    Transaction<TimeInterval | null, PriceData, TransactionData>
+    Transaction<TimeInterval | null, Def>
   >;
 
   /**
@@ -2057,73 +1903,78 @@ export namespace Paddle {
    * to billed. transaction.updated occurs immediately after to add
    * an invoice_number.
    */
-  export type EventTransactionUpdated<
-    PriceData extends CustomData = CustomData,
-    TransactionData extends CustomData = CustomData
-  > = EventBase<
+  export type EventTransactionUpdated<Def extends CustomDataDef> = EventBase<
     "transaction.updated",
-    Transaction<TimeInterval | null, PriceData, TransactionData>
+    Transaction<TimeInterval | null, Def>
   >;
 
   /**
    * Product event alias.
    */
-  export type EventProduct<ProductData extends CustomData = CustomData> =
-    | EventProductCreated<ProductData>
-    | EventProductUpdated<ProductData>;
+  export type EventProduct<Def extends CustomDataDef> =
+    | EventProductCreated<Def>
+    | EventProductUpdated<Def>;
 
   /**
    * Occurs when a product is created.
    */
-  export type EventProductCreated<ProductData extends CustomData = CustomData> =
-    EventBase<"product.created", Product<ProductData>>;
+  export type EventProductCreated<Def extends CustomDataDef> = EventBase<
+    "product.created",
+    Product<Def>
+  >;
 
   /**
    * Occurs when a product is updated.
    */
-  export type EventProductUpdated<ProductData extends CustomData = CustomData> =
-    EventBase<"product.updated", Product<ProductData>>;
+  export type EventProductUpdated<Def extends CustomDataDef> = EventBase<
+    "product.updated",
+    Product<Def>
+  >;
 
   /**
    * Price event alias.
    */
-  export type EventPrice<PriceData extends CustomData = CustomData> =
-    | EventPriceCreated<PriceData>
-    | EventPriceUpdated<PriceData>;
+  export type EventPrice<Def extends CustomDataDef> =
+    | EventPriceCreated<Def>
+    | EventPriceUpdated<Def>;
 
   /**
    * Occurs when a price is created.
    */
-  export type EventPriceCreated<PriceData extends CustomData = CustomData> =
-    EventBase<"price.created", Price<TimeInterval | null, PriceData>>;
+  export type EventPriceCreated<Def extends CustomDataDef> = EventBase<
+    "price.created",
+    Price<TimeInterval | null, Def>
+  >;
 
   /**
    * Occurs when a price is updated.
    */
-  export type EventPriceUpdated<PriceData extends CustomData = CustomData> =
-    EventBase<"price.updated", Price<TimeInterval | null, PriceData>>;
+  export type EventPriceUpdated<Def extends CustomDataDef> = EventBase<
+    "price.updated",
+    Price<TimeInterval | null, Def>
+  >;
 
   /**
    * Address event alias.
    */
-  export type EventAddress<AddressData extends CustomData> =
-    | EventAddressCreated<AddressData>
-    | EventAddressUpdated<AddressData>;
+  export type EventAddress<Def extends CustomDataDef> =
+    | EventAddressCreated<Def>
+    | EventAddressUpdated<Def>;
 
   /**
    * Occurs when an address is created.
    */
-  export type EventAddressCreated<AddressData extends CustomData> = EventBase<
+  export type EventAddressCreated<Def extends CustomDataDef> = EventBase<
     "address.created",
-    Address<AddressData>
+    Address<Def>
   >;
 
   /**'
    * Occurs when an address is updated.
    */
-  export type EventAddressUpdated<AddressData extends CustomData> = EventBase<
+  export type EventAddressUpdated<Def extends CustomDataDef> = EventBase<
     "address.updated",
-    Address<AddressData>
+    Address<Def>
   >;
 
   /**
@@ -2150,47 +2001,47 @@ export namespace Paddle {
   /**
    * Businesses event alias.
    */
-  export type EventBusiness<BusinessData extends CustomData> =
-    | EventBusinessCreated<BusinessData>
-    | EventBusinessUpdated<BusinessData>;
+  export type EventBusiness<Def extends CustomDataDef> =
+    | EventBusinessCreated<Def>
+    | EventBusinessUpdated<Def>;
 
   /**
    * Occurs when a business is created.
    */
-  export type EventBusinessCreated<BusinessData extends CustomData> = EventBase<
+  export type EventBusinessCreated<Def extends CustomDataDef> = EventBase<
     "business.created",
-    Business<BusinessData>
+    Business<Def>
   >;
 
   /**
    * Occurs when a business is updated.
    */
-  export type EventBusinessUpdated<BusinessData extends CustomData> = EventBase<
+  export type EventBusinessUpdated<Def extends CustomDataDef> = EventBase<
     "business.updated",
-    Business<BusinessData>
+    Business<Def>
   >;
 
   /**
    * Customer event alias.
    */
-  export type EventCustomer<CustomerData extends CustomData> =
-    | EventCustomerCreated<CustomerData>
-    | EventCustomerUpdated<CustomerData>;
+  export type EventCustomer<Def extends CustomDataDef> =
+    | EventCustomerCreated<Def>
+    | EventCustomerUpdated<Def>;
 
   /**
    * Occurs when a customer is created.
    */
-  export type EventCustomerCreated<CustomerData extends CustomData> = EventBase<
+  export type EventCustomerCreated<Def extends CustomDataDef> = EventBase<
     "customer.created",
-    Customer<CustomerData>
+    Customer<Def>
   >;
 
   /**
    * Occurs when a customer is updated.
    */
-  export type EventCustomerUpdated<CustomerData extends CustomData> = EventBase<
+  export type EventCustomerUpdated<Def extends CustomDataDef> = EventBase<
     "customer.updated",
-    Customer<CustomerData>
+    Customer<Def>
   >;
 
   /// Notification settings
@@ -2267,16 +2118,7 @@ export namespace Paddle {
   /**
    * Describes a notification for an event that occured in your Paddle system.
    */
-  export interface Notification<
-    PriceData extends CustomData,
-    ProductData extends CustomData,
-    SubscriptionItemData extends CustomData,
-    SubscriptionData extends CustomData,
-    TransactionData extends CustomData,
-    CustomerData extends CustomData,
-    AddressData extends CustomData,
-    BusinessData extends CustomData
-  > {
+  export interface Notification<Def extends CustomDataDef> {
     /** Unique Paddle ID for this notification, prefixed with ntf_. */
     id: NotificationId;
     /** Type of event sent by Paddle, in the format entity.event_type. */
@@ -2284,16 +2126,7 @@ export namespace Paddle {
     /** Status of this notification. */
     status: NotificationStatus;
     /** Notification payload. Includes the new or changed event. */
-    payload: Event<
-      PriceData,
-      ProductData,
-      SubscriptionItemData,
-      SubscriptionData,
-      TransactionData,
-      CustomerData,
-      AddressData,
-      BusinessData
-    >;
+    payload: Event<Def>;
     /** RFC 3339 datetime string of when this notification occurred. */
     occurred_at: string;
     /** RFC 3339 datetime string of when this notification was delivered. */

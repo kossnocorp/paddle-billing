@@ -1,3 +1,9 @@
+types:
+	@npx tsc --noEmit
+
+types-watch:
+	@npx tsc --noEmit --watch
+
 test: test-node test-web
 
 test-node:

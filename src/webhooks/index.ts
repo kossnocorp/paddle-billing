@@ -12,21 +12,12 @@ import type { PaddleAPI as API } from "../api/types";
  *
  * @returns true if the body is authentic
  */
-export function parseWebhookBody<DataDef extends Core.CustomDataDef>(
-  _client: API.Client<DataDef> | null,
+export function parseWebhookBody<Def extends Core.CustomDataDef>(
+  _client: API.Client<Def> | null,
   secret: string,
   signature: string,
   body: string
-): Core.Event<
-  API.CustomData<DataDef["Price"]>,
-  API.CustomData<DataDef["Product"]>,
-  API.CustomData<DataDef["SubscriptionItem"]>,
-  API.CustomData<DataDef["Subscription"]>,
-  API.CustomData<DataDef["Transaction"]>,
-  API.CustomData<DataDef["Customer"]>,
-  API.CustomData<DataDef["Address"]>,
-  API.CustomData<DataDef["Business"]>
-> | null {
+): Core.Event<Def> | null {
   const captures = signature.match(/^ts=(\d+);h1=(.+)$/);
   if (!captures) return null;
 

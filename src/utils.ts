@@ -1,3 +1,6 @@
+/**
+ * The Paddle type utils namespace.
+ */
 export namespace PaddleUtils {
   /**
    * Make all properties in the type optional

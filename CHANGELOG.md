@@ -8,6 +8,16 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## v2.0.0 - 2023-11-21
+
+### Changed
+
+- **BREAKING**: Custom data objects are now passed to core types as `Paddle.CustomDataDef` and resolved using `Paddle.ResolveCustomData` right in the entity type. That allows using a single custom data definition type for all entities. Unless you used the `Paddle` namespace extensively, this change likely won't affect your codebase at all.
+
+### Fixed
+
+- Fixed `Paddle.Checkout` complaining about missing `customData` when none is defined.
+
 ## v1.5.0 - 2023-11-20
 
 ### Added

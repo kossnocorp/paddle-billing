@@ -58,6 +58,7 @@ import {
   updateTransaction,
 } from ".";
 
+// @ts-expect-error: This is ok!
 global.fetch = vi.fn();
 
 const testClient = { key: "test" };
@@ -927,6 +928,7 @@ describe("transactions", () => {
         currency_code: "USD" as const,
         collection_mode: "manual" as const,
         custom_data: { key1: "value1", key2: "value2" },
+        payments: [],
       };
 
       const result = await createTransaction(testClient, body);
