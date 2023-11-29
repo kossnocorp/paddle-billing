@@ -85,7 +85,7 @@ export namespace PaddleWeb {
      *
      * @param items - List of items for this checkout.
      */
-    updateItems(items: Item[]): void;
+    updateItems(items: Items): void;
 
     /**
      * Closes an opened checkout.
@@ -138,7 +138,7 @@ export namespace PaddleWeb {
   export interface CheckoutPropsItems<Data extends Core.CustomData> {
     /** List of items for this checkout. You must pass at least one item. Use
      * the updateItems() or updateCheckout() method to update the items list. */
-    items: [Item, ...Item[]];
+    items: Items;
     /** Information about the customer for this checkout. Pass either
      * an existing id, or the other fields. */
     customer?: CheckoutCustomer | undefined;
@@ -158,7 +158,10 @@ export namespace PaddleWeb {
   /**
    * The checkout customer.
    */
-  export type CheckoutCustomer = CheckoutCustomerId | CheckoutCustomerPayload;
+  export type CheckoutCustomer =
+    | CheckoutCustomerId
+    | CheckoutCustomerEmail
+    | CheckoutCustomerPayload;
 
   /**
    * The checkout customer id.
@@ -168,6 +171,14 @@ export namespace PaddleWeb {
      * the customer, like if they're authenticated and making a change
      * to their subscription. */
     id: Core.CustomerId;
+  }
+
+  /**
+   * The checkout email payload
+   */
+  export interface CheckoutCustomerEmail {
+    /** Email address for the customer. */
+    email?: string | undefined;
   }
 
   /**
@@ -225,11 +236,16 @@ export namespace PaddleWeb {
   export type UpdateCheckoutProps = {
     /** List of items for this checkout. You must pass at least one item. Use
      * the updateItems() or updateCheckout)() method to update the items list. */
-    items: [Item, ...Item[]];
+    items: Items;
     /** Information about the customer for this checkout. Pass either
      * an existing id, or the other fields. */
     customer?: CheckoutCustomer | undefined;
   } & CheckoutDiscount;
+
+  /**
+   * The checkout items array. Expects at least one item.
+   */
+  export type Items = [Item, ...Item[]];
 
   /**
    * The checkout item.

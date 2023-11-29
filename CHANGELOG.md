@@ -8,6 +8,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## v2.1.0 - 2023-11-29
+
+### Changed
+
+- Improved the Paddle.js wrapper types: added `PaddleWeb.Items`. Allow passing a single `email` when opening checkout.
+
 ## v2.0.0 - 2023-11-21
 
 ### Changed
