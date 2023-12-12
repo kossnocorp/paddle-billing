@@ -200,7 +200,7 @@ To verify and parse the Paddle webhook, use `parseWebhookBody` function:
 
 ```ts
 import express from "express";
-import { parseWebhookBody } from "paddle-billing";
+import { parseWebhookBody } from "paddle-billing/webhooks";
 
 const app = express();
 
@@ -267,7 +267,7 @@ The package also provides the web portion of the Paddle Billing platform replaci
 To load the web API (known as Paddle.js), use `loadScript`:
 
 ```ts
-import { loadScript } from "paddle-billing";
+import { loadScript } from "paddle-billing/web";
 
 loadScript().then((Paddle) => {
   Paddle.Checkout.open({

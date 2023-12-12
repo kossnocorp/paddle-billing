@@ -8,6 +8,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## v3.0.0 - 2023-12-12
+
+### Changed
+
+- **BREAKING**: The root index now exports only API methods. To access the webhooks functionality, use `paddle-billing/webhooks`. For the web API, use `paddle-billing/web`.
+
 ## v2.1.0 - 2023-11-29
 
 ### Changed
