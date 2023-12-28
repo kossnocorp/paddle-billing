@@ -1,6 +1,6 @@
 import { createHmac } from "crypto";
-import type { Paddle as Core } from "../types";
-import type { PaddleAPI as API } from "../api/types";
+import type { Paddle as Core } from "../types.js";
+import type { PaddleAPI as API } from "../api/types.js";
 
 /**
  * Validates Paddle event using the secret key and the signature.

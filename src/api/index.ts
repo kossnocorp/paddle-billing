@@ -1,5 +1,5 @@
-import type { Paddle as Core } from "../types";
-import type { PaddleAPI as API } from "./types";
+import type { Paddle as Core } from "../types.js";
+import type { PaddleAPI as API } from "./types.js";
 
 /// Generic
 

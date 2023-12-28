@@ -1,5 +1,5 @@
-import type { Paddle as Core } from "../types";
-import type { PaddleUtils as Utils } from "../utils";
+import type { Paddle as Core } from "../types.js";
+import type { PaddleUtils as Utils } from "../utils.js";
 
 /**
  * The API Paddle types namespace. Contains all the types related to the API.

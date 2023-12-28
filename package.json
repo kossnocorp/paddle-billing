@@ -1,25 +1,51 @@
 {
   "name": "paddle-billing",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Paddle Billing API and Webhooks wrapper with detailed TypeScript types",
+  "sideEffects": false,
   "main": "./index.js",
   "module": "./index.mjs",
   "exports": {
+    "./package.json": "./package.json",
     ".": {
-      "require": "./index.js",
-      "import": "./index.mjs"
+      "require": {
+        "types": "./index.d.ts",
+        "default": "./index.js"
+      },
+      "import": {
+        "types": "./index.d.mts",
+        "default": "./index.mjs"
+      }
     },
     "./api": {
-      "require": "./api/index.js",
-      "import": "./api/index.mjs"
+      "require": {
+        "types": "./api/index.d.ts",
+        "default": "./api/index.js"
+      },
+      "import": {
+        "types": "./api/index.d.mts",
+        "default": "./api/index.mjs"
+      }
     },
     "./webhooks": {
-      "require": "./webhooks/index.js",
-      "import": "./webhooks/index.mjs"
+      "require": {
+        "types": "./webhooks/index.d.ts",
+        "default": "./webhooks/index.js"
+      },
+      "import": {
+        "types": "./webhooks/index.d.mts",
+        "default": "./webhooks/index.mjs"
+      }
     },
     "./web": {
-      "require": "./web/index.js",
-      "import": "./web/index.mjs"
+      "require": {
+        "types": "./web/index.d.ts",
+        "default": "./web/index.js"
+      },
+      "import": {
+        "types": "./web/index.d.mts",
+        "default": "./web/index.mjs"
+      }
     }
   },
   "scripts": {

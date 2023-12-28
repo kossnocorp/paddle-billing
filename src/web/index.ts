@@ -1,5 +1,7 @@
-import type { Paddle as Core } from "../types";
-import type { PaddleWeb as Web } from "./types";
+import type { Paddle as Core } from "../types.js";
+import type { PaddleWeb as Web } from "./types.js";
+
+export type * from "./types.js";
 
 /**
  * @private

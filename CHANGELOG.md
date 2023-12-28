@@ -8,6 +8,16 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## v3.1.0 - 2023-12-13
+
+### Added
+
+- Export `PaddleWeb` namespace from `paddle-billing/web` for convenience.
+
+### Fixed
+
+- Fixed TypeScript types resolution in different environments.
+
 ## v3.0.0 - 2023-12-12
 
 ### Changed
